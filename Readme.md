@@ -1,7 +1,7 @@
 # Личный проект «TaskForce»
 
 * Студент: [Ольга Маринина](https://up.htmlacademy.ru/yii/4/user/2074903).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Селятин](https://htmlacademy.ru/profile/id919955).
 
 ---
 
