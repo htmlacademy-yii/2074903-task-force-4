@@ -1,5 +1,7 @@
 <?php
 
+namespace Omarinina\classes;
+
 class TaskStatusAndActionsIndicator
 {
     const STATUS_NEW = 'new';
