@@ -12,6 +12,6 @@ $TaskOneStatusAndActionsIndicator = new TaskStatusAndActionsIndicator(
 );
 $nextStatus = $TaskOneStatusAndActionsIndicator->getNewStatus();
 
-var_dump($TaskOneStatusAndActionsIndicator->getMapStutesAndActions());
+var_dump($TaskOneStatusAndActionsIndicator->getMapStatusesAndActions());
 var_dump(assert($nextStatus === TaskStatusAndActionsIndicator::STATUS_IN_WORK));
 var_dump($TaskOneStatusAndActionsIndicator->getAvailableActions());

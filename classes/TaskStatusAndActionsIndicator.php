@@ -19,7 +19,7 @@ class TaskStatusAndActionsIndicator
     public $currentStatus = '';
     public $currentAction = '';
 
-    public function __construct($idClient, $idExecutor, $currentStatus, $currentAction)
+    public function __construct(int $idClient, int $idExecutor, string $currentStatus, string $currentAction)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
@@ -27,7 +27,7 @@ class TaskStatusAndActionsIndicator
         $this->currentAction = $currentAction;
     }
 
-    public function getMapStutesAndActions()
+    public function getMapStatusesAndActions() : array
     {
         return [
             self::STATUS_NEW => 'Новое',
@@ -43,7 +43,7 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    public function getNewStatus()
+    public function getNewStatus() : string
     {
         $statusesByActions = $this->linkStatusToAction();
         if ($this->currentAction) {
@@ -52,7 +52,7 @@ class TaskStatusAndActionsIndicator
         return $this->currentStatus;
     }
 
-    public function getAvailableActions()
+    public function getAvailableActions() : array
     {
         $clientActions = $this->linkStatusToClientAction();
         $executorActions = $this->linkStatusToExecutorAction();
@@ -62,7 +62,7 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    private function linkStatusToAction()
+    private function linkStatusToAction() : array
     {
         return [
             self::ACTION_CANCEL => self::STATUS_CANCELLED,
@@ -72,7 +72,7 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    private function linkStatusToClientAction()
+    private function linkStatusToClientAction() : array
     {
         return [
             self::STATUS_NEW => self::ACTION_CANCEL,
@@ -83,7 +83,7 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    private function linkStatusToExecutorAction()
+    private function linkStatusToExecutorAction() : array
     {
         return [
             self::STATUS_NEW => self::ACTION_RESPOND,
