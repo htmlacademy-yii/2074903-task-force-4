@@ -19,14 +19,12 @@ class TaskStatusAndActionsIndicator
     private $idExecutor;
 
     public $currentStatus = '';
-    public $currentAction = '';
 
-    public function __construct(int $idClient, int $idExecutor, string $currentStatus, string $currentAction)
+    public function __construct(int $idClient, int $idExecutor, string $currentStatus)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
         $this->currentStatus = $currentStatus;
-        $this->currentAction = $currentAction;
     }
 
     public function getMapStatusesAndActions() : array
@@ -45,12 +43,9 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    public function getNewStatus() : string
+    public function getNewStatus(string $action) : string
     {
-        $statusesByActions = $this->linkStatusToAction();
-        if ($this->currentAction) {
-        $this->currentStatus = $statusesByActions[$this->currentAction];
-        };
+        $this->currentStatus = $this->getLinkStatusToAction()[$action] ?? $this->currentAction;
         return $this->currentStatus;
     }
 
@@ -59,12 +54,12 @@ class TaskStatusAndActionsIndicator
         $clientActions = $this->linkStatusToClientAction();
         $executorActions = $this->linkStatusToExecutorAction();
         return [
-            'for client' => $clientActions[$this->currentStatus],
+            'for client' => $clientActions[$this->currentStatus] ?? null,
             'for executor' => $executorActions[$this->currentStatus]
         ];
     }
 
-    private function linkStatusToAction() : array
+    private function getLinkStatusToAction() : array
     {
         return [
             self::ACTION_CANCEL => self::STATUS_CANCELLED,

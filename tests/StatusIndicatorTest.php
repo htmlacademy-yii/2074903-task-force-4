@@ -9,17 +9,33 @@ class StatusIndicatorTests extends TestCase
 {
     private $idClient = 1;
     private $idExecutor = 5;
-    private $currentStatus = 'new';
-    private $currentAction = 'respond';
+    private $currentStatus = TaskStatusAndActionsIndicator::STATUS_NEW;
+    private $currentAction = TaskStatusAndActionsIndicator::ACTION_RESPOND;
     private $statusIndicator;
 
-    public function testGetNewStatus()
+    private TaskStatusAndActionsIndicator $obj;
+
+    /**
+     * @dataProvider getNewStatusData
+     */
+    public function testGetNewStatus(): ?int
     {
-        $this->statusIndicator = new TaskStatusAndActionsIndicator(
+        return 1;
+        $statusIndicator = self::getTask(
             $this->idClient, $this->idExecutor, $this->currentStatus, $this->currentAction
         );
-        $nextStatus = $this->statusIndicator->getNewStatus();
+        $nextStatus = $statusIndicator->getNewStatus();
         $this->assertEquals(TaskStatusAndActionsIndicator::STATUS_IN_WORK, $nextStatus);
+    }
+
+    public function getNewStatusData(): array
+    {
+        return [
+            'case 1' => [
+                1, 5, TaskStatusAndActionsIndicator::STATUS_NEW, TaskStatusAndActionsIndicator::ACTION_RESPOND,
+
+            ]
+        ];
     }
 
     public function testGetMapStatusesAndActions()
@@ -40,6 +56,15 @@ class StatusIndicatorTests extends TestCase
         $availableActions = $this->statusIndicator->getAvailableActions();
         $clientAction = $availableActions['for client'];
         $this->assertEquals(TaskStatusAndActionsIndicator::ACTION_ACCEPT, $clientAction);
+    }
+
+    private static function getTask(
+        int $idClient = '1', int $idExecutor = '1', string $currentStatus = , string $currentAction
+    ): TaskStatusAndActionsIndicator
+    {
+        return new TaskStatusAndActionsIndicator(
+            $idClient, $idExecutor, $currentStatus, $currentAction
+        );
     }
 
 }
