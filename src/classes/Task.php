@@ -1,8 +1,10 @@
 <?php
 
-namespace Omarinina\classes;
+namespace omarinina\classes;
 
-class TaskStatusAndActionsIndicator
+declare(strict_types=1);
+
+class Task
 {
     const STATUS_NEW = 'new';
     const STATUS_CANCELLED = 'cancelled';
@@ -17,8 +19,7 @@ class TaskStatusAndActionsIndicator
 
     private $idClient;
     private $idExecutor;
-
-    public $currentStatus = '';
+    private $currentStatus = '';
 
     public function __construct(int $idClient, int $idExecutor, string $currentStatus)
     {
@@ -27,7 +28,7 @@ class TaskStatusAndActionsIndicator
         $this->currentStatus = $currentStatus;
     }
 
-    public function getMapStatusesAndActions() : array
+    public static function getMapStatuses() : array
     {
         return [
             self::STATUS_NEW => 'Новое',
@@ -35,7 +36,12 @@ class TaskStatusAndActionsIndicator
             self::STATUS_CANCELLED => 'Отменено',
             self::STATUS_DONE => 'Выполнено',
             self::STATUS_FAILED => 'Провалено',
+        ];
+    }
 
+    public static function getMapActions() : array
+    {
+        return [
             self::ACTION_CANCEL => 'Отменить',
             self::ACTION_RESPOND => 'Откликнуться',
             self::ACTION_ACCEPT => 'Выполнено',
@@ -43,51 +49,52 @@ class TaskStatusAndActionsIndicator
         ];
     }
 
-    public function getNewStatus(string $action) : string
+    public function getCurrentStatus(): string
     {
-        $this->currentStatus = $this->getLinkStatusToAction()[$action] ?? $this->currentAction;
+        return $this->currentStatus;
+    }
+
+    public function changeStatusByAction(string $currentAction) : string
+    {
+        $availableActions = $this->getAvailableActions()[$this->currentStatus];
+        if (in_array($currentAction, $availableActions)) {
+            $this->currentStatus = $this->getLinkStatusToAction()[$currentAction] ?? $this->currentAction;
+        }
         return $this->currentStatus;
     }
 
     public function getAvailableActions() : array
     {
-        $clientActions = $this->linkStatusToClientAction();
-        $executorActions = $this->linkStatusToExecutorAction();
+        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus] ?? null;
+        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus] ?? null;
         return [
-            'for client' => $clientActions[$this->currentStatus] ?? null,
-            'for executor' => $executorActions[$this->currentStatus]
+            'forClient' => $clientActions,
+            'forExecutor' => $executorActions
         ];
     }
 
-    private function getLinkStatusToAction() : array
+    private static function getLinkStatusToAction() : array
     {
         return [
             self::ACTION_CANCEL => self::STATUS_CANCELLED,
-            self::ACTION_RESPOND => self::STATUS_IN_WORK,
             self::ACTION_ACCEPT => self::STATUS_DONE,
             self::ACTION_DENY => self::STATUS_FAILED
         ];
     }
 
-    private function linkStatusToClientAction() : array
+    private static function getLinkStatusToClientAction() : array
     {
         return [
             self::STATUS_NEW => self::ACTION_CANCEL,
             self::STATUS_IN_WORK => self::ACTION_ACCEPT,
-            self::STATUS_CANCELLED => null,
-            self::STATUS_DONE => null,
-            self::STATUS_FAILED => null
         ];
     }
 
-    private function linkStatusToExecutorAction() : array
+    private static function getLinkStatusToExecutorAction() : array
     {
         return [
             self::STATUS_NEW => self::ACTION_RESPOND,
             self::STATUS_IN_WORK => self::ACTION_DENY,
-            self::STATUS_CANCELLED => null,
-            self::STATUS_DONE => null,
-            self::STATUS_FAILED => null
         ];
     }
 }
