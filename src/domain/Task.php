@@ -1,8 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace omarinina\domain;
-
-declare(strict_types=1);
 
 class Task
 {
@@ -56,17 +54,18 @@ class Task
 
     public function changeStatusByAction(string $currentAction) : string
     {
-        $availableActions = $this->getAvailableActions()[$this->currentStatus];
-        if (in_array($currentAction, $availableActions)) {
-            $this->currentStatus = $this->getLinkStatusToAction()[$currentAction] ?? $this->currentAction;
+        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
+            if (in_array($currentAction, $this->getAvailableActions())) {
+                $this->currentStatus = $this->getLinkStatusToAction()[$currentAction];
+            }
         }
         return $this->currentStatus;
     }
 
     public function getAvailableActions() : array
     {
-        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus] ?? null;
-        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus] ?? null;
+        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus];
+        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus];
         return [
             'forClient' => $clientActions,
             'forExecutor' => $executorActions
