@@ -1,7 +1,7 @@
 <?php
 
 $root = __DIR__ . '/../';
-$file = $root . "/classes/Task.php";
+require_once $root . "/classes/Task.php";
 
 $idClient = 1;
 $idExecutor = 5;
