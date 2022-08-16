@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\classes;
+namespace omarinina\domain;
 
 declare(strict_types=1);
 

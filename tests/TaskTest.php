@@ -1,84 +1,59 @@
 <?php
 
-//require_once '../classes/TaskStatusAndActionsIndicator.php';
-//require_once 'vendor/autoload.php';
-use phpunit\Framework\TestCase;
-use Omarinina\classes\TaskStatusAndActionsIndicator;
+use PHPUnit\Framework\TestCase;
+use omarinina\domain\Task;
 
 class StatusIndicatorTests extends TestCase
 {
-    private $idClient = 1;
-    private $idExecutor = 5;
-    private $currentStatus = TaskStatusAndActionsIndicator::STATUS_NEW;
-    private $currentAction = TaskStatusAndActionsIndicator::ACTION_RESPOND;
-    private $statusIndicator;
+    private $currentAction = Task::ACTION_CANCEL;
 
-    private TaskStatusAndActionsIndicator $obj;
-
-    /**
-     * @dataProvider getNewStatusData
-     */
-    public function testGetNewStatus(): ?int
+    public function testOneChangeStatusByAction()
     {
-        return 1;
         $statusIndicator = self::getTask(
-            $this->idClient, $this->idExecutor, $this->currentStatus, $this->currentAction
+            $this->idClient, $this->idExecutor, $this->currentStatus
         );
-        $nextStatus = $statusIndicator->getNewStatus();
-        $this->assertEquals(TaskStatusAndActionsIndicator::STATUS_IN_WORK, $nextStatus);
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction);
+        $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
-    public function getNewStatusData(): array
+    public function testTwoChangeStatusByAction()
     {
-        return [
-            'case 1' => [
-                1, 5, TaskStatusAndActionsIndicator::STATUS_NEW, TaskStatusAndActionsIndicator::ACTION_RESPOND,
-
-            ]
-        ];
+        $statusIndicator = self::getTask(
+            $this->idClient, $this->idExecutor, $this->currentStatus
+        );
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = Task::ACTION_RESPOND);
+        $this->assertEquals($statusIndicator->getCurrentStatus(), $nextStatus);
     }
 
-    public function testGetMapStatusesAndActions()
+    public function testGetMapStatuses()
     {
-        $this->statusIndicator = new TaskStatusAndActionsIndicator(
-            $this->idClient, $this->idExecutor, $this->currentStatus, $this->currentAction
+        $statusIndicator = self::getTask(
+            $this->idClient, $this->idExecutor, $this->currentStatus
         );
-        $mapStatusesAndActions = $this->statusIndicator->getMapStatusesAndActions();
-        $result = $mapStatusesAndActions['cancel'];
-        $this->assertEquals(TaskStatusAndActionsIndicator::ACTION_CANCEL, array_search($result, $mapStatusesAndActions, $string = false));
+        $mapStatuses = $statusIndicator->getMapStatuses();
+        $result = $mapStatuses[Task::STATUS_DONE];
+        $this->assertEquals(Task::ACTION_ACCEPT, array_search($result, $mapStatuses));
     }
 
     public function testGetAvailableActions()
     {
-        $this->statusIndicator = new TaskStatusAndActionsIndicator(
-            $this->idClient, $this->idExecutor, $this->currentStatus, $this->currentAction
+        $statusIndicator = self::getTask(
+            $this->idClient, $this->idExecutor, $this->currentStatus = Task::STATUS_IN_WORK
         );
-        $availableActions = $this->statusIndicator->getAvailableActions();
-        $clientAction = $availableActions['for client'];
-        $this->assertEquals(TaskStatusAndActionsIndicator::ACTION_ACCEPT, $clientAction);
+        $availableActions = $statusIndicator->getAvailableActions();
+        $executorAction = $availableActions['forExecutor'];
+        $this->assertEquals(Task::ACTION_DENY, $executorAction);
     }
 
     private static function getTask(
-        int $idClient = '1', int $idExecutor = '1', string $currentStatus = , string $currentAction
-    ): TaskStatusAndActionsIndicator
+        int $idClient = '1',
+        int $idExecutor = '1',
+        string $currentStatus = Task::STATUS_NEW
+    ): Task
     {
-        return new TaskStatusAndActionsIndicator(
-            $idClient, $idExecutor, $currentStatus, $currentAction
+        return new Task(
+            $idClient, $idExecutor, $currentStatus
         );
     }
 
 }
-
-/*$idClient = 1;
-$idExecutor = 5;
-$currentStatus = 'new';
-$currentAction = 'respond';
-
-$TaskOneStatusAndActionsIndicator = new TaskStatusAndActionsIndicator(
-    $idClient, $idExecutor, $currentStatus, $currentAction
-);
-$nextStatus = $TaskOneStatusAndActionsIndicator->getNewStatus();
-
-var_dump($TaskOneStatusAndActionsIndicator->getMapStatusesAndActions());
-var_dump(assert($nextStatus === TaskStatusAndActionsIndicator::STATUS_IN_WORK));
-var_dump($TaskOneStatusAndActionsIndicator->getAvailableActions());*/
