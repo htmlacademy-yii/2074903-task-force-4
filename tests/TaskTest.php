@@ -1,9 +1,11 @@
 <?php
+namespace tests;
 
-use PHPUnit\Framework\TestCase;
 use omarinina\domain\Task;
+use PHPUnit\Framework\TestCase;
 
-class StatusIndicatorTests extends TestCase
+
+class TaskTest extends TestCase
 {
     private $currentAction = Task::ACTION_CANCEL;
 
@@ -46,8 +48,8 @@ class StatusIndicatorTests extends TestCase
     }
 
     private static function getTask(
-        int $idClient = '1',
-        int $idExecutor = '1',
+        int $idClient = 1,
+        int $idExecutor = 1,
         string $currentStatus = Task::STATUS_NEW
     ): Task
     {
