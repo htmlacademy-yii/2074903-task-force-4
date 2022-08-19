@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace omarinina\domain;
 
 class Task
 {
@@ -26,7 +26,7 @@ class Task
         $this->currentStatus = $currentStatus;
     }
 
-    public static function getMapStatuses() : array
+    public static function getMapStatuses(): array
     {
         return [
             self::STATUS_NEW => 'Новое',
@@ -37,7 +37,9 @@ class Task
         ];
     }
 
-    public static function getMapActions() : array
+    //The same: we have additional buttoms for a client but they didn't change status,
+    //should they be added this map?
+    public static function getMapActions(): array
     {
         return [
             self::ACTION_CANCEL => 'Отменить',
@@ -52,26 +54,30 @@ class Task
         return $this->currentStatus;
     }
 
-    public function changeStatusByAction(string $currentAction) : string
+    //Does saving new status to DB have to be realised in this function?
+    public function changeStatusByAction(string $currentAction): string
     {
-        $availableActions = $this->getAvailableActions()[$this->currentStatus];
-        if (in_array($currentAction, $availableActions)) {
-            $this->currentStatus = $this->getLinkStatusToAction()[$currentAction] ?? $this->currentAction;
+        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
+            if (in_array($currentAction, $this->getAvailableActions())) {
+                //In the future development there needs validator of person (client/executor)
+                //because client hasn't to send an executor's respond and also for executor
+                $this->currentStatus = $this->getLinkStatusToAction()[$currentAction];
+            }
         }
         return $this->currentStatus;
     }
 
-    public function getAvailableActions() : array
+    public function getAvailableActions(): array
     {
-        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus] ?? null;
-        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus] ?? null;
+        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus];
+        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus];
         return [
             'forClient' => $clientActions,
             'forExecutor' => $executorActions
         ];
     }
 
-    private static function getLinkStatusToAction() : array
+    private static function getLinkStatusToAction(): array
     {
         return [
             self::ACTION_CANCEL => self::STATUS_CANCELLED,
@@ -80,7 +86,10 @@ class Task
         ];
     }
 
-    private static function getLinkStatusToClientAction() : array
+    //Also the client has two additional buttoms when he recives reponds by executors.
+    //Potential this logic can be realised with this class, isn't it?
+
+    private static function getLinkStatusToClientAction(): array
     {
         return [
             self::STATUS_NEW => self::ACTION_CANCEL,
@@ -88,7 +97,7 @@ class Task
         ];
     }
 
-    private static function getLinkStatusToExecutorAction() : array
+    private static function getLinkStatusToExecutorAction(): array
     {
         return [
             self::STATUS_NEW => self::ACTION_RESPOND,
