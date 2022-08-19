@@ -22,7 +22,7 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_NEW
         );
         $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = Task::ACTION_RESPOND);
-        $this->assertEquals($statusIndicator->getCurrentStatus(), $nextStatus);
+        $this->assertEquals($currentStatus, $nextStatus);
     }
 
     public function testGetMapStatuses()
