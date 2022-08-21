@@ -39,7 +39,7 @@ CREATE TABLE categories (
 CREATE TABLE executorCategories (
   PRIMARY KEY (category_id, executor_id),
   category_id INT,
-  FOREIGN KEY (category_id) REFERENCES categories(id)
+  FOREIGN KEY (category_id) REFERENCES categories(id),
   executor_id INT,
   FOREIGN KEY (executor_id) REFERENCES users(id)
 );
@@ -56,9 +56,9 @@ CREATE TABLE tasks (
   executor_id INT,
   FOREIGN KEY (executor_id) REFERENCES users(id),
   category_id INT,
-  FOREIGN KEY (category_id) REFERENCES categories(id)
+  FOREIGN KEY (category_id) REFERENCES categories(id),
   coordinate POINT NOT NULL,
-  task_status VARCHAR(255)
+  task_status VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE files (
@@ -69,7 +69,7 @@ CREATE TABLE files (
 CREATE TABLE taskFiles (
   PRIMARY KEY (file_id, task_id),
   file_id INT,
-  FOREIGN KEY (file_id) REFERENCES files(id)
+  FOREIGN KEY (file_id) REFERENCES files(id),
   task_id INT,
   FOREIGN KEY (task_id) REFERENCES tasks(id)
 );
