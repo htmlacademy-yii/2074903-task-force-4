@@ -2,7 +2,7 @@
 
 namespace omarinina\domain\actions;
 
-class AbstractAction
+abstract class AbstractAction
 {
     private $action;
     private $nameAction;
@@ -35,4 +35,6 @@ class AbstractAction
     {
         return $this->accessUser;
     }
+
+    abstract protected function applyAction($action);
 }
