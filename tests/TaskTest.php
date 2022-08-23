@@ -12,7 +12,8 @@ class TaskTest extends TestCase
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_NEW
         );
-        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = Task::ACTION_CANCEL);
+        $mapActions = $statusIndicator->getMapActions();
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[0]/*Task::ACTION_CANCEL*/);
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 

@@ -2,6 +2,8 @@
 
 namespace omarinina\domain;
 
+use omarinina\domain\actions\CancelAction;
+
 class Task
 {
     const STATUS_NEW = 'new';
@@ -19,11 +21,14 @@ class Task
     private $idExecutor;
     private $currentStatus = '';
 
+    private $actionCancel/* = new CancelAction($idClient, $idExecutor)*/;
+
     public function __construct(int $idClient, int $idExecutor, string $currentStatus)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
         $this->currentStatus = $currentStatus;
+        $this->actionCancel = new CancelAction($this->idClient, $this->idExecutor);
     }
 
     public static function getMapStatuses(): array
@@ -39,10 +44,11 @@ class Task
 
     //The same: we have additional buttoms for a client but they didn't change status,
     //should they be added this map?
-    public static function getMapActions(): array
+    public function getMapActions(): array
     {
         return [
-            self::ACTION_CANCEL => 'Отменить',
+            //self::ACTION_CANCEL => 'Отменить',
+            $this->actionCancel->getAction() => $this->actionCancel->getNameAction(),
             self::ACTION_RESPOND => 'Откликнуться',
             self::ACTION_ACCEPT => 'Выполнено',
             self::ACTION_DENY => 'Отказаться'

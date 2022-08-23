@@ -18,11 +18,13 @@ abstract class AbstractAction
 
     public function getAction(): string
     {
+        $this->action = $this->getCurrentAction();
         return $this->action;
     }
 
     public function getNameAction(): string
     {
+        $this->nameAction = $this->getCurrentNameAction();
         return $this->nameAction;
     }
 
@@ -31,10 +33,10 @@ abstract class AbstractAction
         return $currentUser === $this->defineAccess() ?  true : false;
     }
 
-    private function defineAccess(): int
-    {
-        return $this->accessUser;
-    }
+    abstract protected function getCurrentAction(): string;
+    abstract protected function getCurrentNameAction(): string;
 
-    abstract protected function applyAction($action);
+    abstract protected function defineAccess(): int;
+
+    //abstract protected function applyAction($action);
 }
