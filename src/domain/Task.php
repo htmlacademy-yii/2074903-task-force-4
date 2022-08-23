@@ -2,7 +2,10 @@
 
 namespace omarinina\domain;
 
+use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
+use omarinina\domain\actions\DenyAction;
+use omarinina\domain\actions\RespondAction;
 
 class Task
 {
@@ -12,16 +15,14 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    const ACTION_CANCEL = 'cancel';
-    const ACTION_RESPOND = 'respond';
-    const ACTION_ACCEPT = 'accept';
-    const ACTION_DENY = 'deny';
-
     private $idClient;
     private $idExecutor;
     private $currentStatus = '';
 
-    private $actionCancel/* = new CancelAction($idClient, $idExecutor)*/;
+    private $actionCancel;
+    private $actionRespond;
+    private $actionAccept;
+    private $actionDeny;
 
     public function __construct(int $idClient, int $idExecutor, string $currentStatus)
     {
@@ -29,6 +30,9 @@ class Task
         $this->idExecutor = $idExecutor;
         $this->currentStatus = $currentStatus;
         $this->actionCancel = new CancelAction($this->idClient, $this->idExecutor);
+        $this->actionRespond = new RespondAction($this->idClient, $this->idExecutor);
+        $this->actionAccept = new AcceptAction($this->idClient, $this->idExecutor);
+        $this->actionDeny = new DenyAction($this->idClient, $this->idExecutor);
     }
 
     public static function getMapStatuses(): array
@@ -47,11 +51,10 @@ class Task
     public function getMapActions(): array
     {
         return [
-            //self::ACTION_CANCEL => 'Отменить',
             $this->actionCancel->getAction() => $this->actionCancel->getNameAction(),
-            self::ACTION_RESPOND => 'Откликнуться',
-            self::ACTION_ACCEPT => 'Выполнено',
-            self::ACTION_DENY => 'Отказаться'
+            $this->actionRespond->getAction() => $this->actionRespond->getNameAction(),
+            $this->actionAccept->getAction() => $this->actionAccept->getNameAction(),
+            $this->actionDeny->getAction() => $this->actionDeny->getNameAction(),
         ];
     }
 
@@ -83,31 +86,31 @@ class Task
         ];
     }
 
-    private static function getLinkStatusToAction(): array
+    private function getLinkStatusToAction(): array
     {
         return [
-            self::ACTION_CANCEL => self::STATUS_CANCELLED,
-            self::ACTION_ACCEPT => self::STATUS_DONE,
-            self::ACTION_DENY => self::STATUS_FAILED
+            $this->actionCancel->getAction() => self::STATUS_CANCELLED,
+            $this->actionAccept->getAction() => self::STATUS_DONE,
+            $this->actionDeny->getAction() => self::STATUS_FAILED
         ];
     }
 
     //Also the client has two additional buttoms when he recives reponds by executors.
     //Potential this logic can be realised with this class, isn't it?
 
-    private static function getLinkStatusToClientAction(): array
+    private function getLinkStatusToClientAction(): array
     {
         return [
-            self::STATUS_NEW => self::ACTION_CANCEL,
-            self::STATUS_IN_WORK => self::ACTION_ACCEPT,
+            self::STATUS_NEW => $this->actionCancel->getAction(),
+            self::STATUS_IN_WORK => $this->actionAccept->getAction(),
         ];
     }
 
-    private static function getLinkStatusToExecutorAction(): array
+    private function getLinkStatusToExecutorAction(): array
     {
         return [
-            self::STATUS_NEW => self::ACTION_RESPOND,
-            self::STATUS_IN_WORK => self::ACTION_DENY,
+            self::STATUS_NEW => $this->actionRespond->getAction(),
+            self::STATUS_IN_WORK => $this->actionDeny->getAction(),
         ];
     }
 }
