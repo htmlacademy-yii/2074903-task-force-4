@@ -28,9 +28,11 @@ abstract class AbstractAction
         return $this->nameAction;
     }
 
-    public function isValidUser($currentUser): bool
+    public function isValidUser(int $currentUser, string $currentAction): bool | null
     {
-        return $currentUser === $this->defineAccess() ?  true : false;
+        if ($currentAction === $this->action) {
+            return $currentUser === $this->defineAccess() ?  true : false;
+        }
     }
 
     abstract protected function getCurrentAction(): string;

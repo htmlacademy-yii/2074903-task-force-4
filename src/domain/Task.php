@@ -64,14 +64,10 @@ class Task
     }
 
     //Does saving new status to DB have to be realised in this function?
-    public function changeStatusByAction(string $currentAction): string
+    public function changeStatusByAction(string $currentAction, int $currentUser): string
     {
-        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
-            if (in_array($currentAction, $this->getAvailableActions())) {
-                //In the future development there needs validator of person (client/executor)
-                //because client hasn't to send an executor's respond and also for executor
-                $this->currentStatus = $this->getLinkStatusToAction()[$currentAction];
-            }
+        if ($this->isValidAction($currentAction, $currentUser)) {
+            $this->currentStatus = $this->getLinkStatusToAction()[$currentAction];
         }
         return $this->currentStatus;
     }
@@ -112,5 +108,26 @@ class Task
             self::STATUS_NEW => $this->actionRespond->getAction(),
             self::STATUS_IN_WORK => $this->actionDeny->getAction(),
         ];
+    }
+
+    private function isValidAction(string $currentAction, int $currentUser)
+    {
+        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
+            if (in_array($currentAction, $this->getAvailableActions()) && $this->isAvailableUserAction($currentAction, $currentUser)) {
+                return true;
+            }
+        }
+    }
+
+    private function isAvailableUserAction(string $currentAction, int $currentUser): bool
+    {
+        //I can't create good name here (
+        $chekingAction = [
+            $this->actionAccept->isValidUser($currentUser, $currentAction),
+            $this->actionCancel->isValidUser($currentUser, $currentAction),
+            $this->actionDeny->isValidUser($currentUser, $currentAction),
+            $this->actionRespond->isValidUser($currentUser, $currentAction)
+        ];
+        return in_array(true, $chekingAction);
     }
 }
