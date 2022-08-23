@@ -14,9 +14,8 @@ class CancelAction extends AbstractAction
         return $this->nameAction = 'Отменить';
     }
 
-    protected function defineAccess(): int
+    protected function getCurrentAvailableUSer(): string
     {
-        $accessUser = $this->idClient;
-        return $accessUser;
+        return 'client';
     }
 }

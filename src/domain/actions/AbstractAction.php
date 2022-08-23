@@ -33,12 +33,24 @@ abstract class AbstractAction
         if ($currentAction === $this->action) {
             return $currentUser === $this->defineAccess() ?  true : false;
         }
+        return null;
+    }
+
+    private function defineAccess(): int
+    {
+        $this->accessUser = $this->getMapUser()[$this->getCurrentAvailableUSer()];
+        return $this->accessUser;
+    }
+
+    private function getMapUser(): array
+    {
+        return [
+            'client' => $this->idClient,
+            'executor' => $this->idExecutor
+        ];
     }
 
     abstract protected function getCurrentAction(): string;
     abstract protected function getCurrentNameAction(): string;
-
-    abstract protected function defineAccess(): int;
-
-    //abstract protected function applyAction($action);
+    abstract protected function getCurrentAvailableUSer(): string;
 }

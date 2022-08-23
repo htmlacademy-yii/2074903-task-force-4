@@ -14,9 +14,8 @@ class AcceptAction extends AbstractAction
         return $this->nameAction = 'Выполнено';
     }
 
-    protected function defineAccess(): int
+    protected function getCurrentAvailableUSer(): string
     {
-        $accessUser = $this->idClient;
-        return $accessUser;
+        return 'client';
     }
 }

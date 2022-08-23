@@ -14,9 +14,8 @@ class RespondAction extends AbstractAction
         return $this->nameAction = 'Откликнуться';
     }
 
-    protected function defineAccess(): int
+    protected function getCurrentAvailableUSer(): string
     {
-        $accessUser = $this->idExecutor;
-        return $accessUser;
+        return 'executor';
     }
 }

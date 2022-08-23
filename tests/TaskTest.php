@@ -10,26 +10,29 @@ class TaskTest extends TestCase
     public function testOneChangeStatusByAction()
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_NEW
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
+        $currentUser = 1;
         $mapActions = $statusIndicator->getMapActions();
-        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[0]/*Task::ACTION_CANCEL*/);
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[0], $currentUser);
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
     public function testTwoChangeStatusByAction()
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_NEW
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
-        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = Task::ACTION_RESPOND);
+        $currentUser = 2;
+        $mapActions = $statusIndicator->getMapActions();
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[1], $currentUser);
         $this->assertEquals($currentStatus, $nextStatus);
     }
 
     public function testGetMapStatuses()
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_NEW
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
         $mapStatuses = $statusIndicator->getMapStatuses();
         $result = $mapStatuses[Task::STATUS_DONE];
@@ -39,10 +42,11 @@ class TaskTest extends TestCase
     public function testGetAvailableActions()
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 1, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
+        $mapActions = $statusIndicator->getMapActions();
         $result = $statusIndicator->getAvailableActions()['forExecutor'];
-        $this->assertEquals(Task::ACTION_DENY, $result);
+        $this->assertEquals(array_keys($mapActions)[3], $result);
     }
 
 }

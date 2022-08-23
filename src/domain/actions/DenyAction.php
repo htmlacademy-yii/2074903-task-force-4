@@ -14,9 +14,8 @@ class DenyAction extends AbstractAction
         return $this->nameAction = 'Отказаться';
     }
 
-    protected function defineAccess(): int
+    protected function getCurrentAvailableUSer(): string
     {
-        $accessUser = $this->idExecutor;
-        return $accessUser;
+        return 'executor';
     }
 }
