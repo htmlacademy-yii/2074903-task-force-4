@@ -4,53 +4,7 @@ namespace omarinina\domain\actions;
 
 abstract class AbstractAction
 {
-    private $action;
-    private $nameAction;
-    private $idClient;
-    private $idExecutor;
-    private $accessUser;
-
-    public function __construct(int $idClient, int $idExecutor)
-    {
-        $this->idClient = $idClient;
-        $this->idExecutor = $idExecutor;
-    }
-
-    public function getAction(): string
-    {
-        $this->action = $this->getCurrentAction();
-        return $this->action;
-    }
-
-    public function getNameAction(): string
-    {
-        $this->nameAction = $this->getCurrentNameAction();
-        return $this->nameAction;
-    }
-
-    public function isValidUser(int $currentUser, string $currentAction): bool | null
-    {
-        if ($currentAction === $this->action) {
-            return $currentUser === $this->defineAccess() ?  true : false;
-        }
-        return null;
-    }
-
-    private function defineAccess(): int
-    {
-        $this->accessUser = $this->getMapUser()[$this->getCurrentAvailableUSer()];
-        return $this->accessUser;
-    }
-
-    private function getMapUser(): array
-    {
-        return [
-            'client' => $this->idClient,
-            'executor' => $this->idExecutor
-        ];
-    }
-
-    abstract protected function getCurrentAction(): string;
-    abstract protected function getCurrentNameAction(): string;
-    abstract protected function getCurrentAvailableUSer(): string;
+    abstract public static function getInternalName(): string;
+    abstract public static function getName(): string;
+    abstract public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool;
 }

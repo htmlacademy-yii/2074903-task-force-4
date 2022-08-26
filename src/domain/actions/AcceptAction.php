@@ -4,18 +4,18 @@ namespace omarinina\domain\actions;
 
 class AcceptAction extends AbstractAction
 {
-    protected function getCurrentAction(): string
+    public static function getInternalName(): string
     {
-        return $this->action = 'accept';
+        return 'accept';
     }
 
-    protected function getCurrentNameAction(): string
+    public static function getName(): string
     {
-        return $this->nameAction = 'Выполнено';
+        return 'Выполнено';
     }
 
-    protected function getCurrentAvailableUSer(): string
+    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
     {
-        return 'client';
+        return $idClient === $idUser;
     }
 }

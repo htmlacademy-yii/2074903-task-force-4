@@ -4,18 +4,18 @@ namespace omarinina\domain\actions;
 
 class CancelAction extends AbstractAction
 {
-    protected function getCurrentAction(): string
+    public static function getInternalName(): string
     {
-        return $this->action = 'cancel';
+        return 'cancel';
     }
 
-    protected function getCurrentNameAction(): string
+    public static function getName(): string
     {
-        return $this->nameAction = 'Отменить';
+        return 'Отменить';
     }
 
-    protected function getCurrentAvailableUSer(): string
+    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
     {
-        return 'client';
+        return $idClient === $idUser;
     }
 }

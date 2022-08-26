@@ -4,18 +4,18 @@ namespace omarinina\domain\actions;
 
 class DenyAction extends AbstractAction
 {
-    protected function getCurrentAction(): string
+    public static function getInternalName(): string
     {
-        return $this->action = 'deny';
+        return 'deny';
     }
 
-    protected function getCurrentNameAction(): string
+    public static function getName(): string
     {
-        return $this->nameAction = 'Отказаться';
+        return 'Отказаться';
     }
 
-    protected function getCurrentAvailableUSer(): string
+    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
     {
-        return 'executor';
+        return $idExecutor === $idUser;
     }
 }
