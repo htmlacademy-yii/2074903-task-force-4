@@ -58,10 +58,9 @@ class Task
     //Does saving new status to DB have to be realised in this function?
     public function changeStatusByAction(string $currentAction, int $idUser): string
     {
-        if ($this->isValidAction($currentAction, $idUser)) {
-            $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
-        }
-        return $this->currentStatus;
+        return $this->isValidAction($currentAction, $idUser) ?
+            $this->currentStatus = $this->getLinkActionToStatus()[$currentAction] :
+            $this->currentStatus;
     }
 
     public function getAvailableActions(int $idUser): AbstractAction | null
