@@ -1,6 +1,8 @@
 <?php
 namespace tests;
 
+use omarinina\domain\actions\CancelAction;
+use omarinina\domain\actions\DenyAction;
 use omarinina\domain\Task;
 use PHPUnit\Framework\TestCase;
 
@@ -12,9 +14,8 @@ class TaskTest extends TestCase
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
-        $currentUser = 1;
-        $mapActions = $statusIndicator->getMapActions();
-        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[0], $currentUser);
+        $idUser = 1;
+        $nextStatus = $statusIndicator->changeStatusByAction(CancelAction::getInternalName(), $idUser);
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
@@ -23,9 +24,9 @@ class TaskTest extends TestCase
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
-        $currentUser = 2;
+        $idUser = 2;
         $mapActions = $statusIndicator->getMapActions();
-        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[1], $currentUser);
+        $nextStatus = $statusIndicator->changeStatusByAction($this->currentAction = array_keys($mapActions)[1], $idUser);
         $this->assertEquals($currentStatus, $nextStatus);
     }
 
@@ -44,9 +45,9 @@ class TaskTest extends TestCase
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
-        $mapActions = $statusIndicator->getMapActions();
-        $result = $statusIndicator->getAvailableActions()['forExecutor'];
-        $this->assertEquals(array_keys($mapActions)[3], $result);
+        $idUSer = 2;
+        $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        $this->assertEquals(DenyAction::getInternalName(), $result);
     }
 
 }

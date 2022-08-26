@@ -64,14 +64,22 @@ class Task
         return $this->currentStatus;
     }
 
-    public function getAvailableActions(int $idUser): AbstractAction
+    public function getAvailableActions(int $idUser): AbstractAction | null
     {
-        return array_filter(
-            $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
-            function (AbstractAction $action) use ($idUser) {
-                return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor)[0];
+        $allActions = $this->getLinkStatusToAction()[$this->currentStatus];
+        if ($allActions) {
+            foreach ($allActions as $action) {
+                if ($action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor)) {
+                    return $action;
+                };
             }
-        );
+        }
+        // return array_filter(
+        //     $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
+        //     function (AbstractAction $action) use ($idUser) {
+        //         return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
+        //     }
+        // );
     }
 
     private function getLinkActionToStatus(): array
@@ -102,7 +110,7 @@ class Task
 
     private function isValidAction(string $currentAction, int $idUser)
     {
-        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
+        if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
         }
     }
