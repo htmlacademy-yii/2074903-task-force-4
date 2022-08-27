@@ -65,22 +65,12 @@ class Task
 
     public function getAvailableActions(int $idUser): AbstractAction | null
     {
-        $allActions = $this->getLinkStatusToAction()[$this->currentStatus] ?? [];
-        if ($allActions) {
-            foreach ($allActions as $action) {
-                if ($action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor)) {
-                    return $action;
-                };
+        return array_values(array_filter(
+            $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
+            function (AbstractAction $action) use ($idUser) {
+                return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
             }
-            return null;
-        }
-        return null;
-        // return array_filter(
-        //     $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
-        //     function (AbstractAction $action) use ($idUser) {
-        //         return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
-        //     }
-        // );
+        ))[0] ?? null;
     }
 
     private function getLinkActionToStatus(): array
