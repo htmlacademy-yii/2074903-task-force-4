@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class TaskTest extends TestCase
 {
-    public function testOneChangeStatusByAction()
+    public function testOneChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
@@ -21,7 +21,7 @@ class TaskTest extends TestCase
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
-    public function testTwoChangeStatusByAction()
+    public function testTwoChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
@@ -31,7 +31,7 @@ class TaskTest extends TestCase
         $this->assertEquals($currentStatus, $nextStatus);
     }
 
-    public function testThreeChangeStatusByAction()
+    public function testThreeChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
@@ -41,7 +41,7 @@ class TaskTest extends TestCase
         $this->assertEquals(Task::STATUS_FAILED, $nextStatus);
     }
 
-    public function testFourChangeStatusByAction()
+    public function testFourChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
@@ -51,7 +51,7 @@ class TaskTest extends TestCase
         $this->assertEquals(Task::STATUS_DONE, $nextStatus);
     }
 
-    public function testFiveChangeStatusByAction()
+    public function testFiveChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
@@ -61,7 +61,7 @@ class TaskTest extends TestCase
         $this->assertEquals($currentStatus, $nextStatus);
     }
 
-    public function testSixChangeStatusByAction()
+    public function testSixChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
@@ -71,7 +71,7 @@ class TaskTest extends TestCase
         $this->assertEquals($currentStatus, $nextStatus);
     }
 
-    public function testGetMapStatuses()
+    public function testGetMapStatuses(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
@@ -81,7 +81,7 @@ class TaskTest extends TestCase
         $this->assertEquals('Выполнено', $result);
     }
 
-    public function testOneGetAvailableActions()
+    public function testOneGetAvailableActions(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
@@ -91,7 +91,7 @@ class TaskTest extends TestCase
         $this->assertEquals(DenyAction::getInternalName(), $result);
     }
 
-    public function testTwoGetAvailableActions()
+    public function testTwoGetAvailableActions(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
@@ -101,7 +101,7 @@ class TaskTest extends TestCase
         $this->assertEquals(CancelAction::getInternalName(), $result);
     }
 
-    public function testThreeGetAvailableActions()
+    public function testThreeGetAvailableActions(): void
     {
         $statusIndicator = new Task(
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE

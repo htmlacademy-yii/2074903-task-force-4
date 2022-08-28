@@ -63,7 +63,7 @@ class Task
             $this->currentStatus;
     }
 
-    public function getAvailableActions(int $idUser): AbstractAction | null
+    public function getAvailableActions(int $idUser): ?AbstractAction
     {
         return array_values(array_filter(
             $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
@@ -99,7 +99,7 @@ class Task
         ];
     }
 
-    private function isValidAction(string $currentAction, int $idUser)
+    private function isValidAction(string $currentAction, int $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
