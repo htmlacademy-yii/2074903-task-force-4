@@ -2,11 +2,14 @@
 
 namespace omarinina\domain;
 
+use Exception;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
+use omarinina\exception\CurrentActionException;
+use omarinina\exception\IdUSerException;
 
 class Task
 {
@@ -58,6 +61,24 @@ class Task
     //Does saving new status to DB have to be realised in this function?
     public function changeStatusByAction(string $currentAction, int $idUser): string
     {
+        try {
+            if ($this->isValidAction($currentAction, $idUser)) {
+                return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
+            }
+            if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+                throw new CurrentActionException;
+            }
+            if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
+                throw new IdUSerException;
+            }
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+
         return $this->isValidAction($currentAction, $idUser) ?
             $this->currentStatus = $this->getLinkActionToStatus()[$currentAction] :
             $this->currentStatus;
