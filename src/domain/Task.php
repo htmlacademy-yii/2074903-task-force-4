@@ -122,5 +122,6 @@ class Task
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
         }
+        return false;
     }
 }
