@@ -7,6 +7,10 @@ use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\Task;
 use PHPUnit\Framework\TestCase;
+use omarinina\exception\IdUSerException;
+use omarinina\exception\CurrentActionException;
+use omarinina\exception\AvailableActionsException;
+use Exception;
 
 
 class TaskTest extends TestCase
@@ -17,7 +21,15 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
         $idUser = 1;
-        $nextStatus = $statusIndicator->changeStatusByAction(CancelAction::getInternalName(), $idUser);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction(CancelAction::getInternalName(), $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
@@ -27,8 +39,16 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
         $idUser = 2;
-        $nextStatus = $statusIndicator->changeStatusByAction(RespondAction::getInternalName(), $idUser);
-        $this->assertEquals($currentStatus, $nextStatus);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction(RespondAction::getInternalName(), $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(CurrentActionException::class);
     }
 
     public function testThreeChangeStatusByAction(): void
@@ -37,7 +57,15 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
         $idUser = 2;
-        $nextStatus = $statusIndicator->changeStatusByAction(DenyAction::getInternalName(), $idUser);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction(DenyAction::getInternalName(), $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
         $this->assertEquals(Task::STATUS_FAILED, $nextStatus);
     }
 
@@ -47,7 +75,15 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
         $idUser = 1;
-        $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
         $this->assertEquals(Task::STATUS_DONE, $nextStatus);
     }
 
@@ -57,8 +93,16 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
         $idUser = 2;
-        $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
-        $this->assertEquals($currentStatus, $nextStatus);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(IdUSerException::class);
     }
 
     public function testSixChangeStatusByAction(): void
@@ -67,8 +111,16 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
         $idUser = 2;
-        $nextStatus = $statusIndicator->changeStatusByAction('restart', $idUser);
-        $this->assertEquals($currentStatus, $nextStatus);
+        try {
+            $nextStatus = $statusIndicator->changeStatusByAction('restart', $idUser);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (CurrentActionException $errorAction) {
+            $errorAction->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(CurrentActionException::class);
     }
 
     public function testGetMapStatuses(): void
@@ -87,7 +139,15 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
         );
         $idUSer = 2;
-        $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        try {
+            $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (AvailableActionsException $errorActions) {
+            $errorActions->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
         $this->assertEquals(DenyAction::getInternalName(), $result);
     }
 
@@ -97,7 +157,15 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
         );
         $idUSer = 1;
-        $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        try {
+            $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (AvailableActionsException $errorActions) {
+            $errorActions->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
         $this->assertEquals(CancelAction::getInternalName(), $result);
     }
 
@@ -107,8 +175,51 @@ class TaskTest extends TestCase
             $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
         );
         $idUSer = 1;
-        $result = $statusIndicator->getAvailableActions($idUSer);
-        $this->assertEquals(null, $result);
+        try {
+            $result = $statusIndicator->getAvailableActions($idUSer);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (AvailableActionsException $errorActions) {
+            $errorActions->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(IdUSerException::class);
     }
 
+    public function testFourGetAvailableActions(): void
+    {
+        $statusIndicator = new Task(
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
+        );
+        $idUSer = 5;
+        try {
+            $result = $statusIndicator->getAvailableActions($idUSer);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (AvailableActionsException $errorActions) {
+            $errorActions->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(IdUSerException::class);
+    }
+
+    public function testFiveGetAvailableActions(): void
+    {
+        $statusIndicator = new Task(
+            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
+        );
+        $idUSer = 1;
+        try {
+            $result = $statusIndicator->getAvailableActions($idUSer);
+        } catch (IdUSerException $errorId) {
+            $errorId->getMessage();
+        } catch (AvailableActionsException $errorActions) {
+            $errorActions->getMessage();
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        $this->expectException(AvailableActionsException::class);
+    }
 }
