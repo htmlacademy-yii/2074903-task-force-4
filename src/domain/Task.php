@@ -2,6 +2,12 @@
 
 namespace omarinina\domain;
 
+use omarinina\domain\actions\AcceptAction;
+use omarinina\domain\actions\CancelAction;
+use omarinina\domain\actions\DenyAction;
+use omarinina\domain\actions\RespondAction;
+use omarinina\domain\actions\AbstractAction;
+
 class Task
 {
     const STATUS_NEW = 'new';
@@ -9,11 +15,6 @@ class Task
     const STATUS_IN_WORK = 'in work';
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
-
-    const ACTION_CANCEL = 'cancel';
-    const ACTION_RESPOND = 'respond';
-    const ACTION_ACCEPT = 'accept';
-    const ACTION_DENY = 'deny';
 
     private $idClient;
     private $idExecutor;
@@ -39,13 +40,13 @@ class Task
 
     //The same: we have additional buttoms for a client but they didn't change status,
     //should they be added this map?
-    public static function getMapActions(): array
+    public function getMapActions(): array
     {
         return [
-            self::ACTION_CANCEL => 'Отменить',
-            self::ACTION_RESPOND => 'Откликнуться',
-            self::ACTION_ACCEPT => 'Выполнено',
-            self::ACTION_DENY => 'Отказаться'
+            CancelAction::getInternalName() => CancelAction::getName(),
+            RespondAction::getInternalName() => RespondAction::getName(),
+            AcceptAction::getInternalName() => AcceptAction::getName(),
+            DenyAction::getInternalName() => DenyAction::getName()
         ];
     }
 
@@ -55,53 +56,53 @@ class Task
     }
 
     //Does saving new status to DB have to be realised in this function?
-    public function changeStatusByAction(string $currentAction): string
+    public function changeStatusByAction(string $currentAction, int $idUser): string
     {
-        if (array_key_exists($currentAction, $this->getLinkStatusToAction())) {
-            if (in_array($currentAction, $this->getAvailableActions())) {
-                //In the future development there needs validator of person (client/executor)
-                //because client hasn't to send an executor's respond and also for executor
-                $this->currentStatus = $this->getLinkStatusToAction()[$currentAction];
+        return $this->isValidAction($currentAction, $idUser) ?
+            $this->currentStatus = $this->getLinkActionToStatus()[$currentAction] :
+            $this->currentStatus;
+    }
+
+    public function getAvailableActions(int $idUser): ?AbstractAction
+    {
+        return array_values(array_filter(
+            $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
+            function (AbstractAction $action) use ($idUser) {
+                return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
             }
-        }
-        return $this->currentStatus;
+        ))[0] ?? null;
     }
 
-    public function getAvailableActions(): array
-    {
-        $clientActions = $this->getLinkStatusToClientAction()[$this->currentStatus];
-        $executorActions = $this->getLinkStatusToExecutorAction()[$this->currentStatus];
-        return [
-            'forClient' => $clientActions,
-            'forExecutor' => $executorActions
-        ];
-    }
-
-    private static function getLinkStatusToAction(): array
+    private function getLinkActionToStatus(): array
     {
         return [
-            self::ACTION_CANCEL => self::STATUS_CANCELLED,
-            self::ACTION_ACCEPT => self::STATUS_DONE,
-            self::ACTION_DENY => self::STATUS_FAILED
+            CancelAction::getInternalName() => self::STATUS_CANCELLED,
+            AcceptAction::getInternalName() => self::STATUS_DONE,
+            DenyAction::getInternalName() => self::STATUS_FAILED
         ];
     }
 
     //Also the client has two additional buttoms when he recives reponds by executors.
     //Potential this logic can be realised with this class, isn't it?
 
-    private static function getLinkStatusToClientAction(): array
+    private function getLinkStatusToAction(): array
     {
         return [
-            self::STATUS_NEW => self::ACTION_CANCEL,
-            self::STATUS_IN_WORK => self::ACTION_ACCEPT,
+            self::STATUS_NEW => [
+                new CancelAction,
+                new RespondAction
+            ],
+            self::STATUS_IN_WORK => [
+                new AcceptAction,
+                new DenyAction
+            ]
         ];
     }
 
-    private static function getLinkStatusToExecutorAction(): array
+    private function isValidAction(string $currentAction, int $idUser): bool
     {
-        return [
-            self::STATUS_NEW => self::ACTION_RESPOND,
-            self::STATUS_IN_WORK => self::ACTION_DENY,
-        ];
+        if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+            return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
+        }
     }
 }
