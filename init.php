@@ -2,9 +2,13 @@
 
 require_once 'config/db.php';
 
-$connect = mysqli_connect($db['host'], $db['user'], $db['password'], $db['database']);
-mysqli_set_charset($connect, 'utf8');
-
-if (!$connect) {
-    $dbError = mysqli_connect_error();
-};
+try {
+    $connect = new PDO(
+        'mysql:host='.$db['host'].';dbname='.$db['database'],
+        $db['user'],
+        $db['password'],
+        array(PDO::ATTR_PERSISTENT => true));
+} catch (PDOException $dbError) {
+    print('Error: '.$dbError->getMessage().'<br/>');
+    die();
+}

@@ -7,95 +7,119 @@ CREATE DATABASE taskForce
 USE taskForce;
 
 CREATE TABLE users (
-  /* How I catched we shouldn't use auto increment and we should create ID
-  before inserting any data to the table. Right? */
-  id INT NOT NULL /*AUTO_INCREMENT*/ PRIMARY KEY,
-  dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   email VARCHAR(128) NOT NULL UNIQUE,
   name VARCHAR(255) NOT NULL,
   password CHAR(255) NOT NULL,
-  role VARCHAR(255) NOT NULL,
-  city VARCHAR(128) NOT NULL,
-  coordinate POINT NOT NULL
+  role INT NOT NULL,
+  FOREIGN KEY (role) REFERENCES roles(id),
+  city INT NOT NULL,
+  FOREIGN KEY (city) REFERENCES cities(id),
 );
 
 CREATE TABLE executorProfiles (
-  executor_id INT NOT NULL PRIMARY KEY,
-  FOREIGN KEY (executor_id) REFERENCES users(id),
-  avatar VARCHAR(255) DEFAULT NULL,
-  birth_dt TIMESTAMP DEFAULT NULL,
-  phone CHAR(255) DEFAULT NULL,
-  telegram VARCHAR(255) DEFAULT NULL,
-  bio TEXT DEFAULT NULL,
-  executor_status VARCHAR(255)
+  executorId VARCHAR(36) NOT NULL PRIMARY KEY,
+  FOREIGN KEY (executorId) REFERENCES users(uuid),
+  avatarSrc VARCHAR(255),
+  birthDate TIMESTAMP,
+  phone CHAR(255),
+  telegram VARCHAR(255),
+  bio TEXT,
+  status INT NOT NULL,
+  FOREIGN KEY (status) REFERENCES executorStatuses(id)
 );
+
+CREATE TABLE executorStatuses (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  executorStatus VARCHAR(255) NOT NULL
+)
+
+CREATE TABLE roles (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  role VARCHAR(255) NOT NULL
+)
+
+CREATE TABLE cities (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  city VARCHAR(128) NOT NULL
+)
 
 CREATE TABLE categories (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255)/*,
-  eng_name VARCHAR(255)*/
-);
-
-CREATE TABLE executorCategories (
-  PRIMARY KEY (category_id, executor_id),
-  category_id INT,
-  FOREIGN KEY (category_id) REFERENCES categories(id),
-  executor_id INT,
-  FOREIGN KEY (executor_id) REFERENCES users(id)
-);
-
-CREATE TABLE tasks (
-  id INT NOT NULL /*AUTO_INCREMENT*/ PRIMARY KEY,
-  dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  name VARCHAR(255) NOT NULL,
-  description TEXT,
-  expiry_date TIMESTAMP NOT NULL,
-  budget INT NOT NULL,
-  client_id INT,
-  FOREIGN KEY (client_id) REFERENCES users(id),
-  executor_id INT,
-  FOREIGN KEY (executor_id) REFERENCES users(id),
-  category_id INT,
-  FOREIGN KEY (category_id) REFERENCES categories(id),
-  coordinate POINT NOT NULL,
-  task_status VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE files (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255)
 );
 
+CREATE TABLE executorCategories (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  categoryId INT NOT NULL,
+  FOREIGN KEY (categoryId) REFERENCES categories(id),
+  executorId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (executorId) REFERENCES users(uuid)
+);
+
+CREATE TABLE tasks (
+  uuid VARCHAR(36) NOT NULL PRIMARY KEY,
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  expiryDate TIMESTAMP NOT NULL,
+  budget INT NOT NULL,
+  categoryId INT NOT NULL,
+  FOREIGN KEY (categoryId) REFERENCES categories(id),
+  coordinate POINT NOT NULL,
+  status INT NOT NULL,
+  FOREIGN KEY (status) REFERENCES taskStatuses(id)
+);
+
+CREATE TABLE taskStatuses (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  taskStatus VARCHAR(255) NOT NULL
+)
+
+CREATE TABLE userTasks (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (userId) REFERENCES users(uuid),
+  taskId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (taskId) REFERENCES tasks(uuid),
+)
+
+CREATE TABLE files (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fileSrc VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE taskFiles (
-  PRIMARY KEY (file_id, task_id),
-  file_id INT,
-  FOREIGN KEY (file_id) REFERENCES files(id),
-  task_id INT,
-  FOREIGN KEY (task_id) REFERENCES tasks(id)
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fileId INT NOT NULL,
+  FOREIGN KEY (fileId) REFERENCES files(id),
+  taskId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (taskId) REFERENCES tasks(uuid)
 );
 
 CREATE TABLE responds (
-  PRIMARY KEY (task_id, executor_id),
-  task_id INT,
-  FOREIGN KEY (task_id) REFERENCES tasks(id),
-  executor_id INT,
-  FOREIGN KEY (executor_id) REFERENCES users(id),
-  dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  taskId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (taskId) REFERENCES tasks(uuid),
+  executorId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (executorId) REFERENCES users(uuid),
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   price INT NOT NULL,
   comment TEXT
 );
 
 CREATE TABLE reviews (
-  PRIMARY KEY (task_id, executor_id),
-  task_id INT,
-  FOREIGN KEY (task_id) REFERENCES tasks(id),
-  executor_id INT,
-  FOREIGN KEY (executor_id) REFERENCES users(id),
-  client_id INT,
-  FOREIGN KEY (client_id) REFERENCES users(id),
-  score INT,
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  taskId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (taskId) REFERENCES tasks(uuid),
+  executorId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (executorId) REFERENCES users(uuid),
+  clientId VARCHAR(36) NOT NULL,
+  FOREIGN KEY (clientId) REFERENCES users(uuid),
+  score INT NOT NULL,
   comment TEXT,
-  dt_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  createAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   success BOOLEAN
 );
 
