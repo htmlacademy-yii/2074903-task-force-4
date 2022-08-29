@@ -8,6 +8,7 @@ use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
+use omarinina\exception\AvailableActionsException;
 use omarinina\exception\CurrentActionException;
 use omarinina\exception\IdUSerException;
 
@@ -61,37 +62,33 @@ class Task
     //Does saving new status to DB have to be realised in this function?
     public function changeStatusByAction(string $currentAction, int $idUser): string
     {
-        try {
-            if ($this->isValidAction($currentAction, $idUser)) {
-                return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
-            }
-            if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
-                throw new CurrentActionException;
-            }
-            if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
-                throw new IdUSerException;
-            }
-        } catch (IdUSerException $errorId) {
-            $errorId->getMessage();
-        } catch (CurrentActionException $errorAction) {
-            $errorAction->getMessage();
-        } catch (Exception $e) {
-            $e->getMessage();
+        if ($this->isValidAction($currentAction, $idUser)) {
+            return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
         }
-
-        return $this->isValidAction($currentAction, $idUser) ?
-            $this->currentStatus = $this->getLinkActionToStatus()[$currentAction] :
-            $this->currentStatus;
+        if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+            throw new CurrentActionException;
+        }
+        if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
+            throw new IdUSerException;
+        }
     }
 
     public function getAvailableActions(int $idUser): ?AbstractAction
     {
-        return array_values(array_filter(
-            $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
+        $availableActions = $this->getLinkStatusToAction()[$this->currentStatus];
+        if (!$availableActions) {
+            throw new AvailableActionsException;
+        }
+        $availableAction = array_values(array_filter(
+            $availableActions,
             function (AbstractAction $action) use ($idUser) {
                 return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
             }
-        ))[0] ?? null;
+        ))[0];
+        if (!$availableAction) {
+            throw new IdUSerException;
+        }
+        return $availableAction;
     }
 
     private function getLinkActionToStatus(): array

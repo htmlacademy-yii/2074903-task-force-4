@@ -5,6 +5,7 @@ require_once $root . '/vendor/autoload.php';
 require_once 'init.php';
 
 use omarinina\domain\Task;
+use omarinina\exception\AvailableActionsException;
 use omarinina\exception\IdUSerException;
 use omarinina\exception\CurrentActionException;
 
@@ -17,6 +18,16 @@ try {
     $errorId->getMessage();
 } catch (CurrentActionException $errorAction) {
     $errorAction->getMessage();
+} catch (Exception $e) {
+    $e->getMessage();
+}
+
+try {
+    $newTask->getAvailableActions(1);
+} catch (IdUSerException $errorId) {
+    $errorId->getMessage();
+} catch (AvailableActionsException $errorActions) {
+    $errorActions->getMessage();
 } catch (Exception $e) {
     $e->getMessage();
 }
