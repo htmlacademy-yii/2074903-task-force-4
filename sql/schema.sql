@@ -42,7 +42,9 @@ CREATE TABLE roles (
 
 CREATE TABLE cities (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  city VARCHAR(128) NOT NULL
+  city VARCHAR(128) NOT NULL,
+  lan POINT NOT NULL,
+  long POINT NOT NULL
 )
 
 CREATE TABLE categories (
@@ -67,7 +69,8 @@ CREATE TABLE tasks (
   budget INT NOT NULL,
   categoryId INT NOT NULL,
   FOREIGN KEY (categoryId) REFERENCES categories(id),
-  coordinate POINT NOT NULL,
+  lan POINT NOT NULL,
+  long POINT NOT NULL,
   status INT NOT NULL,
   FOREIGN KEY (status) REFERENCES taskStatuses(id)
 );
