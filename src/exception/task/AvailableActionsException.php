@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\exception;
+namespace omarinina\exception\task;
 
 use Exception;
 

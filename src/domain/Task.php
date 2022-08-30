@@ -8,9 +8,9 @@ use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
-use omarinina\exception\AvailableActionsException;
-use omarinina\exception\CurrentActionException;
-use omarinina\exception\IdUSerException;
+use omarinina\exception\task\AvailableActionsException;
+use omarinina\exception\task\CurrentActionException;
+use omarinina\exception\task\IdUSerException;
 
 class Task
 {

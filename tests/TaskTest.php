@@ -7,9 +7,9 @@ use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\Task;
 use PHPUnit\Framework\TestCase;
-use omarinina\exception\IdUSerException;
-use omarinina\exception\CurrentActionException;
-use omarinina\exception\AvailableActionsException;
+use omarinina\exception\task\IdUSerException;
+use omarinina\exception\task\CurrentActionException;
+use omarinina\exception\task\AvailableActionsException;
 use Exception;
 
 
