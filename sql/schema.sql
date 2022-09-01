@@ -49,7 +49,8 @@ CREATE TABLE cities (
 
 CREATE TABLE categories (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255)
+  name VARCHAR(255) NOT NULL,
+  icon VARCHAR(255),
 );
 
 CREATE TABLE executorCategories (
