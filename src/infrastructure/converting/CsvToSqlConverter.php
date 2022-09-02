@@ -30,7 +30,12 @@ class CsvToSqlConverter
         $this->colums = $colums;
     }
 
-    public function import() : ?array
+    public function runParseCsvToSql(): void{
+        $this->parseCsvToArray();
+        $this->openSqlAndWriteCsvArray();
+    }
+
+    private function parseCsvToArray(): void
     {
         if (!file_exists($this->csvFile)) {
             throw new FileExistException;
@@ -51,10 +56,22 @@ class CsvToSqlConverter
             $this->parseData[] = $line;
         }
 
-        return $this->parseData;
+        array_shift($this->parseData);
+
+        $this->parseData = array_filter($this->parseData, function ($data) {
+            $FilledItems = array_walk($data, function ($item) {
+                return isset($item);
+            });
+            $ItemsNotNull = array_walk($data, function ($item) {
+                return $item !== 'null';
+            });
+            return $FilledItems &&
+                $ItemsNotNull &&
+                array_count_values($data) === array_count_values($this->colums);
+        });
     }
 
-    public function writeSql(): bool
+    private function openSqlAndWriteCsvArray(): void
     {
         if (!file_exists($this->sqlFile)) {
             throw new FileExistException;
@@ -65,7 +82,9 @@ class CsvToSqlConverter
             throw new FileOpenException;
         }
 
-        return $file->fwrite($this->useSqlInstruction());
+        $file->fwrite($this->getSqlInstruction());
+
+        fclose($file);
     }
 
     private function getHeaderColums(): array | false {
@@ -75,6 +94,7 @@ class CsvToSqlConverter
 
     private function getNextLine(): ?iterable
     {
+        //how do I set next line after headers?
         $result = null;
         while (!$this->utilsFile->eof()) {
             yield $this->utilsFile->fgetcsv();
@@ -82,45 +102,33 @@ class CsvToSqlConverter
         return $result;
     }
 
-    private function useSqlInstruction(): string
+    private function getSqlInstruction(): string
     {
-        return 'INSERT '.$this->usedTable.'('.$this->getLineColumns().') VALUES ('.$this->getData().');';
+        foreach ($this->getData() as $data) {
+            return 'INSERT '.$this->usedTable.'('.$this->getLineColumns().') VALUES ('.$data.');\n';
+        }
     }
 
     private function getLineColumns(): string
     {
         $columnsInLine = array_reduce($this->columns, function ($carry, $column) {
-            return $carry.key($column).', ';
+            return $carry.$column.', ';
         });
         return mb_substr($columnsInLine, 0, mb_strlen($columnsInLine) - 2);
     }
 
-    private function getData(): string
+    private function getData(): iterable
     {
-        //не подходит reduce, потому что нам надо не одну строчку из всех строчек получить
-        // а каждый раз получать одну строчку через yield?
-        $oneLineData = array_reduce($this->parseData, function ($carry, $data) {
-            return $carry.$this->getLineCsv($data).', ';
-        });
-        return mb_substr($oneLineData, 0, mb_strlen($oneLineData) - 2);
+        foreach ($this->parseData as $data) {
+            yield $this->getLineCsvArray($data);
+        }
     }
 
-    private function getLineCsv(array $data): string
+    private function getLineCsvArray(array $data): string
     {
-
-
-        $counter = 0;
-        $result = array_reduce($data, function ($carry, $item) use (&$counter) {
-            $type = current($this->columns[$counter]);
-            $counter += 1;
-            switch ($type) {
-                case self::TYPE_INT:
-                    return $carry. $item.",";
-                default:
-                    return $carry."'".addslashes($item)."',";
-            }
+        $oneLineData = array_reduce($data, function ($carry, $item) {
+            return $carry.$item.', ';
         });
-
-        return mb_substr($result, 0, mb_strlen($result) - 1);
+        return mb_substr($oneLineData, 0, mb_strlen($oneLineData) - 2);
     }
 }
