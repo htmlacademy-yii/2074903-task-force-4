@@ -2,6 +2,8 @@
 
 namespace omarinina\domain\actions;
 
+use omarinina\domain\valueObjects\UserId;
+
 class RespondAction extends AbstractAction
 {
     public static function getInternalName(): string
@@ -14,7 +16,7 @@ class RespondAction extends AbstractAction
         return 'Откликнуться';
     }
 
-    public function isAvailableForUser(int $idUser): bool
+    public function isAvailableForUser(UserId $idUser): bool
     {
         return $this->idExecutor === $idUser;
     }

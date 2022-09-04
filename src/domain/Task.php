@@ -8,6 +8,7 @@ use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
+use omarinina\domain\valueObjects\UserId;
 use omarinina\exception\AvailableActionsException;
 use omarinina\exception\CurrentActionException;
 use omarinina\exception\IdUSerException;
@@ -24,7 +25,7 @@ class Task
     private $idExecutor;
     private $currentStatus = '';
 
-    public function __construct(int $idClient, int $idExecutor, string $currentStatus)
+    public function __construct(UserId $idClient, UserId $idExecutor, string $currentStatus)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
@@ -60,9 +61,9 @@ class Task
     }
 
     //Does saving new status to DB have to be realised in this function?
-    public function changeStatusByAction(string $currentAction, int $idUser): string
+    public function changeStatusByAction(string $currentAction, UserId $idUser): string
     {
-        if ($this->isValidAction($currentAction, $idUser)) {
+        if ($this->isValidAction($currentAction,  $idUser)) {
             return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
         }
         if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
@@ -73,7 +74,7 @@ class Task
         }
     }
 
-    public function getAvailableActions(int $idUser): ?AbstractAction
+    public function getAvailableActions(UserId $idUser): ?AbstractAction
     {
         $availableActions = $this->getLinkStatusToAction()[$this->currentStatus];
         if (!$availableActions) {
@@ -117,7 +118,7 @@ class Task
         ];
     }
 
-    private function isValidAction(string $currentAction, int $idUser): bool
+    private function isValidAction(string $currentAction, UserId $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
