@@ -11,16 +11,18 @@ use omarinina\domain\exception\task\IdUSerException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
 use Exception;
-
+use omarinina\domain\valueObjects\UserId;
 
 class TaskTest extends TestCase
 {
     public function testOneChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_NEW
         );
-        $idUser = 1;
+        $idUser = new UserId('1');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction(CancelAction::getInternalName(), $idUser);
         } catch (IdUSerException $errorId) {
@@ -36,9 +38,11 @@ class TaskTest extends TestCase
     public function testTwoChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_NEW
         );
-        $idUser = 2;
+        $idUser = new UserId('2');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction(RespondAction::getInternalName(), $idUser);
         } catch (IdUSerException $errorId) {
@@ -54,9 +58,11 @@ class TaskTest extends TestCase
     public function testThreeChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_IN_WORK
         );
-        $idUser = 2;
+        $idUser = new UserId('2');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction(DenyAction::getInternalName(), $idUser);
         } catch (IdUSerException $errorId) {
@@ -72,9 +78,11 @@ class TaskTest extends TestCase
     public function testFourChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_IN_WORK
         );
-        $idUser = 1;
+        $idUser = new UserId('1');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
         } catch (IdUSerException $errorId) {
@@ -90,9 +98,11 @@ class TaskTest extends TestCase
     public function testFiveChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_IN_WORK
         );
-        $idUser = 2;
+        $idUser = new UserId('2');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
         } catch (IdUSerException $errorId) {
@@ -108,9 +118,11 @@ class TaskTest extends TestCase
     public function testSixChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_IN_WORK
         );
-        $idUser = 2;
+        $idUser = new UserId('2');
         try {
             $nextStatus = $statusIndicator->changeStatusByAction('restart', $idUser);
         } catch (IdUSerException $errorId) {
@@ -126,7 +138,9 @@ class TaskTest extends TestCase
     public function testGetMapStatuses(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_NEW
         );
         $mapStatuses = $statusIndicator->getMapStatuses();
         $result = $mapStatuses[Task::STATUS_DONE];
@@ -136,9 +150,11 @@ class TaskTest extends TestCase
     public function testOneGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_IN_WORK
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_IN_WORK
         );
-        $idUSer = 2;
+        $idUSer = new UserId('2');
         try {
             $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
         } catch (IdUSerException $errorId) {
@@ -154,9 +170,11 @@ class TaskTest extends TestCase
     public function testTwoGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_NEW
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_NEW
         );
-        $idUSer = 1;
+        $idUSer = new UserId('1');
         try {
             $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
         } catch (IdUSerException $errorId) {
@@ -172,9 +190,11 @@ class TaskTest extends TestCase
     public function testThreeGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_DONE
         );
-        $idUSer = 1;
+        $idUSer = new UserId('1');
         try {
             $result = $statusIndicator->getAvailableActions($idUSer);
         } catch (IdUSerException $errorId) {
@@ -190,9 +210,11 @@ class TaskTest extends TestCase
     public function testFourGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_DONE
         );
-        $idUSer = 5;
+        $idUSer = new UserId('5');
         try {
             $result = $statusIndicator->getAvailableActions($idUSer);
         } catch (IdUSerException $errorId) {
@@ -208,9 +230,11 @@ class TaskTest extends TestCase
     public function testFiveGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = 1, $idExecutor = 2, $currentStatus = Task::STATUS_DONE
+            $idClient = new UserId('1'),
+            $idExecutor = new UserId('2'),
+            $currentStatus = Task::STATUS_DONE
         );
-        $idUSer = 1;
+        $idUSer = new UserId('1');
         try {
             $result = $statusIndicator->getAvailableActions($idUSer);
         } catch (IdUSerException $errorId) {
