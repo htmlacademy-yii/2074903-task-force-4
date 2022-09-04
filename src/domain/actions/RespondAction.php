@@ -14,8 +14,8 @@ class RespondAction extends AbstractAction
         return 'Откликнуться';
     }
 
-    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
+    public function isAvailableForUser(int $idUser): bool
     {
-        return $idExecutor === $idUser;
+        return $this->idExecutor === $idUser;
     }
 }

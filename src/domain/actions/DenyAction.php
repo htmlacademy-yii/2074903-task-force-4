@@ -14,8 +14,8 @@ class DenyAction extends AbstractAction
         return 'Отказаться';
     }
 
-    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
+    public function isAvailableForUser(int $idUser): bool
     {
-        return $idExecutor === $idUser;
+        return $this->idExecutor === $idUser;
     }
 }

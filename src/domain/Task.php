@@ -82,7 +82,7 @@ class Task
         $availableAction = array_values(array_filter(
             $availableActions,
             function (AbstractAction $action) use ($idUser) {
-                return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
+                return $action->isAvailableForUser($idUser);
             }
         ))[0];
         if (!$availableAction) {
@@ -107,12 +107,12 @@ class Task
     {
         return [
             self::STATUS_NEW => [
-                new CancelAction,
-                new RespondAction
+                new CancelAction($this->idClient, $this->idExecutor),
+                new RespondAction($this->idClient, $this->idExecutor)
             ],
             self::STATUS_IN_WORK => [
-                new AcceptAction,
-                new DenyAction
+                new AcceptAction($this->idClient, $this->idExecutor),
+                new DenyAction($this->idClient, $this->idExecutor)
             ]
         ];
     }
