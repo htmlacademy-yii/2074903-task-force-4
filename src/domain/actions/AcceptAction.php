@@ -14,8 +14,8 @@ class AcceptAction extends AbstractAction
         return 'Выполнено';
     }
 
-    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
+    public function isAvailableForUser(int $idUser): bool
     {
-        return $idClient === $idUser;
+        return $this->idClient === $idUser;
     }
 }
