@@ -18,6 +18,6 @@ class AcceptAction extends AbstractAction
 
     public function isAvailableForUser(UserId $idUser): bool
     {
-        return $this->idClient === $idUser;
+        return $this->idClient->getId() === $idUser->getId();
     }
 }

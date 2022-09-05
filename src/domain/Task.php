@@ -21,9 +21,9 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    private $idClient;
-    private $idExecutor;
-    private $currentStatus = '';
+    private UserId $idClient;
+    private UserId $idExecutor;
+    private string $currentStatus = '';
 
     public function __construct(UserId $idClient, UserId $idExecutor, string $currentStatus)
     {
@@ -76,16 +76,15 @@ class Task
 
     public function getAvailableActions(UserId $idUser): ?AbstractAction
     {
-        $availableActions = $this->getLinkStatusToAction()[$this->currentStatus];
-        if (!$availableActions) {
+        if (!array_key_exists($this->currentStatus, $this->getLinkStatusToAction())) {
             throw new AvailableActionsException;
         }
         $availableAction = array_values(array_filter(
-            $availableActions,
+            $this->getLinkStatusToAction()[$this->currentStatus],
             function (AbstractAction $action) use ($idUser) {
                 return $action->isAvailableForUser($idUser);
             }
-        ))[0];
+        ))[0] ?? null;
         if (!$availableAction) {
             throw new IdUSerException;
         }

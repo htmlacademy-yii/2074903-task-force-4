@@ -18,6 +18,6 @@ class DenyAction extends AbstractAction
 
     public function isAvailableForUser(UserId $idUser): bool
     {
-        return $this->idExecutor === $idUser;
+        return $this->idExecutor->getId() === $idUser->getId();
     }
 }

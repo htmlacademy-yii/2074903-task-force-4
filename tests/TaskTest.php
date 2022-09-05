@@ -17,12 +17,13 @@ class TaskTest extends TestCase
     public function testOneChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_NEW
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_NEW
         );
-        $idUser = new UserId('1');
-        $nextStatus = $statusIndicator->changeStatusByAction(CancelAction::getInternalName(), $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            CancelAction::getInternalName(),
+            UserId::create(1));
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
@@ -30,35 +31,38 @@ class TaskTest extends TestCase
     {
         $this->expectException(CurrentActionException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_NEW
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_NEW
         );
-        $idUser = new UserId('2');
-        $nextStatus = $statusIndicator->changeStatusByAction(RespondAction::getInternalName(), $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            RespondAction::getInternalName(),
+            UserId::create(2));
     }
 
     public function testThreeChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_IN_WORK
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_IN_WORK
         );
-        $idUser = new UserId('2');
-        $nextStatus = $statusIndicator->changeStatusByAction(DenyAction::getInternalName(), $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            DenyAction::getInternalName(),
+            UserId::create(2));
         $this->assertEquals(Task::STATUS_FAILED, $nextStatus);
     }
 
     public function testFourChangeStatusByAction(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_IN_WORK
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_IN_WORK
         );
-        $idUser = new UserId('1');
-        $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            AcceptAction::getInternalName(),
+            UserId::create(1));
         $this->assertEquals(Task::STATUS_DONE, $nextStatus);
     }
 
@@ -66,32 +70,34 @@ class TaskTest extends TestCase
     {
         $this->expectException(IdUSerException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_IN_WORK
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_IN_WORK
         );
-        $idUser = new UserId('2');
-        $nextStatus = $statusIndicator->changeStatusByAction(AcceptAction::getInternalName(), $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            AcceptAction::getInternalName(),
+            UserId::create(2));
     }
 
     public function testSixChangeStatusByAction(): void
     {
         $this->expectException(CurrentActionException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_IN_WORK
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_IN_WORK
         );
-        $idUser = new UserId('2');
-        $nextStatus = $statusIndicator->changeStatusByAction('restart', $idUser);
+        $nextStatus = $statusIndicator->changeStatusByAction(
+            'restart',
+            UserId::create(2));
     }
 
     public function testGetMapStatuses(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_NEW
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_NEW
         );
         $mapStatuses = $statusIndicator->getMapStatuses();
         $result = $mapStatuses[Task::STATUS_DONE];
@@ -101,60 +107,59 @@ class TaskTest extends TestCase
     public function testOneGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_IN_WORK
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_IN_WORK
         );
-        $idUSer = new UserId('2');
-        $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        $result = $statusIndicator->
+            getAvailableActions(UserId::create(2))->
+            getInternalName();
         $this->assertEquals(DenyAction::getInternalName(), $result);
     }
 
     public function testTwoGetAvailableActions(): void
     {
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_NEW
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_NEW
         );
-        $idUSer = new UserId('1');
-        $result = $statusIndicator->getAvailableActions($idUSer)->getInternalName();
+        $result = $statusIndicator->
+            getAvailableActions(UserId::create(1))->
+            getInternalName();
         $this->assertEquals(CancelAction::getInternalName(), $result);
     }
 
     public function testThreeGetAvailableActions(): void
     {
-        $this->expectException(IdUSerException::class);
+        $this->expectException(AvailableActionsException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_DONE
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_DONE
         );
-        $idUSer = new UserId('1');
-        $result = $statusIndicator->getAvailableActions($idUSer);
+        $result = $statusIndicator->getAvailableActions(UserId::create(1));
     }
 
     public function testFourGetAvailableActions(): void
     {
         $this->expectException(IdUSerException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_DONE
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_NEW
         );
-        $idUSer = new UserId('5');
-        $result = $statusIndicator->getAvailableActions($idUSer);
+        $result = $statusIndicator->getAvailableActions(UserId::create(5));
     }
 
     public function testFiveGetAvailableActions(): void
     {
         $this->expectException(AvailableActionsException::class);
         $statusIndicator = new Task(
-            $idClient = new UserId('1'),
-            $idExecutor = new UserId('2'),
-            $currentStatus = Task::STATUS_DONE
+            UserId::create(1),
+            UserId::create(2),
+            Task::STATUS_DONE
         );
-        $idUSer = new UserId('1');
-        $result = $statusIndicator->getAvailableActions($idUSer);
+        $result = $statusIndicator->getAvailableActions(UserId::create(1));
     }
 }
