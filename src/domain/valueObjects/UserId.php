@@ -2,31 +2,44 @@
 
 namespace omarinina\domain\valueObjects;
 
+use \InvalidArgumentException;
 use Webmozart\Assert\Assert;
-use Webmozart\Assert\InvalidArgumentException;
 
 class UserId
 {
-    private string $id;
+    /** @var integer */
+    private int $id;
 
-    public function __construct(?string $id)
+    /**
+     * @param integer|null $id
+     */
+    public function __construct(?int $id)
     {
         if ($id === null) {
             throw new InvalidArgumentException('ID is null');
         }
 
-        Assert::uuid($id);
+        Assert::integer($id);
+
+        $this->id = $id;
     }
 
-    public function getId(): string
+    /**
+     * @return integer
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public static function create(?string $id = null): self
+    /**
+     * @param integer|null $id
+     * @return self
+     */
+    public static function create(?int $id): self
     {
-        if ($id) {
-            $id = '';
+        if ($id === null) {
+            $id = rand();
         }
         return new self($id);
     }
