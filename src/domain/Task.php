@@ -2,11 +2,16 @@
 
 namespace omarinina\domain;
 
+use Exception;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
+use omarinina\domain\valueObjects\UserId;
+use omarinina\exception\AvailableActionsException;
+use omarinina\exception\CurrentActionException;
+use omarinina\exception\IdUSerException;
 
 class Task
 {
@@ -16,17 +21,33 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    private $idClient;
-    private $idExecutor;
-    private $currentStatus = '';
+    /** @var UserId */
+    private UserId $idClient;
 
-    public function __construct(int $idClient, int $idExecutor, string $currentStatus)
+    /** @var UserId */
+    private UserId $idExecutor;
+
+    /** @var string */
+    private string $currentStatus = '';
+
+    /**
+     * @param UserId $idClient
+     * @param UserId $idExecutor
+     * @param string $currentStatus
+     */
+    public function __construct(
+        UserId $idClient,
+        UserId $idExecutor,
+        string $currentStatus)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
         $this->currentStatus = $currentStatus;
     }
 
+    /**
+     * @return array
+     */
     public static function getMapStatuses(): array
     {
         return [
@@ -40,6 +61,9 @@ class Task
 
     //The same: we have additional buttoms for a client but they didn't change status,
     //should they be added this map?
+    /**
+     * @return array
+     */
     public function getMapActions(): array
     {
         return [
@@ -50,29 +74,65 @@ class Task
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getCurrentStatus(): string
     {
         return $this->currentStatus;
     }
 
     //Does saving new status to DB have to be realised in this function?
-    public function changeStatusByAction(string $currentAction, int $idUser): string
+    /**
+     * @param string $currentAction
+     * @param UserId $idUser
+     * @return string
+     * @throws CurrentActionException Exception when user tries to choose action
+     * which is anavailable for this task status
+     * @throws IdUserException Esception when user doesn't have rights to add
+     * changes in this task status
+     */
+    public function changeStatusByAction(string $currentAction, UserId $idUser): string
     {
-        return $this->isValidAction($currentAction, $idUser) ?
-            $this->currentStatus = $this->getLinkActionToStatus()[$currentAction] :
-            $this->currentStatus;
+        if ($this->isValidAction($currentAction,  $idUser)) {
+            return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
+        }
+        if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+            throw new CurrentActionException;
+        }
+        if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
+            throw new IdUSerException;
+        }
     }
 
-    public function getAvailableActions(int $idUser): ?AbstractAction
+    /**
+     * @param UserId $idUser
+     * @return AbstractAction|null
+     * @throws AvailableActionException Exception when task has such status
+     * which doesn't have any available action for any users
+     * @throws IdUserException Esception when user doesn't have rights to add
+     * changes in this task status
+     */
+    public function getAvailableActions(UserId $idUser): ?AbstractAction
     {
-        return array_values(array_filter(
-            $this->getLinkStatusToAction()[$this->currentStatus] ?? [],
+        if (!array_key_exists($this->currentStatus, $this->getLinkStatusToAction())) {
+            throw new AvailableActionsException;
+        }
+        $availableAction = array_values(array_filter(
+            $this->getLinkStatusToAction()[$this->currentStatus],
             function (AbstractAction $action) use ($idUser) {
-                return $action->isAvailableForUser($idUser, $this->idClient, $this->idExecutor);
+                return $action->isAvailableForUser($idUser);
             }
         ))[0] ?? null;
+        if (!$availableAction) {
+            throw new IdUSerException;
+        }
+        return $availableAction;
     }
 
+    /**
+     * @return array
+     */
     private function getLinkActionToStatus(): array
     {
         return [
@@ -85,24 +145,33 @@ class Task
     //Also the client has two additional buttoms when he recives reponds by executors.
     //Potential this logic can be realised with this class, isn't it?
 
+    /**
+     * @return array
+     */
     private function getLinkStatusToAction(): array
     {
         return [
             self::STATUS_NEW => [
-                new CancelAction,
-                new RespondAction
+                new CancelAction($this->idClient, $this->idExecutor),
+                new RespondAction($this->idClient, $this->idExecutor)
             ],
             self::STATUS_IN_WORK => [
-                new AcceptAction,
-                new DenyAction
+                new AcceptAction($this->idClient, $this->idExecutor),
+                new DenyAction($this->idClient, $this->idExecutor)
             ]
         ];
     }
 
-    private function isValidAction(string $currentAction, int $idUser): bool
+    /**
+     * @param string $currentAction
+     * @param UserId $idUser
+     * @return boolean
+     */
+    private function isValidAction(string $currentAction, UserId $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
         }
+        return false;
     }
 }

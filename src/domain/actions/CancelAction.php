@@ -2,20 +2,32 @@
 
 namespace omarinina\domain\actions;
 
+use omarinina\domain\valueObjects\UserId;
+
 class CancelAction extends AbstractAction
 {
+    /**
+     * @return string
+     */
     public static function getInternalName(): string
     {
         return 'cancel';
     }
 
+    /**
+     * @return string
+     */
     public static function getName(): string
     {
         return 'Отменить';
     }
 
-    public function isAvailableForUser(int $idUser, int $idClient, int $idExecutor): bool
+    /**
+     * @param UserId $idUser
+     * @return boolean
+     */
+    public function isAvailableForUser(UserId $idUser): bool
     {
-        return $idClient === $idUser;
+        return $this->idClient->getId() === $idUser->getId();
     }
 }
