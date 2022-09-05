@@ -21,17 +21,33 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
+    /** @var UserId */
     private UserId $idClient;
+
+    /** @var UserId */
     private UserId $idExecutor;
+
+    /** @var string */
     private string $currentStatus = '';
 
-    public function __construct(UserId $idClient, UserId $idExecutor, string $currentStatus)
+    /**
+     * @param UserId $idClient
+     * @param UserId $idExecutor
+     * @param string $currentStatus
+     */
+    public function __construct(
+        UserId $idClient,
+        UserId $idExecutor,
+        string $currentStatus)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
         $this->currentStatus = $currentStatus;
     }
 
+    /**
+     * @return array
+     */
     public static function getMapStatuses(): array
     {
         return [
@@ -45,6 +61,9 @@ class Task
 
     //The same: we have additional buttoms for a client but they didn't change status,
     //should they be added this map?
+    /**
+     * @return array
+     */
     public function getMapActions(): array
     {
         return [
@@ -55,12 +74,24 @@ class Task
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getCurrentStatus(): string
     {
         return $this->currentStatus;
     }
 
     //Does saving new status to DB have to be realised in this function?
+    /**
+     * @param string $currentAction
+     * @param UserId $idUser
+     * @return string
+     * @throws CurrentActionException Exception when user tries to choose action
+     * which is anavailable for this task status
+     * @throws IdUserException Esception when user doesn't have rights to add
+     * changes in this task status
+     */
     public function changeStatusByAction(string $currentAction, UserId $idUser): string
     {
         if ($this->isValidAction($currentAction,  $idUser)) {
@@ -74,6 +105,14 @@ class Task
         }
     }
 
+    /**
+     * @param UserId $idUser
+     * @return AbstractAction|null
+     * @throws AvailableActionException Exception when task has such status
+     * which doesn't have any available action for any users
+     * @throws IdUserException Esception when user doesn't have rights to add
+     * changes in this task status
+     */
     public function getAvailableActions(UserId $idUser): ?AbstractAction
     {
         if (!array_key_exists($this->currentStatus, $this->getLinkStatusToAction())) {
@@ -91,6 +130,9 @@ class Task
         return $availableAction;
     }
 
+    /**
+     * @return array
+     */
     private function getLinkActionToStatus(): array
     {
         return [
@@ -103,6 +145,9 @@ class Task
     //Also the client has two additional buttoms when he recives reponds by executors.
     //Potential this logic can be realised with this class, isn't it?
 
+    /**
+     * @return array
+     */
     private function getLinkStatusToAction(): array
     {
         return [
@@ -117,6 +162,11 @@ class Task
         ];
     }
 
+    /**
+     * @param string $currentAction
+     * @param UserId $idUser
+     * @return boolean
+     */
     private function isValidAction(string $currentAction, UserId $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
