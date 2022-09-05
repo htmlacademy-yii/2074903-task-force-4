@@ -2,7 +2,6 @@
 
 namespace omarinina\infrastructure\converting;
 
-use Exception;
 use SplFileObject;
 use omarinina\infrastructure\exception\FileExistException;
 use omarinina\infrastructure\exception\FileOpenException;
@@ -13,7 +12,7 @@ class CsvToSqlConverter
     private string $csvFile;
     private string $sqlFile;
     private string $usedTable;
-    private array $colums = [];
+    private array $columns = [];
     private SplFileObject $utilsFile;
     private array $parseData = [];
 
@@ -21,13 +20,13 @@ class CsvToSqlConverter
         string $csvFile,
         string $sqlFile,
         string $usedTable,
-        array $colums
+        array $columns
     )
     {
         $this->csvFile = $csvFile;
         $this->sqlFile = $sqlFile;
         $this->usedTable = $usedTable;
-        $this->colums = $colums;
+        $this->columns = $columns;
     }
 
     public function runParseCsvToSql(): void{
@@ -67,7 +66,7 @@ class CsvToSqlConverter
             });
             return $FilledItems &&
                 $ItemsNotNull &&
-                array_count_values($data) === array_count_values($this->colums);
+                array_count_values($data) === array_count_values($this->columns);
         });
     }
 
