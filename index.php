@@ -3,7 +3,7 @@
 use omarinina\infrastructure\converting\CsvToSqlConverter;
 use omarinina\infrastructure\exception\FileExistException;
 use omarinina\infrastructure\exception\FileOpenException;
-use omarinina\infrastructure\exception\HeaderColumsException;
+use omarinina\infrastructure\exception\HeaderColumnsException;
 
 $root = __DIR__;
 require_once $root.'/vendor/autoload.php';
@@ -18,7 +18,7 @@ $converterCsvToSqlCities = new CsvToSqlConverter(
 try {
     $converterCsvToSqlCities->runParseCsvToSql();
     print('Записали, проверяй');
-} catch (FileExistException | FileOpenException | HeaderColumsException $e) {
+} catch (FileExistException | FileOpenException | HeaderColumnsException $e) {
     print($e->getMessage());
     die();
 } catch (\Throwable $e) {
@@ -36,7 +36,7 @@ $converterCsvToSqlCategories = new CsvToSqlConverter(
 try {
     $converterCsvToSqlCategories->runParseCsvToSql();
     print('Записали, проверяй');
-} catch (FileExistException | FileOpenException | HeaderColumsException $e) {
+} catch (FileExistException | FileOpenException | HeaderColumnsException $e) {
     print($e->getMessage());
     die();
 } catch (\Throwable $e) {
