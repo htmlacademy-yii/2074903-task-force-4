@@ -132,5 +132,6 @@ class CsvToSqlConverter
             }
             return true;
         }
+        return false;
     }
 }
