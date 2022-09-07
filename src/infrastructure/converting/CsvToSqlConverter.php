@@ -61,8 +61,8 @@ class CsvToSqlConverter
             if ($this->isValidLine($line)) {
                 $writtenFile->fwrite(
                 'INSERT INTO ' . $this->usedTable
-                    . ' (' . implode(', ', $this->columns) . ') VALUES ('
-                    . implode(', ', $line) . ');' . PHP_EOL);
+                    . ' (' . implode(', ', $this->columns) . ') VALUES ("'
+                    . implode('", "', $line) . '");' . PHP_EOL);
             }
         }
     }

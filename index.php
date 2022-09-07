@@ -13,11 +13,10 @@ $converterCsvToSqlCities = new CsvToSqlConverter(
     $root . '/data/cities.csv',
     $root . '/sql/cities.sql',
     'cities',
-    ['name', 'lat', 'long']);
+    ['name', 'lat', 'lng']);
 
 try {
     $converterCsvToSqlCities->runParseCsvToSql();
-    print('Записали, проверяй');
 } catch (FileExistException | FileOpenException | HeaderColumnsException $e) {
     print($e->getMessage());
     die();
@@ -35,7 +34,6 @@ $converterCsvToSqlCategories = new CsvToSqlConverter(
 
 try {
     $converterCsvToSqlCategories->runParseCsvToSql();
-    print('Записали, проверяй');
 } catch (FileExistException | FileOpenException | HeaderColumnsException $e) {
     print($e->getMessage());
     die();
