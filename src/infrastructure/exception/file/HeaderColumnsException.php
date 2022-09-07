@@ -4,7 +4,7 @@ namespace omarinina\infrastructure\exception;
 
 use Exception;
 
-class HeaderColumsException extends Exception
+class HeaderColumnsException extends Exception
 {
     public function __construct()
     {

@@ -5,17 +5,28 @@ namespace omarinina\infrastructure\converting;
 use SplFileObject;
 use omarinina\infrastructure\exception\FileExistException;
 use omarinina\infrastructure\exception\FileOpenException;
-use omarinina\infrastructure\exception\HeaderColumsException;
+use omarinina\infrastructure\exception\HeaderColumnsException;
 
 class CsvToSqlConverter
 {
+    /** @var string */
     private string $csvFile;
-    private string $sqlFile;
-    private string $usedTable;
-    private array $columns = [];
-    private SplFileObject $utilsFile;
-    private array $parseData = [];
 
+    /** @var string */
+    private string $sqlFile;
+
+    /** @var string */
+    private string $usedTable;
+
+    /** @var array */
+    private array $columns = [];
+
+    /**
+     * @param string $csvFile
+     * @param string $sqlFile
+     * @param string $usedTable
+     * @param array $columns
+     */
     public function __construct(
         string $csvFile,
         string $sqlFile,
@@ -29,105 +40,97 @@ class CsvToSqlConverter
         $this->columns = $columns;
     }
 
-    public function runParseCsvToSql(): void{
-        $this->parseCsvToArray();
-        $this->openSqlAndWriteCsvArray();
+    /**
+     * @return void
+     * @throws HeaderColumnsException count of columns in read file is not
+     * the same as in DB table
+     */
+    public function runParseCsvToSql() {
+        $writtenFile = $this->openSqlWrittenFile();
+        $headerColumns = null;
+        $readFile = $this->openCsvReadFile();
+        $readFile->rewind();
+        foreach ($this->readLines($readFile) as $i => $line) {
+            if ($i === 0) {
+                $headerColumns = $line;
+                if (count($headerColumns) !== count($this->columns)) {
+                    throw new HeaderColumnsException;
+                }
+                continue;
+            }
+            if ($this->isValidLine($line)) {
+                $writtenFile->fwrite(
+                'INSERT INTO ' . $this->usedTable
+                    . ' (' . implode(', ', $this->columns) . ') VALUES ('
+                    . implode(', ', $line) . ');' . PHP_EOL);
+            }
+        }
     }
 
-    private function parseCsvToArray(): void
+    /**
+     * @return SplFileObject
+     * @throws FileExistException file which we try to open doesn't exist
+     * @throws FileOpenException file didin't open
+     */
+    private function openCsvReadFile(): SplFileObject
     {
         if (!file_exists($this->csvFile)) {
             throw new FileExistException;
         }
 
-        $this->utilsFile = new SplFileObject($this->csvFile, 'r');
-        if (!$this->utilsFile) {
+        $readFile = new SplFileObject($this->csvFile, 'r');
+
+        if (!$readFile) {
             throw new FileOpenException;
         }
 
-        $headerColums = $this->getHeaderColums();
-
-        if (count($headerColums) !== count($this->columns)) {
-            throw new HeaderColumsException;
-        }
-
-        foreach ($this->getNextLine() as $line) {
-            $this->parseData[] = $line;
-        }
-
-        array_shift($this->parseData);
-
-        $this->parseData = array_filter($this->parseData, function ($data) {
-            $FilledItems = array_walk($data, function ($item) {
-                return isset($item);
-            });
-            $ItemsNotNull = array_walk($data, function ($item) {
-                return $item !== 'null';
-            });
-            return $FilledItems &&
-                $ItemsNotNull &&
-                array_count_values($data) === array_count_values($this->columns);
-        });
+        return $readFile;
     }
 
-    private function openSqlAndWriteCsvArray(): void
+    /**
+     * @return SplFileObject
+     * @throws FileExistException file which we try to open doesn't exist
+     * @throws FileOpenException file didin't open
+     */
+    private function openSqlWrittenFile(): SplFileObject
     {
         if (!file_exists($this->sqlFile)) {
             throw new FileExistException;
         }
 
-        $file = new SplFileObject($this->sqlFile, 'w');
-        if (!$file) {
+        $writtenFile = new SplFileObject($this->sqlFile, 'w');
+
+        if (!$writtenFile) {
             throw new FileOpenException;
         }
 
-        $file->fwrite($this->getSqlInstruction());
-
-        fclose($file);
+        return $writtenFile;
     }
 
-    private function getHeaderColums(): array | false {
-        $this->utilsFile->rewind();
-        return $this->utilsFile->fgetcsv();
-    }
-
-    private function getNextLine(): ?iterable
+    /**
+     * @param SplFileObject $readFile
+     * @return iterable
+     */
+    private function readLines(SplFileObject $readFile): iterable
     {
-        //how do I set next line after headers?
-        $result = null;
-        while (!$this->utilsFile->eof()) {
-            yield $this->utilsFile->fgetcsv();
-        }
-        return $result;
-    }
-
-    private function getSqlInstruction(): string
-    {
-        foreach ($this->getData() as $data) {
-            return 'INSERT '.$this->usedTable.'('.$this->getLineColumns().') VALUES ('.$data.');\n';
+        while (!$readFile->eof()) {
+            yield $readFile->fgetcsv();
         }
     }
 
-    private function getLineColumns(): string
+    /**
+     * @param array $line
+     * @return boolean
+     */
+    private function isValidLine(array $line): bool
     {
-        $columnsInLine = array_reduce($this->columns, function ($carry, $column) {
-            return $carry.$column.', ';
-        });
-        return mb_substr($columnsInLine, 0, mb_strlen($columnsInLine) - 2);
-    }
-
-    private function getData(): iterable
-    {
-        foreach ($this->parseData as $data) {
-            yield $this->getLineCsvArray($data);
+        if (count($line) === count($this->columns)) {
+            foreach ($line as $item) {
+                if(!isset($item) && $item === null) {
+                    return false;
+                };
+            }
+            return true;
         }
-    }
-
-    private function getLineCsvArray(array $data): string
-    {
-        $oneLineData = array_reduce($data, function ($carry, $item) {
-            return $carry.$item.', ';
-        });
-        return mb_substr($oneLineData, 0, mb_strlen($oneLineData) - 2);
     }
 }
