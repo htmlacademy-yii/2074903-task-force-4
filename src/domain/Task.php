@@ -9,9 +9,9 @@ use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
 use omarinina\domain\valueObjects\UserId;
-use omarinina\exception\AvailableActionsException;
-use omarinina\exception\CurrentActionException;
-use omarinina\exception\IdUSerException;
+use omarinina\domain\exception\task\IdUSerException;
+use omarinina\domain\exception\task\CurrentActionException;
+use omarinina\domain\exception\task\AvailableActionsException;
 
 class Task
 {
@@ -144,7 +144,7 @@ class Task
 
     //Also the client has two additional buttoms when he recives reponds by executors.
     //Potential this logic can be realised with this class, isn't it?
-
+    
     /**
      * @return array
      */

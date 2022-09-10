@@ -9,4 +9,5 @@ Thumbs.db
 vendor
 config/db.php
 .project
+.dbeaver
 .errors.log
