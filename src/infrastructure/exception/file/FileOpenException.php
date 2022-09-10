@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace omarinina\infrastructure\exception;
+namespace omarinina\infrastructure\exception\file;
 
 use Exception;
 

@@ -3,9 +3,9 @@
 namespace omarinina\infrastructure\converting;
 
 use SplFileObject;
-use omarinina\infrastructure\exception\FileExistException;
-use omarinina\infrastructure\exception\FileOpenException;
-use omarinina\infrastructure\exception\HeaderColumnsException;
+use omarinina\infrastructure\exception\file\FileExistException;
+use omarinina\infrastructure\exception\file\FileOpenException;
+use omarinina\infrastructure\exception\file\HeaderColumnsException;
 
 class CsvToSqlConverter
 {
@@ -98,11 +98,7 @@ class CsvToSqlConverter
             throw new FileExistException;
         }
 
-        $writtenFile = new SplFileObject($this->sqlFile, 'w');
-
-        if (!$writtenFile) {
-            throw new FileOpenException;
-        }
+        $writtenFile = new SplFileObject($this->sqlFile, 'w+');
 
         return $writtenFile;
     }
@@ -124,14 +120,10 @@ class CsvToSqlConverter
      */
     private function isValidLine(array $line): bool
     {
-        if (count($line) === count($this->columns)) {
-            foreach ($line as $item) {
-                if(!isset($item) && $item === null) {
-                    return false;
-                };
-            }
-            return true;
-        }
-        return false;
+        $lineColumns = array_filter($line, function ($column) {
+            return !empty($column) || $column !== null;
+        });
+
+        return count($lineColumns) === count($this->columns);
     }
 }
