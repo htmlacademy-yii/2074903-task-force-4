@@ -1,13 +1,7 @@
-#тут бывают настройки cli, nginx, но коллега мне сказал, что это здесь не нужно вообще
 version: '2'
 
 volumes:
   db:
-
-networks:
-  my-network:
-    #driver: bridge
-    #external: true
 
 services:
   php:
@@ -17,8 +11,6 @@ services:
       - ./:/app:delegated
     ports:
       - '8000:80'
-    networks:
-      - my-network
     depends_on:
       - db
 
@@ -26,40 +18,9 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      #как все эти данные передаются в контейнер? и что тут вообще должно быть
-      - MYSQL_DATABASE=taskforse
-      - MYSQL_USER=?
-      - MYSQL_PASSWORD=user_password
+      - MYSQL_DATABASE=taskForce
       - MYSQL_ROOT_PASSWORD=root_password
-    #преподаватель рассказывал, что не нужно указывать порт для БД, чтобы к ней не было прямого доступа
     ports:
       - '3306:3306'
-    #правда ли, здесь нужно и то и другое
-    expose:
-      - '3306'
     volumes:
-      #правильно я понимаю, что должна быть папка database с бд соответственно
-      - ./database:/var/lib/mysql
-    networks:
-      - my-network
-
-  #что это и нужно ли оно нам
-  memcached:
-    container_name: memcached
-    image: memcached:latest
-    ports:
-      - "0.0.0.0:11211:11211"
-
-  #оставляем?
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - '8888:80'
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=db
-    depends_on:
-      - db
-
-#нужна нам тестовая БД?
-#нужен нам volume для тестов?
+      - ./docker/data/mysql:/var/lib/mysql
