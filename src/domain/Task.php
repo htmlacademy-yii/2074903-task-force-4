@@ -144,7 +144,7 @@ class Task
 
     //Also the client has two additional buttons when he receives responds by executors.
     //Potential this logic can be realised with this class, isn't it?
-    
+
     /**
      * @return array
      */
