@@ -14,9 +14,6 @@ class MainAsset extends AssetBundle
     public $js = [
         'js/main.js'
     ];
-    //do we need to save 'depends' for our own asset?
     public $depends = [
-        'yii\web\YiiAsset',
-        'yii\bootstrap5\BootstrapAsset'
     ];
 }

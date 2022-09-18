@@ -14,9 +14,6 @@ class LandingAsset extends AssetBundle
     public $js = [
         'js/landing.js'
     ];
-    //do we need to save 'depends' for our own asset?
     public $depends = [
-        'yii\web\YiiAsset',
-        'yii\bootstrap5\BootstrapAsset'
     ];
 }
