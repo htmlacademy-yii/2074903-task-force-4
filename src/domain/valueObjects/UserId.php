@@ -2,7 +2,7 @@
 
 namespace omarinina\domain\valueObjects;
 
-use \InvalidArgumentException;
+use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
 class UserId

@@ -2,7 +2,6 @@
 
 namespace omarinina\domain;
 
-use Exception;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
@@ -28,7 +27,7 @@ class Task
     private UserId $idExecutor;
 
     /** @var string */
-    private string $currentStatus = '';
+    private string $currentStatus;
 
     /**
      * @param UserId $idClient
@@ -83,13 +82,15 @@ class Task
     }
 
     //Does saving new status to DB have to be realised in this function?
+
     /**
      * @param string $currentAction
      * @param UserId $idUser
      * @return string
      * @throws CurrentActionException Exception when user tries to choose action
-     * which is anavailable for this task status
+     * which is unavailable for this task status
      * @throws IdUserException Exception when user doesn't have rights to add
+     * @throws AvailableActionsException
      * changes in this task status
      */
     public function changeStatusByAction(string $currentAction, UserId $idUser): string
@@ -103,12 +104,13 @@ class Task
         if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
             throw new IdUSerException;
         }
+        return $this->currentStatus;
     }
 
     /**
      * @param UserId $idUser
      * @return AbstractAction|null
-     * @throws AvailableActionException Exception when task has such status
+     * @throws AvailableActionsException Exception when task has such status
      * which doesn't have any available action for any users
      * @throws IdUserException Exception when user doesn't have rights to add
      * changes in this task status
@@ -166,6 +168,8 @@ class Task
      * @param string $currentAction
      * @param UserId $idUser
      * @return boolean
+     * @throws AvailableActionsException
+     * @throws IdUSerException
      */
     private function isValidAction(string $currentAction, UserId $idUser): bool
     {

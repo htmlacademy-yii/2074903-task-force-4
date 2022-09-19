@@ -19,7 +19,7 @@ class CsvToSqlConverter
     private string $usedTable;
 
     /** @var array */
-    private array $columns = [];
+    private array $columns;
 
     /**
      * @param string $csvFile
@@ -42,13 +42,15 @@ class CsvToSqlConverter
 
     /**
      * @return void
+     * @throws FileExistException
+     * @throws FileOpenException
      * @throws HeaderColumnsException count of columns in read file is not
      * the same as in DB table
      */
     public function runParseCsvToSql(): void
     {
+
         $writtenFile = $this->openSqlWrittenFile();
-        $headerColumns = null;
         $readFile = $this->openCsvReadFile();
         $readFile->rewind();
         foreach ($this->readLines($readFile) as $i => $line) {
