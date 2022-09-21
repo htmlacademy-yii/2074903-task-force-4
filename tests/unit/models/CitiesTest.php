@@ -3,6 +3,7 @@ namespace tests\models;
 
 use app\models\Cities;
 use app\tests\fixtures\CitiesFixture;
+use app\tests\fixtures\UsersFixture;
 
 class CitiesTest extends \Codeception\Test\Unit
 {
@@ -14,9 +15,13 @@ class CitiesTest extends \Codeception\Test\Unit
     public function _before()
     {
         $this->tester->haveFixtures([
-            'user' => [
+            'cities' => [
                 'class' => CitiesFixture::class,
                 'dataFile' => '@tests/fixtures/data/cities.php'
+            ],
+            'users' => [
+                'class' => UsersFixture::class,
+                'dataFile' => '@tests/fixtures/data/users.php'
             ]
         ]);
     }
