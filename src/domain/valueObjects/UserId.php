@@ -3,44 +3,44 @@
 namespace omarinina\domain\valueObjects;
 
 use InvalidArgumentException;
-use Webmozart\Assert\Assert;
+use Ramsey\Uuid\Uuid;
 
 class UserId
 {
-    /** @var integer */
-    private int $id;
+    /** @var string */
+    private string $uuid;
 
     /**
-     * @param integer|null $id
+     * @param string|null $uuid
      */
-    public function __construct(?int $id)
+    public function __construct(?string $uuid)
     {
-        if ($id === null) {
+        if ($uuid === null) {
             throw new InvalidArgumentException('ID is null');
         }
 
-        Assert::integer($id);
+        Uuid::isValid($uuid);
 
-        $this->id = $id;
+        $this->uuid = $uuid;
     }
 
     /**
-     * @return integer
+     * @return string
      */
-    public function getId(): int
+    public function getId(): string
     {
-        return $this->id;
+        return $this->uuid;
     }
 
     /**
-     * @param integer|null $id
+     * @param string|null $uuid
      * @return self
      */
-    public static function create(?int $id): self
+    public static function create(?string $uuid): self
     {
-        if ($id === null) {
-            $id = rand();
+        if ($uuid === null) {
+            $uuid = Uuid::uuid4()->toString();
         }
-        return new self($id);
+        return new self($uuid);
     }
 }
