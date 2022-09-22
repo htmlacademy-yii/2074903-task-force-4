@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use omarinina\domain\valueObjects\UniqueIdentification;
 use Yii;
 
 /**
@@ -67,6 +68,23 @@ class Users extends \yii\db\ActiveRecord
             'role' => 'Role',
             'city' => 'City',
         ];
+    }
+
+    /**
+     * @return UniqueIdentification
+     */
+    public function getUuidString(): UniqueIdentification
+    {
+        return new UniqueIdentification($this->uuid);
+    }
+
+    /**
+     * @param UniqueIdentification $value
+     * @return void
+     */
+    public function setUuidString(UniqueIdentification $value): void
+    {
+        $this->uuid = $value->getId();
     }
 
     /**

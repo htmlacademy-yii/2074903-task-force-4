@@ -5,7 +5,7 @@ namespace omarinina\domain\valueObjects;
 use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 
-class UserId
+class UniqueIdentification
 {
     /** @var string */
     private string $uuid;
@@ -16,7 +16,7 @@ class UserId
     public function __construct(?string $uuid)
     {
         if ($uuid === null) {
-            throw new InvalidArgumentException('ID is null');
+            $uuid = Uuid::uuid4()->toString();
         }
 
         Uuid::isValid($uuid);
@@ -30,17 +30,5 @@ class UserId
     public function getId(): string
     {
         return $this->uuid;
-    }
-
-    /**
-     * @param string|null $uuid
-     * @return self
-     */
-    public static function create(?string $uuid): self
-    {
-        if ($uuid === null) {
-            $uuid = Uuid::uuid4()->toString();
-        }
-        return new self($uuid);
     }
 }
