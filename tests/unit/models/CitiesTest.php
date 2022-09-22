@@ -2,6 +2,7 @@
 namespace tests\models;
 
 use app\models\Cities;
+use app\models\Users;
 use app\tests\fixtures\CitiesFixture;
 use app\tests\fixtures\UsersFixture;
 
@@ -12,32 +13,31 @@ class CitiesTest extends \Codeception\Test\Unit
      */
     protected $tester;
 
-    public function _before()
-    {
-        $this->tester->haveFixtures([
-            'cities' => [
-                'class' => CitiesFixture::class,
-                'dataFile' => '@tests/fixtures/data/cities.php'
-            ],
-            'users' => [
-                'class' => UsersFixture::class,
-                'dataFile' => '@tests/fixtures/data/users.php'
-            ]
-        ]);
-    }
-
-
-
-//    public function _fixtures()
+//    public function _before()
 //    {
-//        return ['cities' => CitiesFixture::class];
+//        $this->tester->haveFixtures([
+//            'cities' => [
+//                'class' => CitiesFixture::class,
+//                'dataFile' => '@tests/fixtures/data/cities.php'
+//            ],
+//            'users' => [
+//                'class' => UsersFixture::class,
+//                'dataFile' => '@tests/fixtures/data/users.php'
+//            ]
+//        ]);
 //    }
+
+    public function _fixtures()
+    {
+        return [
+            'cities' => CitiesFixture::class,
+            'users' => UsersFixture::class
+        ];
+    }
 
     public function testAddingNewCityWithCorrectData()
     {
-        //don't understand why there is no CitiesFixture and
-        //how concrete data for fixture to add in CitiesFixture
-        $this->assertCount(4, Cities::find()->all());
+        $this->cities->assertCount(4, Cities::find()->all());
         $this->tester->seeRecord(Cities::class, ['name' => 'Феникс']);
         $this->tester->seeRecord(Cities::class, ['name' => 'Варшава']);
         $this->tester->seeRecord(Cities::class, ['name' => 'Винтертур']);
@@ -50,9 +50,20 @@ class CitiesTest extends \Codeception\Test\Unit
 
         $newCity->save();
 
-        $this->assertNotNull($newCity->id);
+        $this->cities->assertNotNull($newCity->id);
 
         $this->assertCount(5, Cities::find()->all());
         $this->tester->seeRecord(Cities::class, ['name' => 'Минск']);
+    }
+
+    public function testRelationsWithUsersTable()
+    {
+        $checkedCity1 = $this->cities('citi2')->id;
+        $countUsers1 = $checkedCity1->users;
+        $this->assertCount(2, $countUsers1);
+
+        $checkedCity2 = $this->cities('citi1')->id;
+        $countUsers2 = $checkedCity2->users;
+        $this->assertCount(1,$countUsers2);
     }
 }

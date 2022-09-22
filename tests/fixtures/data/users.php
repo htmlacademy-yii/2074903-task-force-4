@@ -1,10 +1,11 @@
 <?php
 
-use omarinina\domain\valueObjects\UserId;
+use omarinina\domain\valueObjects\UniqueIdentification;
+
 
 return [
     'user1' => [
-        'uuid' => UserId::create(),
+        'uuid' => new UniqueIdentification(),
         'email' => 'hello@ya.ru',
         'name' => 'Mr Duck',
         'password' => 'top-secret',
@@ -12,7 +13,7 @@ return [
         'city' => 2
     ],
     'user2' => [
-        'uuid' => UserId::create(),
+        'uuid' => new UniqueIdentification(),
         'email' => 'bye@ya.ru',
         'name' => 'Catty',
         'password' => 'just-secret',
@@ -20,7 +21,7 @@ return [
         'city' => 2
     ],
     'user3' => [
-        'uuid' => UserId::create(),
+        'uuid' => new UniqueIdentification(),
         'email' => 'wtf@ya.ru',
         'name' => 'Strange',
         'password' => 'secret',
