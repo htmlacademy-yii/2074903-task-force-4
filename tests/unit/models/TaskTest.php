@@ -10,93 +10,107 @@ use PHPUnit\Framework\TestCase;
 use omarinina\domain\exception\task\IdUSerException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
-use omarinina\domain\valueObjects\UserId;
+use omarinina\domain\valueObjects\UniqueIdentification;
 
 class TaskTest extends TestCase
 {
     public function testOneChangeStatusByAction(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_NEW
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             CancelAction::getInternalName(),
-            UserId::create(1));
+            $user1);
         $this->assertEquals(Task::STATUS_CANCELLED, $nextStatus);
     }
 
     public function testTwoChangeStatusByAction(): void
     {
         $this->expectException(CurrentActionException::class);
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_NEW
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             RespondAction::getInternalName(),
-            UserId::create(2));
+            $user2);
     }
 
     public function testThreeChangeStatusByAction(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_IN_WORK
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             DenyAction::getInternalName(),
-            UserId::create(2));
+            $user2);
         $this->assertEquals(Task::STATUS_FAILED, $nextStatus);
     }
 
     public function testFourChangeStatusByAction(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_IN_WORK
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             AcceptAction::getInternalName(),
-            UserId::create(1));
+            $user1);
         $this->assertEquals(Task::STATUS_DONE, $nextStatus);
     }
 
     public function testFiveChangeStatusByAction(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $this->expectException(IdUSerException::class);
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_IN_WORK
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             AcceptAction::getInternalName(),
-            UserId::create(2));
+            $user2);
     }
 
     public function testSixChangeStatusByAction(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $this->expectException(CurrentActionException::class);
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_IN_WORK
         );
         $nextStatus = $statusIndicator->changeStatusByAction(
             'restart',
-            UserId::create(2));
+            $user2);
     }
 
     public function testGetMapStatuses(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_NEW
         );
         $mapStatuses = $statusIndicator->getMapStatuses();
@@ -106,60 +120,71 @@ class TaskTest extends TestCase
 
     public function testOneGetAvailableActions(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_IN_WORK
         );
         $result = $statusIndicator->
-            getAvailableActions(UserId::create(2))->
+            getAvailableActions($user2)->
             getInternalName();
         $this->assertEquals(DenyAction::getInternalName(), $result);
     }
 
     public function testTwoGetAvailableActions(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_NEW
         );
         $result = $statusIndicator->
-            getAvailableActions(UserId::create(1))->
+            getAvailableActions($user1)->
             getInternalName();
         $this->assertEquals(CancelAction::getInternalName(), $result);
     }
 
     public function testThreeGetAvailableActions(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $this->expectException(AvailableActionsException::class);
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_DONE
         );
-        $result = $statusIndicator->getAvailableActions(UserId::create(1));
+        $result = $statusIndicator->getAvailableActions($user1);
     }
 
     public function testFourGetAvailableActions(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
+        $user3 = new UniqueIdentification();
         $this->expectException(IdUSerException::class);
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_NEW
         );
-        $result = $statusIndicator->getAvailableActions(UserId::create(5));
+        $result = $statusIndicator->getAvailableActions($user3);
     }
 
     public function testFiveGetAvailableActions(): void
     {
+        $user1 = new UniqueIdentification();
+        $user2 = new UniqueIdentification();
         $this->expectException(AvailableActionsException::class);
         $statusIndicator = new Task(
-            UserId::create(1),
-            UserId::create(2),
+            $user1,
+            $user2,
             Task::STATUS_DONE
         );
-        $result = $statusIndicator->getAvailableActions(UserId::create(1));
+        $result = $statusIndicator->getAvailableActions($user1);
     }
 }
