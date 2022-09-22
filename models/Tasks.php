@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use omarinina\domain\valueObjects\UniqueIdentification;
 
 /**
  * This is the model class for table "tasks".
@@ -71,6 +72,23 @@ class Tasks extends \yii\db\ActiveRecord
             'lng' => 'Lng',
             'status' => 'Status',
         ];
+    }
+
+    /**
+     * @return UniqueIdentification
+     */
+    public function getUuidString(): UniqueIdentification
+    {
+        return new UniqueIdentification($this->uuid);
+    }
+
+    /**
+     * @param UniqueIdentification $value
+     * @return void
+     */
+    public function setUuidString(UniqueIdentification $value): void
+    {
+        $this->uuid = $value->getId();
     }
 
     /**
