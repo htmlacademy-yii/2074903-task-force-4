@@ -1,55 +1,116 @@
-# Личный проект «TaskForce»
+<p align="center">
+    <a href="https://github.com/htmlacademy-yii/2074903-task-force-4">
+        <img src="web/img/logotype.png" width=227 height=60 alt="taskforce">
+    </a>
+    <h1 align="center">TaskForce</h1>
+    <h3 align="center">study project by Olga Marinina</h3>
+</p>
+<p align="center">
+<img src="https://img.shields.io/badge/php-%5E8.1.0-blue">
+<img src="https://img.shields.io/badge/mysql-latest-orange">
+<img src="https://img.shields.io/badge/yii2-~2.0.45-green">
+<img src="https://img.shields.io/badge/phpunit-~9.5.0-blue">
+</p>
+<br>
 
-* Студент: [Ольга Маринина](https://up.htmlacademy.ru/yii/4/user/2074903).
-* Наставник: [Михаил Селятин](https://htmlacademy.ru/profile/id919955).
+* Student: [Olga Marinina](https://up.htmlacademy.ru/yii/4/user/2074903).
+* Mentor: [Mikhail Selyatin](https://htmlacademy.ru/profile/id919955).
 
----
+About project
+-------------------
 
-**Обратите внимание на файл:**
+"TaskForce" is an online platform for finding executors for one-time tasks.
+The site functions as an ad exchange where individual customers publish tasks.
+Executors can respond to these tasks by offering their services and the cost of the work.
 
-- [Contributing.md](Contributing.md) — руководство по внесению изменений.
+### Main use cases
 
---
+* Publishing a task
+* Adding a response to a task
+* Search for tasks by category and name
+* Selecting an executor and assigning him to a task
+* Editing a profile
 
-_Не удаляйте и не обращайте внимание на файлы:_<br>
-_`.editorconfig`, `.gitattributes`, `.gitignore`._
 
----
 
-### Памятка
+DIRECTORY STRUCTURE
+-------------------
 
-#### 1. Зарегистрируйтесь на Гитхабе
+      assets/             contains assets definition
+      commands/           contains console commands (controllers)
+      config/             contains application configurations
+      controllers/        contains Web controller classes
+      data/               contains csv-data for DB
+      docker/             contains data from DB volumes
+      mail/               contains view files for e-mails
+      models/             contains model classes
+      runtime/            contains files generated during runtime
+      sql/                contains schema mysql DB and some instructions for mysql
+      src/                contains individual classes creating by us
+      tests/              contains various tests for the basic application (just unit)
+      vendor/             contains dependent 3rd-party packages
+      views/              contains view files for the Web application
+      web/                contains the entry script and Web resources
+      widgets/            contains some widgets
 
-Если у вас ещё нет аккаунта на [github.com](https://github.com/join), скорее зарегистрируйтесь.
 
-#### 2. Создайте форк
 
-Откройте репозиторий и нажмите кнопку «Fork» в правом верхнем углу. Репозиторий из Академии будет скопирован в ваш аккаунт.
+REQUIREMENTS
+------------
 
-<img width="767" alt="" src="https://user-images.githubusercontent.com/8537950/65957999-98951580-e44e-11e9-86dc-24c3186892b8.png">
+We work on this project with docker-compose.
 
-Получится вот так:
+**Images**:
+* yiisoftware/yii2-php:8.1-apache
+* mysql:latest
 
-<img width="767" alt="" src="https://user-images.githubusercontent.com/8537950/65958000-98951580-e44e-11e9-8a6c-deb5a0751e85.png">
+You can then access the application through the following URL:
 
-#### 3. Клонируйте репозиторий на свой компьютер
+    http://127.0.0.1:8000
 
-Будьте внимательны: нужно клонировать свой репозиторий (форк), а не репозиторий Академии. Также обратите внимание, что клонировать репозиторий нужно через SSH, а не через HTTPS. Нажмите зелёную кнопку в правой части экрана, чтобы скопировать SSH-адрес вашего репозитория:
 
-<img width="767" alt="" src="https://user-images.githubusercontent.com/8537950/65958001-992dac00-e44e-11e9-9ac4-9dbb98d7e410.png">
 
-Клонировать репозиторий можно так:
+CONFIGURATION
+-------------
+
+### Database
+
+Edit the file `config/db.php` with real data, for example:
+
+```php
+return [
+    'class' => 'yii\db\Connection',
+    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
+    'username' => 'root',
+    'password' => '1234',
+    'charset' => 'utf8',
+];
+```
+
+
+
+TESTING
+-------
+
+Tests are located in `tests` directory. We use only unit tests on this project.
+
+Tests can be executed by running
 
 ```
-git clone SSH-адрес_вашего_форка
+vendor/bin/codecept run
 ```
 
-Команда клонирует репозиторий на ваш компьютер и подготовит всё необходимое для старта работы.
+The command above will execute unit. Unit tests are testing the system components. 
 
-#### 4. Начинайте обучение!
 
----
+### Code coverage support
 
-<a href="https://htmlacademy.ru/intensive/php2"><img align="left" width="50" height="50" alt="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/yii/logo-for-github-2.png"></a>
+By default, code coverage is disabled in `codeception.yml` configuration file, you should uncomment needed rows to be able
+to collect code coverage. You can run your tests and collect coverage with the following command:
 
-Репозиторий создан для обучения на профессиональном онлайн‑курсе «[PHP, уровень 2](https://htmlacademy.ru/intensive/php2)» от [HTML Academy](https://htmlacademy.ru).
+```
+#collect coverage only for unit tests
+vendor/bin/codecept run unit --coverage --coverage-html --coverage-xml
+```
+
+You can see code coverage output under the `tests/_output` directory.

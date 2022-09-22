@@ -59,7 +59,7 @@ class Task
         ];
     }
 
-    //The same: we have additional buttoms for a client but they didn't change status,
+    //The same: we have additional buttons for a client, but they didn't change status,
     //should they be added this map?
     /**
      * @return array
@@ -89,7 +89,7 @@ class Task
      * @return string
      * @throws CurrentActionException Exception when user tries to choose action
      * which is anavailable for this task status
-     * @throws IdUserException Esception when user doesn't have rights to add
+     * @throws IdUserException Exception when user doesn't have rights to add
      * changes in this task status
      */
     public function changeStatusByAction(string $currentAction, UserId $idUser): string
@@ -110,7 +110,7 @@ class Task
      * @return AbstractAction|null
      * @throws AvailableActionException Exception when task has such status
      * which doesn't have any available action for any users
-     * @throws IdUserException Esception when user doesn't have rights to add
+     * @throws IdUserException Exception when user doesn't have rights to add
      * changes in this task status
      */
     public function getAvailableActions(UserId $idUser): ?AbstractAction
@@ -142,9 +142,9 @@ class Task
         ];
     }
 
-    //Also the client has two additional buttoms when he recives reponds by executors.
+    //Also the client has two additional buttons when he receives responds by executors.
     //Potential this logic can be realised with this class, isn't it?
-    
+
     /**
      * @return array
      */

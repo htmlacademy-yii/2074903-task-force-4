@@ -45,7 +45,8 @@ class CsvToSqlConverter
      * @throws HeaderColumnsException count of columns in read file is not
      * the same as in DB table
      */
-    public function runParseCsvToSql() {
+    public function runParseCsvToSql(): void
+    {
         $writtenFile = $this->openSqlWrittenFile();
         $headerColumns = null;
         $readFile = $this->openCsvReadFile();
@@ -70,7 +71,7 @@ class CsvToSqlConverter
     /**
      * @return SplFileObject
      * @throws FileExistException file which we try to open doesn't exist
-     * @throws FileOpenException file didin't open
+     * @throws FileOpenException file didn't open
      */
     private function openCsvReadFile(): SplFileObject
     {
@@ -89,16 +90,15 @@ class CsvToSqlConverter
 
     /**
      * @return SplFileObject
-     * @throws FileExistException file which we try to open doesn't exist
-     * @throws FileOpenException file didin't open
+     * @throws FileOpenException file didn't open
      */
     private function openSqlWrittenFile(): SplFileObject
     {
-        if (!file_exists($this->sqlFile)) {
-            throw new FileExistException;
-        }
-
         $writtenFile = new SplFileObject($this->sqlFile, 'w+');
+
+        if (!$writtenFile) {
+            throw new FileOpenException;
+        }
 
         return $writtenFile;
     }
@@ -121,7 +121,7 @@ class CsvToSqlConverter
     private function isValidLine(array $line): bool
     {
         $lineColumns = array_filter($line, function ($column) {
-            return !empty($column) || $column !== null;
+            return !empty($column) || $column !== 'null';
         });
 
         return count($lineColumns) === count($this->columns);

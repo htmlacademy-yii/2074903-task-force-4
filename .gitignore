@@ -1,13 +1,41 @@
-.DS_Store
+# phpstorm project files
 .idea
-*.ai
-*.log
-*.pdf
-*.psd
-*.sublime*
-Thumbs.db
-vendor
-config/db.php
+
+# netbeans project files
+nbproject
+
+# zend studio for eclipse project files
+.buildpath
 .project
-.dbeaver
-.errors.log
+.settings
+
+# windows thumbnail cache
+Thumbs.db
+
+# composer vendor dir
+/vendor
+
+# composer itself is not needed
+composer.phar
+
+# composer lock
+composer.lock
+
+# Mac DS_Store Files
+.DS_Store
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
+
+tests/_output/*
+tests/_support/_generated
+
+#vagrant folder
+/.vagrant
+
+#data of connection to DB
+config/db.php
+
+docker/data
