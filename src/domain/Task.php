@@ -2,13 +2,12 @@
 
 namespace omarinina\domain;
 
-use Exception;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
-use omarinina\domain\valueObjects\UserId;
+use omarinina\domain\valueObjects\UniqueIdentification;
 use omarinina\domain\exception\task\IdUSerException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
@@ -21,23 +20,23 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    /** @var UserId */
-    private UserId $idClient;
+    /** @var UniqueIdentification */
+    private UniqueIdentification $idClient;
 
-    /** @var UserId */
-    private UserId $idExecutor;
+    /** @var UniqueIdentification */
+    private UniqueIdentification $idExecutor;
 
     /** @var string */
-    private string $currentStatus = '';
+    private string $currentStatus;
 
     /**
-     * @param UserId $idClient
-     * @param UserId $idExecutor
+     * @param UniqueIdentification $idClient
+     * @param UniqueIdentification $idExecutor
      * @param string $currentStatus
      */
     public function __construct(
-        UserId $idClient,
-        UserId $idExecutor,
+        UniqueIdentification $idClient,
+        UniqueIdentification $idExecutor,
         string $currentStatus)
     {
         $this->idClient = $idClient;
@@ -83,16 +82,18 @@ class Task
     }
 
     //Does saving new status to DB have to be realised in this function?
+
     /**
      * @param string $currentAction
-     * @param UserId $idUser
+     * @param UniqueIdentification $idUser
      * @return string
      * @throws CurrentActionException Exception when user tries to choose action
-     * which is anavailable for this task status
+     * which is unavailable for this task status
      * @throws IdUserException Exception when user doesn't have rights to add
+     * @throws AvailableActionsException
      * changes in this task status
      */
-    public function changeStatusByAction(string $currentAction, UserId $idUser): string
+    public function changeStatusByAction(string $currentAction, UniqueIdentification $idUser): string
     {
         if ($this->isValidAction($currentAction,  $idUser)) {
             return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
@@ -103,17 +104,18 @@ class Task
         if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
             throw new IdUSerException;
         }
+        return $this->currentStatus;
     }
 
     /**
-     * @param UserId $idUser
+     * @param UniqueIdentification $idUser
      * @return AbstractAction|null
-     * @throws AvailableActionException Exception when task has such status
+     * @throws AvailableActionsException Exception when task has such status
      * which doesn't have any available action for any users
      * @throws IdUserException Exception when user doesn't have rights to add
      * changes in this task status
      */
-    public function getAvailableActions(UserId $idUser): ?AbstractAction
+    public function getAvailableActions(UniqueIdentification $idUser): ?AbstractAction
     {
         if (!array_key_exists($this->currentStatus, $this->getLinkStatusToAction())) {
             throw new AvailableActionsException;
@@ -164,10 +166,12 @@ class Task
 
     /**
      * @param string $currentAction
-     * @param UserId $idUser
+     * @param UniqueIdentification $idUser
      * @return boolean
+     * @throws AvailableActionsException
+     * @throws IdUSerException
      */
-    private function isValidAction(string $currentAction, UserId $idUser): bool
+    private function isValidAction(string $currentAction, UniqueIdentification $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;

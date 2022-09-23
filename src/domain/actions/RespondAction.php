@@ -2,7 +2,7 @@
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\valueObjects\UserId;
+use omarinina\domain\valueObjects\UniqueIdentification;
 
 class RespondAction extends AbstractAction
 {
@@ -23,10 +23,10 @@ class RespondAction extends AbstractAction
     }
 
     /**
-     * @param UserId $idUser
+     * @param UniqueIdentification $idUser
      * @return boolean
      */
-    public function isAvailableForUser(UserId $idUser): bool
+    public function isAvailableForUser(UniqueIdentification $idUser): bool
     {
         return $this->idExecutor->getId() === $idUser->getId();
     }
