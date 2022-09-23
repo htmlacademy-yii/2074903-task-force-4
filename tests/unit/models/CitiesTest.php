@@ -52,7 +52,7 @@ class CitiesTest extends \Codeception\Test\Unit
 
         $this->cities->assertNotNull($newCity->id);
 
-        $this->assertCount(5, Cities::find()->all());
+        $this->cities->assertCount(5, Cities::find()->all());
         $this->tester->seeRecord(Cities::class, ['name' => 'Минск']);
     }
 
