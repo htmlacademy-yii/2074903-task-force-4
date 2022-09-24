@@ -33,8 +33,7 @@ $config = [
             'class' => 'yii\faker\FixtureController',
             'templatePath' => '@app/fixtures/templates',
             'fixtureDataPath' => '@app/fixtures/data',
-            // but we don't have directory 'common'
-            'namespace' => 'common\fixtures',
+            'namespace' => 'app\fixtures',
         ],
     ],
 ];
