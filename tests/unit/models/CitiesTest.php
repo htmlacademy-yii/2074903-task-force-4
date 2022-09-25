@@ -1,7 +1,7 @@
 <?php
 namespace tests\models;
 
-use app\models\Cities;
+use omarinina\domain\models\Cities;
 use app\tests\fixtures\CitiesFixture;
 use app\tests\fixtures\UsersFixture;
 

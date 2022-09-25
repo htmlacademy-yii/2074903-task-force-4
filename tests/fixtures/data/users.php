@@ -5,7 +5,7 @@ use omarinina\domain\valueObjects\UniqueIdentification;
 
 return [
     'user1' => [
-        'uuid' => new UniqueIdentification(),
+        'uuid' => UniqueIdentification::createInst(),
         'email' => 'hello@ya.ru',
         'name' => 'Mr Duck',
         'password' => 'top-secret',
@@ -13,7 +13,7 @@ return [
         'city' => 2
     ],
     'user2' => [
-        'uuid' => new UniqueIdentification(),
+        'uuid' => UniqueIdentification::createInst(),
         'email' => 'bye@ya.ru',
         'name' => 'Catty',
         'password' => 'just-secret',
@@ -21,7 +21,7 @@ return [
         'city' => 2
     ],
     'user3' => [
-        'uuid' => new UniqueIdentification(),
+        'uuid' => UniqueIdentification::createInst(),
         'email' => 'wtf@ya.ru',
         'name' => 'Strange',
         'password' => 'secret',

@@ -5,5 +5,5 @@ use yii\test\ActiveFixture;
 
 class CitiesFixture extends ActiveFixture
 {
-    public $modelClass = 'app\models\Cities';
+    public $modelClass = 'omarinina\domain\models\Cities';
 }
