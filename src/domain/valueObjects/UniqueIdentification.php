@@ -31,4 +31,13 @@ class UniqueIdentification
     {
         return $this->uuid;
     }
+
+    /**
+     * @param string|null $uuid
+     * @return UniqueIdentification
+     */
+    static function createInst(?string $uuid = null)
+    {
+        return new self($uuid);
+    }
 }
