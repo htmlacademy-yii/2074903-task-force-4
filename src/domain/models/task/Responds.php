@@ -1,8 +1,11 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\task;
 
 use Yii;
+use yii\db\Expression;
+use omarinina\domain\models\user\Users;
+
 
 /**
  * This is the model class for table "responds".
@@ -10,7 +13,7 @@ use Yii;
  * @property int $id
  * @property string $taskId
  * @property string $executorId
- * @property string|null $createAt
+ * @property string $createAt
  * @property int $price
  * @property string|null $comment
  *
@@ -33,8 +36,9 @@ class Responds extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['taskId', 'executorId', 'price'], 'required'],
+            [['taskId', 'executorId', 'price', 'createAt'], 'required'],
             [['createAt'], 'safe'],
+            [['createAt'], 'default', 'value' => new Expression('NOW()')],
             [['price'], 'integer'],
             [['comment'], 'string'],
             [['taskId', 'executorId'], 'string', 'max' => 36],

@@ -1,29 +1,36 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\user;
 
+use omarinina\domain\models\Categories;
 use omarinina\domain\valueObjects\UniqueIdentification;
 use Yii;
+use omarinina\domain\models\Cities;
+use omarinina\domain\models\task\Responds;
+use omarinina\domain\models\Reviews;
+use omarinina\domain\models\task\Tasks;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "users".
  *
  * @property string $uuid
- * @property string|null $createAt
+ * @property string $createAt
  * @property string $email
  * @property string $name
  * @property string $password
  * @property int $role
  * @property int $city
  *
- * @property Cities $city0
- * @property ExecutorCategories[] $executorCategories
+ * @property Cities $userCity
+ * @property ExecutorCategories $executorCategories
+ * @property Categories $categories
  * @property ExecutorProfiles $executorProfiles
- * @property Responds[] $responds
- * @property Reviews[] $reviews
- * @property Reviews[] $reviews0
- * @property Roles $role0
- * @property UserTasks[] $userTasks
+ * @property Responds $responds
+ * @property Reviews $executorReviews
+ * @property Reviews $clientReviews
+ * @property Roles $userRole
+ * @property Tasks $tasks
  */
 class Users extends \yii\db\ActiveRecord
 {
@@ -43,6 +50,7 @@ class Users extends \yii\db\ActiveRecord
         return [
             [['uuid', 'email', 'name', 'password', 'role', 'city'], 'required'],
             [['createAt'], 'safe'],
+            [['createAt'], 'default', 'value' => new Expression('NOW()')],
             [['role', 'city'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['email'], 'string', 'max' => 128],
@@ -88,11 +96,11 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[City0]].
+     * Gets query for [[UserCity]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCity0()
+    public function getUserCity()
     {
         return $this->hasOne(Cities::class, ['id' => 'city']);
     }
@@ -105,6 +113,18 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorCategories()
     {
         return $this->hasMany(ExecutorCategories::class, ['executorId' => 'uuid']);
+    }
+
+    /**
+     * Gets query for [[Categories]].
+     *
+     * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getCategories()
+    {
+        return $this->hasMany(Categories::class, ['id' => 'categoriesId'])
+            ->viaTable('executorCategories', ['executorId' => 'uuid']);
     }
 
     /**
@@ -128,42 +148,54 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Reviews]].
+     * Gets query for [[ExecutorReviews]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getReviews()
+    public function getExecutorReviews()
     {
         return $this->hasMany(Reviews::class, ['executorId' => 'uuid']);
     }
 
     /**
-     * Gets query for [[Reviews0]].
+     * Gets query for [[ClientReviews]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getReviews0()
+    public function getClientReviews()
     {
         return $this->hasMany(Reviews::class, ['clientId' => 'uuid']);
     }
 
     /**
-     * Gets query for [[Role0]].
+     * Gets query for [[UserRole]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getRole0()
+    public function getUserRole()
     {
         return $this->hasOne(Roles::class, ['id' => 'role']);
     }
 
+//    /**
+//     * Gets query for [[UserTasks]].
+//     *
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getUserTasks()
+//    {
+//        return $this->hasMany(UserTasks::class, ['userId' => 'uuid']);
+//    }
+
     /**
-     * Gets query for [[UserTasks]].
+     * Gets query for [[Tasks]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
-    public function getUserTasks()
+    public function getTasks()
     {
-        return $this->hasMany(UserTasks::class, ['userId' => 'uuid']);
+        return $this->hasMany(Tasks::class, ['id' => 'taskId'])
+            ->viaTable('userTasks', ['userId' => 'uuid']);
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-namespace app\models;
+namespace omarinina\domain\models;
 
 use Yii;
+use omarinina\domain\models\task\Tasks;
 
 /**
  * This is the model class for table "files".
@@ -10,7 +11,7 @@ use Yii;
  * @property int $id
  * @property string $fileSrc
  *
- * @property TaskFiles[] $taskFiles
+ * @property Tasks $tasks
  */
 class Files extends \yii\db\ActiveRecord
 {
@@ -44,13 +45,25 @@ class Files extends \yii\db\ActiveRecord
         ];
     }
 
+//    /**
+//     * Gets query for [[TaskFiles]].
+//     *
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getTaskFiles()
+//    {
+//        return $this->hasMany(TaskFiles::class, ['fileId' => 'id']);
+//    }
+
     /**
-     * Gets query for [[TaskFiles]].
+     * Gets query for [[Tasks]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
-    public function getTaskFiles()
+    public function getTasks()
     {
-        return $this->hasMany(TaskFiles::class, ['fileId' => 'id']);
+        return $this->hasMany(Tasks::class, ['uuid' => 'taskId'])
+            ->viaTable('taskFiles', ['fileId' => 'id']);
     }
 }

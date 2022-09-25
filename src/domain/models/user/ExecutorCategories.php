@@ -1,8 +1,9 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\user;
 
 use Yii;
+use omarinina\domain\models\Categories;
 
 /**
  * This is the model class for table "executorCategories".

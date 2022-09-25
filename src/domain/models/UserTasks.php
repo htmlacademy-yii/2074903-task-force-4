@@ -3,6 +3,8 @@
 namespace omarinina\domain\models;
 
 use Yii;
+use omarinina\domain\models\task\Tasks;
+use omarinina\domain\models\user\Users;
 
 /**
  * This is the model class for table "userTasks".

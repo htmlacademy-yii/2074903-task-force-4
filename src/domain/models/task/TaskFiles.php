@@ -1,8 +1,9 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\task;
 
 use Yii;
+use omarinina\domain\models\Files;
 
 /**
  * This is the model class for table "taskFiles".

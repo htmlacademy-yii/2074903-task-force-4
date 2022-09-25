@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace omarinina\domain\models;
 
 use Yii;
+use omarinina\domain\models\user\Users;
+use omarinina\domain\models\task\Tasks;
 
 /**
  * This is the model class for table "reviews".

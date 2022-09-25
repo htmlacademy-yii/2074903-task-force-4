@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\user;
 
 use Yii;
 
@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property string $role
  *
- * @property Users[] $users
+ * @property Users $users
  */
 class Roles extends \yii\db\ActiveRecord
 {

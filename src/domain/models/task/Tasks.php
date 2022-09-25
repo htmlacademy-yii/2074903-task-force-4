@@ -1,30 +1,35 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\task;
 
 use Yii;
 use omarinina\domain\valueObjects\UniqueIdentification;
+use omarinina\domain\models\Categories;
+use omarinina\domain\models\Reviews;
+use omarinina\domain\models\user\Users;
+use omarinina\domain\models\Files;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tasks".
  *
  * @property string $uuid
- * @property string|null $createAt
+ * @property string $createAt
  * @property string $name
  * @property string|null $description
  * @property string $expiryDate
  * @property int $budget
  * @property int $categoryId
- * @property float $lat
- * @property float $lng
+ * @property float|null $lat
+ * @property float|null $lng
  * @property int $status
  *
  * @property Categories $category
- * @property Responds[] $responds
- * @property Reviews[] $reviews
- * @property TaskStatuses $status0
- * @property TaskFiles[] $taskFiles
- * @property UserTasks[] $userTasks
+ * @property Responds $responds
+ * @property Reviews $reviews
+ * @property TaskStatuses $taskStatus
+ * @property Files $files
+ * @property Users $users
  */
 class Tasks extends \yii\db\ActiveRecord
 {
@@ -42,8 +47,9 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'name', 'expiryDate', 'budget', 'categoryId', 'lat', 'lng', 'status'], 'required'],
+            [['uuid', 'name', 'expiryDate', 'budget', 'categoryId', 'status', 'createAt'], 'required'],
             [['createAt', 'expiryDate'], 'safe'],
+            [['createAt'], 'default', 'value' => new Expression('NOW()')],
             [['description'], 'string'],
             [['budget', 'categoryId', 'status'], 'integer'],
             [['lat', 'lng'], 'number'],
@@ -68,8 +74,8 @@ class Tasks extends \yii\db\ActiveRecord
             'expiryDate' => 'Expiry Date',
             'budget' => 'Budget',
             'categoryId' => 'Category ID',
-            'lat' => 'Lat',
-            'lng' => 'Lng',
+            'lat' => 'Latitude',
+            'lng' => 'Longitude',
             'status' => 'Status',
         ];
     }
@@ -122,32 +128,56 @@ class Tasks extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Status0]].
+     * Gets query for [[TaskStatus]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus0()
+    public function getTaskStatus()
     {
         return $this->hasOne(TaskStatuses::class, ['id' => 'status']);
     }
 
-    /**
-     * Gets query for [[TaskFiles]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTaskFiles()
-    {
-        return $this->hasMany(TaskFiles::class, ['taskId' => 'uuid']);
-    }
+//    /**
+//     * Gets query for [[TaskIdFiles]].
+//     *
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getTaskIdFiles()
+//    {
+//        return $this->hasMany(TaskFiles::class, ['taskId' => 'uuid']);
+//    }
 
     /**
-     * Gets query for [[UserTasks]].
+     *  Gets query for [[Files]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
      */
-    public function getUserTasks()
+    public function getFiles()
     {
-        return $this->hasMany(UserTasks::class, ['taskId' => 'uuid']);
+        return $this->hasMany(Files::class, ['id' => 'fileId'])
+            ->viaTable('taskFiles', ['taskId' => 'uuid']);
+    }
+
+//    /**
+//     * Gets query for [[UserTasks]].
+//     *
+//     * @return \yii\db\ActiveQuery
+//     */
+//    public function getUserTasks()
+//    {
+//        return $this->hasMany(UserTasks::class, ['taskId' => 'uuid']);
+//    }
+
+    /**
+     * Gets query for [[Users]].
+     *
+     * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(Users::class, ['id' => 'userId'])
+            ->viaTable('userTasks', ['taskId' => 'uuid']);
     }
 }

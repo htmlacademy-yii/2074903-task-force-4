@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\task;
 
 use Yii;
 

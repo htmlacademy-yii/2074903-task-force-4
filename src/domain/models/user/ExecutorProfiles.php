@@ -1,7 +1,8 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\user;
 
+use omarinina\domain\models\Categories;
 use Yii;
 
 /**
@@ -16,7 +17,8 @@ use Yii;
  * @property int $status
  *
  * @property Users $executor
- * @property ExecutorStatuses $status0
+ * @property ExecutorStatuses $executorStatus
+ * @property Categories $categories
  */
 class ExecutorProfiles extends \yii\db\ActiveRecord
 {
@@ -57,7 +59,7 @@ class ExecutorProfiles extends \yii\db\ActiveRecord
             'birthDate' => 'Birth Date',
             'phone' => 'Phone',
             'telegram' => 'Telegram',
-            'bio' => 'Bio',
+            'bio' => 'Bio description',
             'status' => 'Status',
         ];
     }
@@ -73,12 +75,24 @@ class ExecutorProfiles extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Status0]].
+     * Gets query for [[ExecutorStatus]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus0()
+    public function getExecutorStatus()
     {
         return $this->hasOne(ExecutorStatuses::class, ['id' => 'status']);
+    }
+
+    /**
+     * Gets query for [[Categories]].
+     *
+     * @return \yii\db\ActiveQuery
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getCategories()
+    {
+        return $this->hasMany(Categories::class, ['id' => 'categoryId'])
+            ->viaTable('executorCategories', ['executorId' => 'executorId']);
     }
 }
