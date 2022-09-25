@@ -80,8 +80,8 @@ CREATE TABLE tasks (
   budget INT NOT NULL,
   categoryId INT NOT NULL,
   FOREIGN KEY (categoryId) REFERENCES categories(id),
-  lat DECIMAL(9,7) NOT NULL,
-  lng DECIMAL(10,7) NOT NULL,
+  lat DECIMAL(9,7),
+  lng DECIMAL(10,7),
   status INT NOT NULL,
   FOREIGN KEY (status) REFERENCES taskStatuses(id)
 );

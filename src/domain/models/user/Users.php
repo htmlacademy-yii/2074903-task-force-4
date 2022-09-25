@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace omarinina\domain\models;
 
 use omarinina\domain\valueObjects\UniqueIdentification;
 use Yii;
