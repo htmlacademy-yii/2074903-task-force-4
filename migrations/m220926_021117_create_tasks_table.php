@@ -13,7 +13,7 @@ class m220926_021117_create_tasks_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%tasks}}', [
-            'uuid' => $this->string(36)->notNull(),
+            'uuid' => $this->string(36)->notNull()->unique(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'name' => $this->string(255)->notNull(),

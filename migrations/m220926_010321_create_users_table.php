@@ -13,7 +13,7 @@ class m220926_010321_create_users_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%users}}', [
-            'uuid' => $this->string(36)->notNull(),
+            'uuid' => $this->string(36)->notNull()->unique(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'email' => $this->string(128)->unique()->notNull(),

@@ -15,7 +15,7 @@ class m220926_015341_create_executorCategories_table extends Migration
         $this->createTable('{{%executorCategories}}', [
             'id' => $this->primaryKey(),
             'categoryId' => $this->integer()->notNull(),
-            'executorId' => $this->string(36)->notNull(),
+            'executorId' => $this->string(36)->notNull()
         ]);
 
         $this->addForeignKey(
@@ -42,9 +42,9 @@ class m220926_015341_create_executorCategories_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%executorCategories}}');
-
-        $this->dropForeignKey('categoryId', 'executorCategories');
         $this->dropForeignKey('executorId', 'executorCategories');
+        $this->dropForeignKey('categoryId', 'executorCategories');
+
+        $this->dropTable('{{%executorCategories}}');
     }
 }
