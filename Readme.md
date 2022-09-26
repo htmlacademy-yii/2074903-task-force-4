@@ -88,16 +88,25 @@ return [
 ```
 
 
+### Migrations
+
+Migrations can be started via the command
+
+```
+docker-compose run php ./yii migrate
+```
+
+
 
 TESTING
 -------
 
 Tests are located in `tests` directory. We use only unit tests on this project.
 
-Tests can be executed by running
+Unit tests can be executed by running
 
 ```
-vendor/bin/codecept run
+vendor/bin/codecept run unit
 ```
 
 The command above will execute unit. Unit tests are testing the system components. 
