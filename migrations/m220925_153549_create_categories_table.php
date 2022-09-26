@@ -26,8 +26,8 @@ class m220925_153549_create_categories_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%categories}}');
-
         $this->dropIndex('c_name', 'categories');
+
+        $this->dropTable('{{%categories}}');
     }
 }

@@ -23,10 +23,10 @@ class m220926_010321_create_users_table extends Migration
             'city' => $this->integer()->notNull()
         ]);
 
-        $this->addPrimaryKey('uuid', 'users', 'uuid');
+        $this->addPrimaryKey('USER_UUID', 'users', 'uuid');
 
         $this->addForeignKey(
-            'role',
+            'USER_ROLE',
             'users',
             'role',
             'roles',
@@ -35,7 +35,7 @@ class m220926_010321_create_users_table extends Migration
         );
 
         $this->addForeignKey(
-            'city',
+            'USER_CITY',
             'users',
             'city',
             'cities',
@@ -49,11 +49,11 @@ class m220926_010321_create_users_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('USER_CITY', 'users');
+        $this->dropForeignKey('USER_ROLE','users');
+
+        $this->dropPrimaryKey('USER_UUID', 'users');
+
         $this->dropTable('{{%users}}');
-
-        $this->dropPrimaryKey('uuid', 'users');
-
-        $this->dropForeignKey('role','users');
-        $this->dropForeignKey('city', 'users');
     }
 }

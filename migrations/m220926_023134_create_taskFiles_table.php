@@ -19,7 +19,7 @@ class m220926_023134_create_taskFiles_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'fileId',
+            'TASK_FILE_ID',
             'taskFiles',
             'fileId',
             'files',
@@ -28,7 +28,7 @@ class m220926_023134_create_taskFiles_table extends Migration
         );
 
         $this->addForeignKey(
-            'taskId',
+            'FILE_TASK_ID',
             'taskFiles',
             'taskId',
             'tasks',
@@ -42,9 +42,9 @@ class m220926_023134_create_taskFiles_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%taskFiles}}');
+        $this->dropForeignKey('FILE_TASK_ID', 'taskFiles');
+        $this->dropForeignKey('TASK_FILE_ID', 'taskFiles');
 
-        $this->dropForeignKey('fileId', 'taskFiles');
-        $this->dropForeignKey('taskId', 'taskFiles');
+        $this->dropTable('{{%taskFiles}}');
     }
 }

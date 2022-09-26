@@ -23,7 +23,7 @@ class m220926_083746_create_responds_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'taskId',
+            'RESPOND_TASK_ID',
             'responds',
             'taskId',
             'tasks',
@@ -32,7 +32,7 @@ class m220926_083746_create_responds_table extends Migration
         );
 
         $this->addForeignKey(
-            'executorId',
+            'RESPOND_EXECUTOR_ID',
             'responds',
             'executorId',
             'users',
@@ -46,9 +46,9 @@ class m220926_083746_create_responds_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%responds}}');
+        $this->dropForeignKey('RESPOND_EXECUTOR_ID', 'responds');
+        $this->dropForeignKey('RESPOND_TASK_ID', 'responds');
 
-        $this->dropForeignKey('taskId', 'responds');
-        $this->dropForeignKey('executorId', 'responds');
+        $this->dropTable('{{%responds}}');
     }
 }

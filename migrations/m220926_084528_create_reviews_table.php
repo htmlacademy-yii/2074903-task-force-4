@@ -25,7 +25,7 @@ class m220926_084528_create_reviews_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'taskId',
+            'REVIEW_TASK_ID',
             'reviews',
             'taskId',
             'tasks',
@@ -34,7 +34,7 @@ class m220926_084528_create_reviews_table extends Migration
         );
 
         $this->addForeignKey(
-            'executorId',
+            'REVIEW_EXECUTOR_ID',
             'reviews',
             'executorId',
             'users',
@@ -43,7 +43,7 @@ class m220926_084528_create_reviews_table extends Migration
         );
 
         $this->addForeignKey(
-            'clientId',
+            'REVIEW_CLIENT_ID',
             'reviews',
             'clientId',
             'users',
@@ -57,10 +57,10 @@ class m220926_084528_create_reviews_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%reviews}}');
+        $this->dropForeignKey('REVIEW_CLIENT_ID', 'reviews');
+        $this->dropForeignKey('REVIEW_EXECUTOR_ID', 'reviews');
+        $this->dropForeignKey('REVIEW_TASK_ID', 'reviews');
 
-        $this->dropForeignKey('taskId', 'reviews');
-        $this->dropForeignKey('executorId', 'reviews');
-        $this->dropForeignKey('clientId', 'reviews');
+        $this->dropTable('{{%reviews}}');
     }
 }

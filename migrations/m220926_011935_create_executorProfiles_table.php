@@ -22,10 +22,10 @@ class m220926_011935_create_executorProfiles_table extends Migration
             'status' => $this->integer()->notNull()
         ]);
 
-        $this->addPrimaryKey('executorId', 'executorProfiles', 'executorId');
+        $this->addPrimaryKey('EXECUTOR_ID', 'executorProfiles', 'executorId');
 
         $this->addForeignKey(
-            'executorId',
+            'PROFILE_EXECUTOR_ID',
             'executorProfiles',
             'executorId',
             'users',
@@ -34,7 +34,7 @@ class m220926_011935_create_executorProfiles_table extends Migration
         );
 
         $this->addForeignKey(
-            'status',
+            'PROFILE_STATUS',
             'executorProfiles',
             'status',
             'executorStatuses',
@@ -48,11 +48,11 @@ class m220926_011935_create_executorProfiles_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('PROFILE_STATUS', 'executorProfiles');
+        $this->dropForeignKey('PROFILE_EXECUTOR_ID', 'executorProfiles');
+
+        $this->dropPrimaryKey('EXECUTOR_ID', 'executorProfiles');
+
         $this->dropTable('{{%executorProfiles}}');
-
-        $this->dropPrimaryKey('executorId', 'executorProfiles');
-
-        $this->dropForeignKey('executorId', 'executorProfiles');
-        $this->dropForeignKey('status', 'executorProfiles');
     }
 }

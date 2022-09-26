@@ -19,7 +19,7 @@ class m220926_022631_create_userTasks_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'userId',
+            'TASK_USER_ID',
             'userTasks',
             'userId',
             'users',
@@ -28,7 +28,7 @@ class m220926_022631_create_userTasks_table extends Migration
         );
 
         $this->addForeignKey(
-            'taskId',
+            'USER_TASK_ID',
             'userTasks',
             'taskId',
             'tasks',
@@ -42,9 +42,9 @@ class m220926_022631_create_userTasks_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%userTasks}}');
+        $this->dropForeignKey('USER_TASK_ID', 'userTasks');
+        $this->dropForeignKey('TASK_USER_ID', 'userTasks');
 
-        $this->dropForeignKey('userId', 'userTasks');
-        $this->dropForeignKey('taskId', 'userTasks');
+        $this->dropTable('{{%userTasks}}');
     }
 }

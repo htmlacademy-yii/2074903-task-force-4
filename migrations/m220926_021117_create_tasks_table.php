@@ -26,10 +26,10 @@ class m220926_021117_create_tasks_table extends Migration
             'status' => $this->integer()->notNull()
         ]);
 
-        $this->addPrimaryKey('uuid', 'tasks', 'uuid');
+        $this->addPrimaryKey('TASK_UUID', 'tasks', 'uuid');
 
         $this->addForeignKey(
-            'categoryId',
+            'TASK_CATEGORY_ID',
             'tasks',
             'categoryId',
             'categories',
@@ -38,7 +38,7 @@ class m220926_021117_create_tasks_table extends Migration
         );
 
         $this->addForeignKey(
-            'status',
+            'TASK_STATUS',
             'tasks',
             'status',
             'taskStatuses',
@@ -54,13 +54,13 @@ class m220926_021117_create_tasks_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%tasks}}');
-
-        $this->dropPrimaryKey('uuid', 'tasks');
-
-        $this->dropForeignKey('categoryId', 'tasks');
-        $this->dropForeignKey('status', 'tasks');
-
         $this->dropIndex('t_name', 'tasks');
+
+        $this->dropForeignKey('TASK_STATUS', 'tasks');
+        $this->dropForeignKey('TASK_CATEGORY_ID', 'tasks');
+
+        $this->dropPrimaryKey('TASK_UUID', 'tasks');
+
+        $this->dropTable('{{%tasks}}');
     }
 }

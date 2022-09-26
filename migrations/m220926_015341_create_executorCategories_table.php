@@ -19,7 +19,7 @@ class m220926_015341_create_executorCategories_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'categoryId',
+            'EXECUTOR_CATEGORY_ID',
             'executorCategories',
             'categoryId',
             'categories',
@@ -28,7 +28,7 @@ class m220926_015341_create_executorCategories_table extends Migration
         );
 
         $this->addForeignKey(
-            'executorId',
+            'CATEGORY_EXECUTOR_ID',
             'executorCategories',
             'executorId',
             'users',
@@ -42,8 +42,8 @@ class m220926_015341_create_executorCategories_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('executorId', 'executorCategories');
-        $this->dropForeignKey('categoryId', 'executorCategories');
+        $this->dropForeignKey('CATEGORY_EXECUTOR_ID', 'executorCategories');
+        $this->dropForeignKey('EXECUTOR_CATEGORY_ID', 'executorCategories');
 
         $this->dropTable('{{%executorCategories}}');
     }
