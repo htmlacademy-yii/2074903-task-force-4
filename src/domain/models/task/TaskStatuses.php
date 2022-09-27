@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property string $taskStatus
  *
- * @property Tasks[] $tasks
+ * @property Tasks $tasks
  */
 class TaskStatuses extends \yii\db\ActiveRecord
 {

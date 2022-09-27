@@ -10,7 +10,7 @@ use Yii;
  * @property int $id
  * @property string $executorStatus
  *
- * @property ExecutorProfiles[] $executorProfiles
+ * @property ExecutorProfiles $executorProfiles
  */
 class ExecutorStatuses extends \yii\db\ActiveRecord
 {

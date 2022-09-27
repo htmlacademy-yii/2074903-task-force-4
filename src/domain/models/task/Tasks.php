@@ -14,11 +14,11 @@ use yii\db\Expression;
  * This is the model class for table "tasks".
  *
  * @property string $uuid
- * @property string $createAt
+ * @property string|null $createAt
  * @property string $name
  * @property string|null $description
  * @property string $expiryDate
- * @property int $budget
+ * @property string $budget
  * @property int $categoryId
  * @property float|null $lat
  * @property float|null $lng
@@ -47,12 +47,12 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'name', 'expiryDate', 'budget', 'categoryId', 'status', 'createAt'], 'required'],
+            [['uuid', 'name', 'expiryDate', 'budget', 'categoryId', 'status'], 'required'],
             [['createAt', 'expiryDate'], 'safe'],
-            [['createAt'], 'default', 'value' => new Expression('NOW()')],
             [['description'], 'string'],
-            [['budget', 'categoryId', 'status'], 'integer'],
+            [['categoryId', 'status'], 'integer'],
             [['lat', 'lng'], 'number'],
+            [['budget'], 'string', 'max' => 128],
             [['uuid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 255],
             [['uuid'], 'unique'],

@@ -13,8 +13,8 @@ use omarinina\domain\models\user\Users;
  * @property int $id
  * @property string $taskId
  * @property string $executorId
- * @property string $createAt
- * @property int $price
+ * @property string|null $createAt
+ * @property string $price
  * @property string|null $comment
  *
  * @property Users $executor
@@ -36,10 +36,9 @@ class Responds extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['taskId', 'executorId', 'price', 'createAt'], 'required'],
+            [['taskId', 'executorId', 'price'], 'required'],
             [['createAt'], 'safe'],
-            [['createAt'], 'default', 'value' => new Expression('NOW()')],
-            [['price'], 'integer'],
+            [['price'], 'string', 'max' => 128],
             [['comment'], 'string'],
             [['taskId', 'executorId'], 'string', 'max' => 36],
             [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'uuid']],

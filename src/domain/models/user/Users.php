@@ -15,7 +15,7 @@ use yii\db\Expression;
  * This is the model class for table "users".
  *
  * @property string $uuid
- * @property string $createAt
+ * @property string|null $createAt
  * @property string $email
  * @property string $name
  * @property string $password
@@ -50,7 +50,6 @@ class Users extends \yii\db\ActiveRecord
         return [
             [['uuid', 'email', 'name', 'password', 'role', 'city'], 'required'],
             [['createAt'], 'safe'],
-            [['createAt'], 'default', 'value' => new Expression('NOW()')],
             [['role', 'city'], 'integer'],
             [['uuid'], 'string', 'max' => 36],
             [['email'], 'string', 'max' => 128],
