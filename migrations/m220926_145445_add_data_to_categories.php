@@ -34,6 +34,6 @@ class m220926_145445_add_data_to_categories extends Migration
      */
     public function safeDown()
     {
-        Categories::deleteAll();
+        $this->delete('categories');
     }
 }

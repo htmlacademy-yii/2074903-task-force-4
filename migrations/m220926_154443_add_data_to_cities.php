@@ -1113,6 +1113,6 @@ class m220926_154443_add_data_to_cities extends Migration
      */
     public function safeDown()
     {
-        Cities::deleteAll();
+        $this->delete('cities');
     }
 }
