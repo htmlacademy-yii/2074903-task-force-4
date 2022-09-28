@@ -6,7 +6,7 @@ use omarinina\domain\valueObjects\UniqueIdentification;
  * @var $faker \Faker\Generator
  */
 return [
-    'uuid' => UniqueIdentification::createInst(),
+    'uuid' => UniqueIdentification::createInst()->getId(),
     'email' => $faker->email(),
     'name' => $faker->userName(),
     'password' => $faker->password(),

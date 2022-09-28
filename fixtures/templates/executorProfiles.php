@@ -26,16 +26,20 @@ $activeTasks = $tasks->all();
 if ($activeTasks) {
     $activeTaskIds = $tasks->select('uuid')->asArray();
     $activeExecutors = [];
-    $relations = UserTasks::find();
     foreach ($activeTaskIds as $taskId) {
-        //как сделать массив значений, а не моделей?
-        $activeExecutors = [$relations->select('executorId')->where(['taskId' => $taskId])];
-    }
-    function getExecutorStatus($executor, $activeExecutors) {
-        if (in_array($executor, $activeExecutors)) {
-            return ExecutorStatuses::findOne(['executorStatus' => 'Занят'])->id;
+        $relations = UserTasks::find();
+        $activeUsers = $relations->select('uuid')->where(['taskId' => $taskId])->asArray();
+        foreach ($activeUsers as $user) {
+            if (in_array($user, $executorsAr)) {
+                $activeExecutors = [$user];
+            }
         }
-        return ExecutorStatuses::findOne(['executorStatus' => 'Открыт для новых заказов'])->id;
+    }
+    function getExecutorStatus($executor, $activeExecutors): string
+    {
+        return in_array($executor, $activeExecutors) ?
+            ExecutorStatuses::findOne(['executorStatus' => 'Занят'])->id :
+            ExecutorStatuses::findOne(['executorStatus' => 'Открыт для новых заказов'])->id;
     }
 }
 if (!$activeTasks) {
