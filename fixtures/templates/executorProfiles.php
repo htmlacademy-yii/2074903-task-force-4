@@ -31,7 +31,7 @@ if ($activeTasks) {
         $activeUsers = $relations->select('uuid')->where(['taskId' => $taskId])->asArray();
         foreach ($activeUsers as $user) {
             if (in_array($user, $executorsAr)) {
-                $activeExecutors = [$user];
+                $activeExecutors[] = $user;
             }
         }
     }
@@ -50,7 +50,7 @@ if (!$activeTasks) {
  * @var $faker \Faker\Generator
  */
 return [
-    'uuid' => $faker->randomElement($executorsAr),
+    'executorId' => $faker->unique()->randomElement($executorsAr),
     'avatarSrc' => $faker->randomElement(
         [
             '@app/web/img/avatars/1.png',
