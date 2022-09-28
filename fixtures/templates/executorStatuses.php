@@ -4,5 +4,5 @@
  * @var $faker \Faker\Generator
  */
 return [
-    'executorStatus' => $faker->randomElements(['Открыт для новых заказов', 'Занят'])
+    'executorStatus' => $faker->unique()->randomElements(['Открыт для новых заказов', 'Занят'])
 ];

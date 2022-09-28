@@ -4,7 +4,7 @@
  * @var $faker \Faker\Generator
  */
 return [
-    'taskStatus' => $faker->randomElements([
+    'taskStatus' => $faker->unique()->randomElements([
         'Новое',
         'Отменено',
         'В работе',
