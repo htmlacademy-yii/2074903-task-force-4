@@ -1,22 +1,20 @@
 <?php
 
-namespace omarinina\domain\models;
+namespace omarinina\domain\models\task;
 
-use Yii;
 use omarinina\domain\models\user\Users;
-use omarinina\domain\models\task\Tasks;
+use Yii;
 
 /**
  * This is the model class for table "reviews".
  *
  * @property int $id
- * @property string $taskId
- * @property string $executorId
- * @property string $clientId
+ * @property int $taskId
+ * @property int $executorId
+ * @property int $clientId
  * @property int $score
  * @property string|null $comment
- * @property string|null $createAt
- * @property int|null $success
+ * @property string $createAt
  *
  * @property Users $client
  * @property Users $executor
@@ -39,13 +37,12 @@ class Reviews extends \yii\db\ActiveRecord
     {
         return [
             [['taskId', 'executorId', 'clientId', 'score'], 'required'],
-            [['score', 'success'], 'integer'],
+            [['taskId', 'executorId', 'clientId', 'score'], 'integer'],
             [['comment'], 'string'],
             [['createAt'], 'safe'],
-            [['taskId', 'executorId', 'clientId'], 'string', 'max' => 36],
-            [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'uuid']],
-            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'uuid']],
-            [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'uuid']],
+            [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
+            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
+            [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'id']],
         ];
     }
 
@@ -62,7 +59,6 @@ class Reviews extends \yii\db\ActiveRecord
             'score' => 'Score',
             'comment' => 'Comment',
             'createAt' => 'Create At',
-            'success' => 'Success',
         ];
     }
 
@@ -73,7 +69,7 @@ class Reviews extends \yii\db\ActiveRecord
      */
     public function getClient()
     {
-        return $this->hasOne(Users::class, ['uuid' => 'clientId']);
+        return $this->hasOne(Users::class, ['id' => 'clientId']);
     }
 
     /**
@@ -83,7 +79,7 @@ class Reviews extends \yii\db\ActiveRecord
      */
     public function getExecutor()
     {
-        return $this->hasOne(Users::class, ['uuid' => 'executorId']);
+        return $this->hasOne(Users::class, ['id' => 'executorId']);
     }
 
     /**
@@ -93,6 +89,6 @@ class Reviews extends \yii\db\ActiveRecord
      */
     public function getTask()
     {
-        return $this->hasOne(Tasks::class, ['uuid' => 'taskId']);
+        return $this->hasOne(Tasks::class, ['id' => 'taskId']);
     }
 }

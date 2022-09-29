@@ -2,19 +2,16 @@
 
 namespace omarinina\domain\models\task;
 
-use Yii;
-use omarinina\domain\valueObjects\UniqueIdentification;
-use omarinina\domain\models\Categories;
-use omarinina\domain\models\Reviews;
 use omarinina\domain\models\user\Users;
+use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
-use yii\db\Expression;
+use Yii;
 
 /**
  * This is the model class for table "tasks".
  *
- * @property string $uuid
- * @property string|null $createAt
+ * @property int $id
+ * @property string $createAt
  * @property string $name
  * @property string|null $description
  * @property string $expiryDate
@@ -23,13 +20,18 @@ use yii\db\Expression;
  * @property float|null $lat
  * @property float|null $lng
  * @property int $status
+ * @property int|null $executorId
+ * @property int $clientId
  *
  * @property Categories $category
- * @property Responds $responds
- * @property Reviews $reviews
+ * @property Users $client
+ * @property Users $executor
+ * @property Responds[] $responds
+ * @property Reviews[] $reviews
  * @property TaskStatuses $taskStatus
- * @property Files $files
- * @property Users $users
+ * @property TaskFiles[] $taskFiles
+ * @property Files[] $files
+ *
  */
 class Tasks extends \yii\db\ActiveRecord
 {
@@ -47,16 +49,16 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'name', 'expiryDate', 'budget', 'categoryId', 'status'], 'required'],
             [['createAt', 'expiryDate'], 'safe'],
+            [['name', 'expiryDate', 'budget', 'categoryId', 'status', 'clientId'], 'required'],
             [['description'], 'string'],
-            [['categoryId', 'status'], 'integer'],
+            [['categoryId', 'status', 'executorId', 'clientId'], 'integer'],
             [['lat', 'lng'], 'number'],
-            [['budget'], 'string', 'max' => 128],
-            [['uuid'], 'string', 'max' => 36],
             [['name'], 'string', 'max' => 255],
-            [['uuid'], 'unique'],
+            [['budget'], 'string', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
+            [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
+            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
             [['status'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatuses::class, 'targetAttribute' => ['status' => 'id']],
         ];
     }
@@ -67,34 +69,19 @@ class Tasks extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'uuid' => 'Uuid',
+            'id' => 'ID',
             'createAt' => 'Create At',
             'name' => 'Name',
             'description' => 'Description',
             'expiryDate' => 'Expiry Date',
             'budget' => 'Budget',
             'categoryId' => 'Category ID',
-            'lat' => 'Latitude',
-            'lng' => 'Longitude',
+            'lat' => 'Lat',
+            'lng' => 'Lng',
             'status' => 'Status',
+            'executorId' => 'Executor ID',
+            'clientId' => 'Client ID',
         ];
-    }
-
-    /**
-     * @return UniqueIdentification
-     */
-    public function getUuidString(): UniqueIdentification
-    {
-        return new UniqueIdentification($this->uuid);
-    }
-
-    /**
-     * @param UniqueIdentification $value
-     * @return void
-     */
-    public function setUuidString(UniqueIdentification $value): void
-    {
-        $this->uuid = $value->getId();
     }
 
     /**
@@ -108,13 +95,33 @@ class Tasks extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Client]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClient()
+    {
+        return $this->hasOne(Users::class, ['id' => 'clientId']);
+    }
+
+    /**
+     * Gets query for [[Executor]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutor()
+    {
+        return $this->hasOne(Users::class, ['id' => 'executorId']);
+    }
+
+    /**
      * Gets query for [[Responds]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getResponds()
     {
-        return $this->hasMany(Responds::class, ['taskId' => 'uuid']);
+        return $this->hasMany(Responds::class, ['taskId' => 'id']);
     }
 
     /**
@@ -124,7 +131,7 @@ class Tasks extends \yii\db\ActiveRecord
      */
     public function getReviews()
     {
-        return $this->hasMany(Reviews::class, ['taskId' => 'uuid']);
+        return $this->hasMany(Reviews::class, ['taskId' => 'id']);
     }
 
     /**
@@ -137,15 +144,15 @@ class Tasks extends \yii\db\ActiveRecord
         return $this->hasOne(TaskStatuses::class, ['id' => 'status']);
     }
 
-//    /**
-//     * Gets query for [[TaskIdFiles]].
-//     *
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getTaskIdFiles()
-//    {
-//        return $this->hasMany(TaskFiles::class, ['taskId' => 'uuid']);
-//    }
+    /**
+     * Gets query for [[TaskFiles]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTaskFiles()
+    {
+        return $this->hasMany(TaskFiles::class, ['taskId' => 'id']);
+    }
 
     /**
      *  Gets query for [[Files]].
@@ -156,28 +163,6 @@ class Tasks extends \yii\db\ActiveRecord
     public function getFiles()
     {
         return $this->hasMany(Files::class, ['id' => 'fileId'])
-            ->viaTable('taskFiles', ['taskId' => 'uuid']);
-    }
-
-//    /**
-//     * Gets query for [[UserTasks]].
-//     *
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getUserTasks()
-//    {
-//        return $this->hasMany(UserTasks::class, ['taskId' => 'uuid']);
-//    }
-
-    /**
-     * Gets query for [[Users]].
-     *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getUsers()
-    {
-        return $this->hasMany(Users::class, ['id' => 'userId'])
-            ->viaTable('userTasks', ['taskId' => 'uuid']);
+            ->viaTable('taskFiles', ['taskId' => 'id']);
     }
 }

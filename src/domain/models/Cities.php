@@ -2,8 +2,8 @@
 
 namespace omarinina\domain\models;
 
-use Yii;
 use omarinina\domain\models\user\Users;
+use Yii;
 
 /**
  * This is the model class for table "cities".
@@ -13,7 +13,7 @@ use omarinina\domain\models\user\Users;
  * @property float $lat
  * @property float $lng
  *
- * @property Users $users
+ * @property Users[] $users
  */
 class Cities extends \yii\db\ActiveRecord
 {
@@ -45,8 +45,8 @@ class Cities extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'lat' => 'Latitude',
-            'lng' => 'Longitude',
+            'lat' => 'Lat',
+            'lng' => 'Lng',
         ];
     }
 

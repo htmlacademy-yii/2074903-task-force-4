@@ -2,18 +2,16 @@
 
 namespace omarinina\domain\models\task;
 
-use Yii;
-use yii\db\Expression;
 use omarinina\domain\models\user\Users;
-
+use Yii;
 
 /**
  * This is the model class for table "responds".
  *
  * @property int $id
- * @property string $taskId
- * @property string $executorId
- * @property string|null $createAt
+ * @property int $taskId
+ * @property int $executorId
+ * @property string $createAt
  * @property string $price
  * @property string|null $comment
  *
@@ -37,12 +35,12 @@ class Responds extends \yii\db\ActiveRecord
     {
         return [
             [['taskId', 'executorId', 'price'], 'required'],
+            [['taskId', 'executorId'], 'integer'],
             [['createAt'], 'safe'],
-            [['price'], 'string', 'max' => 128],
             [['comment'], 'string'],
-            [['taskId', 'executorId'], 'string', 'max' => 36],
-            [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'uuid']],
-            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'uuid']],
+            [['price'], 'string', 'max' => 128],
+            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
+            [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'id']],
         ];
     }
 
@@ -68,7 +66,7 @@ class Responds extends \yii\db\ActiveRecord
      */
     public function getExecutor()
     {
-        return $this->hasOne(Users::class, ['uuid' => 'executorId']);
+        return $this->hasOne(Users::class, ['id' => 'executorId']);
     }
 
     /**
@@ -78,6 +76,6 @@ class Responds extends \yii\db\ActiveRecord
      */
     public function getTask()
     {
-        return $this->hasOne(Tasks::class, ['uuid' => 'taskId']);
+        return $this->hasOne(Tasks::class, ['id' => 'taskId']);
     }
 }

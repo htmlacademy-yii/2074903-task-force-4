@@ -2,10 +2,9 @@
 
 namespace omarinina\domain\models;
 
-use omarinina\domain\models\user\ExecutorProfiles;
-use Yii;
-use omarinina\domain\models\user\Users;
+use omarinina\domain\models\user\ExecutorCategories;
 use omarinina\domain\models\task\Tasks;
+use Yii;
 
 /**
  * This is the model class for table "categories".
@@ -14,9 +13,8 @@ use omarinina\domain\models\task\Tasks;
  * @property string $name
  * @property string|null $icon
  *
- * @property ExecutorProfiles $executorProfiles
- * @property Users $executors
- * @property Tasks $tasks
+ * @property ExecutorCategories[] $executorCategories
+ * @property Tasks[] $tasks
  */
 class Categories extends \yii\db\ActiveRecord
 {
@@ -47,42 +45,18 @@ class Categories extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'icon' => 'Icon src',
+            'icon' => 'Icon',
         ];
     }
 
-//    /**
-//     * Gets query for [[ExecutorCategories]].
-//     *
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getExecutorCategories()
-//    {
-//        return $this->hasMany(ExecutorCategories::class, ['categoryId' => 'id']);
-//    }
-
     /**
-     * Gets query for [[ExecutorProfiles]].
+     * Gets query for [[ExecutorCategories]].
      *
      * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
      */
-    public function getExecutorProfiles()
+    public function getExecutorCategories()
     {
-        return $this->hasMany(ExecutorProfiles::class, ['executorId' => 'executorId'])
-            ->viaTable('executorCategories', ['categoriesId' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Executors]].
-     *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getExecutors()
-    {
-        return $this->hasMany(Users::class, ['uuid' => 'executorId'])
-            ->viaTable('executorCategories', ['categoriesId' => 'id']);
+        return $this->hasMany(ExecutorCategories::class, ['categoryId' => 'id']);
     }
 
     /**

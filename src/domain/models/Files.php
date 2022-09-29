@@ -2,8 +2,9 @@
 
 namespace omarinina\domain\models;
 
-use Yii;
+use omarinina\domain\models\task\TaskFiles;
 use omarinina\domain\models\task\Tasks;
+use Yii;
 
 /**
  * This is the model class for table "files".
@@ -11,7 +12,8 @@ use omarinina\domain\models\task\Tasks;
  * @property int $id
  * @property string $fileSrc
  *
- * @property Tasks $tasks
+ * @property TaskFiles[] $taskFiles
+ * @property Tasks $task
  */
 class Files extends \yii\db\ActiveRecord
 {
@@ -45,25 +47,25 @@ class Files extends \yii\db\ActiveRecord
         ];
     }
 
-//    /**
-//     * Gets query for [[TaskFiles]].
-//     *
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getTaskFiles()
-//    {
-//        return $this->hasMany(TaskFiles::class, ['fileId' => 'id']);
-//    }
+    /**
+     * Gets query for [[TaskFiles]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTaskFiles()
+    {
+        return $this->hasMany(TaskFiles::class, ['fileId' => 'id']);
+    }
 
     /**
-     * Gets query for [[Tasks]].
+     * Gets query for [[Task]].
      *
      * @return \yii\db\ActiveQuery
      * @throws \yii\base\InvalidConfigException
      */
-    public function getTasks()
+    public function getTask()
     {
-        return $this->hasMany(Tasks::class, ['uuid' => 'taskId'])
+        return $this->hasOne(Tasks::class, ['id' => 'taskId'])
             ->viaTable('taskFiles', ['fileId' => 'id']);
     }
 }

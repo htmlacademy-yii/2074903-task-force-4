@@ -2,15 +2,15 @@
 
 namespace omarinina\domain\models\user;
 
-use Yii;
 use omarinina\domain\models\Categories;
+use Yii;
 
 /**
  * This is the model class for table "executorCategories".
  *
  * @property int $id
  * @property int $categoryId
- * @property string $executorId
+ * @property int $executorId
  *
  * @property Categories $category
  * @property Users $executor
@@ -32,10 +32,9 @@ class ExecutorCategories extends \yii\db\ActiveRecord
     {
         return [
             [['categoryId', 'executorId'], 'required'],
-            [['categoryId'], 'integer'],
-            [['executorId'], 'string', 'max' => 36],
+            [['categoryId', 'executorId'], 'integer'],
+            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
-            [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'uuid']],
         ];
     }
 
@@ -68,6 +67,6 @@ class ExecutorCategories extends \yii\db\ActiveRecord
      */
     public function getExecutor()
     {
-        return $this->hasOne(Users::class, ['uuid' => 'executorId']);
+        return $this->hasOne(Users::class, ['id' => 'executorId']);
     }
 }

@@ -2,35 +2,36 @@
 
 namespace omarinina\domain\models\user;
 
-use omarinina\domain\models\Categories;
-use omarinina\domain\valueObjects\UniqueIdentification;
-use Yii;
 use omarinina\domain\models\Cities;
 use omarinina\domain\models\task\Responds;
-use omarinina\domain\models\Reviews;
+use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
-use yii\db\Expression;
+use Yii;
 
 /**
  * This is the model class for table "users".
  *
- * @property string $uuid
- * @property string|null $createAt
+ * @property int $id
+ * @property string $createAt
  * @property string $email
  * @property string $name
  * @property string $password
  * @property int $role
  * @property int $city
+ * @property string|null $avatarSrc
+ * @property string|null $birthDate
+ * @property string|null $phone
+ * @property string|null $telegram
+ * @property string|null $bio
  *
- * @property Cities $userCity
- * @property ExecutorCategories $executorCategories
- * @property Categories $categories
- * @property ExecutorProfiles $executorProfiles
- * @property Responds $responds
- * @property Reviews $executorReviews
- * @property Reviews $clientReviews
+ * @property Cities $city0
+ * @property ExecutorCategories[] $executorCategories
+ * @property Responds[] $responds
+ * @property Reviews[] $clientReviews
+ * @property Reviews[] $executorReviews
  * @property Roles $userRole
- * @property Tasks $tasks
+ * @property Tasks[] $clientTasks
+ * @property Tasks[] $executorTasks
  */
 class Users extends \yii\db\ActiveRecord
 {
@@ -48,16 +49,15 @@ class Users extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'email', 'name', 'password', 'role', 'city'], 'required'],
-            [['createAt'], 'safe'],
+            [['createAt', 'birthDate'], 'safe'],
+            [['email', 'name', 'password', 'role', 'city'], 'required'],
             [['role', 'city'], 'integer'],
-            [['uuid'], 'string', 'max' => 36],
+            [['bio'], 'string'],
             [['email'], 'string', 'max' => 128],
-            [['name', 'password'], 'string', 'max' => 255],
+            [['name', 'password', 'avatarSrc', 'phone', 'telegram'], 'string', 'max' => 255],
             [['email'], 'unique'],
-            [['uuid'], 'unique'],
-            [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['city' => 'id']],
+            [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
         ];
     }
 
@@ -67,39 +67,27 @@ class Users extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'uuid' => 'Uuid',
+            'id' => 'ID',
             'createAt' => 'Create At',
             'email' => 'Email',
             'name' => 'Name',
             'password' => 'Password',
             'role' => 'Role',
             'city' => 'City',
+            'avatarSrc' => 'Avatar Src',
+            'birthDate' => 'Birth Date',
+            'phone' => 'Phone',
+            'telegram' => 'Telegram',
+            'bio' => 'Bio',
         ];
     }
 
     /**
-     * @return UniqueIdentification
-     */
-    public function getUuidString(): UniqueIdentification
-    {
-        return new UniqueIdentification($this->uuid);
-    }
-
-    /**
-     * @param UniqueIdentification $value
-     * @return void
-     */
-    public function setUuidString(UniqueIdentification $value): void
-    {
-        $this->uuid = $value->getId();
-    }
-
-    /**
-     * Gets query for [[UserCity]].
+     * Gets query for [[City0]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUserCity()
+    public function getCity0()
     {
         return $this->hasOne(Cities::class, ['id' => 'city']);
     }
@@ -111,29 +99,7 @@ class Users extends \yii\db\ActiveRecord
      */
     public function getExecutorCategories()
     {
-        return $this->hasMany(ExecutorCategories::class, ['executorId' => 'uuid']);
-    }
-
-    /**
-     * Gets query for [[Categories]].
-     *
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getCategories()
-    {
-        return $this->hasMany(Categories::class, ['id' => 'categoriesId'])
-            ->viaTable('executorCategories', ['executorId' => 'uuid']);
-    }
-
-    /**
-     * Gets query for [[ExecutorProfiles]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getExecutorProfiles()
-    {
-        return $this->hasOne(ExecutorProfiles::class, ['executorId' => 'uuid']);
+        return $this->hasMany(ExecutorCategories::class, ['executorId' => 'id']);
     }
 
     /**
@@ -143,17 +109,7 @@ class Users extends \yii\db\ActiveRecord
      */
     public function getResponds()
     {
-        return $this->hasMany(Responds::class, ['executorId' => 'uuid']);
-    }
-
-    /**
-     * Gets query for [[ExecutorReviews]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getExecutorReviews()
-    {
-        return $this->hasMany(Reviews::class, ['executorId' => 'uuid']);
+        return $this->hasMany(Responds::class, ['executorId' => 'id']);
     }
 
     /**
@@ -163,7 +119,17 @@ class Users extends \yii\db\ActiveRecord
      */
     public function getClientReviews()
     {
-        return $this->hasMany(Reviews::class, ['clientId' => 'uuid']);
+        return $this->hasMany(Reviews::class, ['clientId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ExecutorReviews]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorReviews()
+    {
+        return $this->hasMany(Reviews::class, ['executorId' => 'id']);
     }
 
     /**
@@ -176,25 +142,23 @@ class Users extends \yii\db\ActiveRecord
         return $this->hasOne(Roles::class, ['id' => 'role']);
     }
 
-//    /**
-//     * Gets query for [[UserTasks]].
-//     *
-//     * @return \yii\db\ActiveQuery
-//     */
-//    public function getUserTasks()
-//    {
-//        return $this->hasMany(UserTasks::class, ['userId' => 'uuid']);
-//    }
-
     /**
-     * Gets query for [[Tasks]].
+     * Gets query for [[ClientTasks]].
      *
      * @return \yii\db\ActiveQuery
-     * @throws \yii\base\InvalidConfigException
      */
-    public function getTasks()
+    public function getClientTasks()
     {
-        return $this->hasMany(Tasks::class, ['id' => 'taskId'])
-            ->viaTable('userTasks', ['userId' => 'uuid']);
+        return $this->hasMany(Tasks::class, ['clientId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ExecutorTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorTasks()
+    {
+        return $this->hasMany(Tasks::class, ['executorId' => 'id']);
     }
 }
