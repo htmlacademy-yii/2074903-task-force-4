@@ -14,14 +14,13 @@ class m220926_084528_create_reviews_table extends Migration
     {
         $this->createTable('{{%reviews}}', [
             'id' => $this->primaryKey(),
-            'taskId' => $this->string(36)->notNull(),
-            'executorId' => $this->string(36)->notNull(),
-            'clientId' => $this->string(36)->notNull(),
+            'taskId' => $this->integer()->notNull(),
+            'executorId' => $this->integer()->notNull(),
+            'clientId' => $this->integer()->notNull(),
             'score' => $this->integer()->notNull(),
             'comment' => $this->text(),
             'createAt' => $this->timestamp()
-                ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
-            'success' => $this->boolean(),
+                ->defaultValue(new \yii\db\Expression('NOW()'))->notNull()
         ]);
 
         $this->addForeignKey(
@@ -29,7 +28,7 @@ class m220926_084528_create_reviews_table extends Migration
             'reviews',
             'taskId',
             'tasks',
-            'uuid',
+            'id',
             'CASCADE'
         );
 
@@ -38,7 +37,7 @@ class m220926_084528_create_reviews_table extends Migration
             'reviews',
             'executorId',
             'users',
-            'uuid',
+            'id',
             'CASCADE'
         );
 
@@ -47,7 +46,7 @@ class m220926_084528_create_reviews_table extends Migration
             'reviews',
             'clientId',
             'users',
-            'uuid',
+            'id',
             'CASCADE'
         );
     }

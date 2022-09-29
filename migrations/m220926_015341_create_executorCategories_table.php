@@ -15,7 +15,7 @@ class m220926_015341_create_executorCategories_table extends Migration
         $this->createTable('{{%executorCategories}}', [
             'id' => $this->primaryKey(),
             'categoryId' => $this->integer()->notNull(),
-            'executorId' => $this->string(36)->notNull()
+            'executorId' => $this->integer()->notNull()
         ]);
 
         $this->addForeignKey(
@@ -32,7 +32,7 @@ class m220926_015341_create_executorCategories_table extends Migration
             'executorCategories',
             'executorId',
             'users',
-            'uuid',
+            'id',
             'CASCADE'
         );
     }

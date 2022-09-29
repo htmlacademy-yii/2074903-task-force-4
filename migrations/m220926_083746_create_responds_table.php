@@ -14,8 +14,8 @@ class m220926_083746_create_responds_table extends Migration
     {
         $this->createTable('{{%responds}}', [
             'id' => $this->primaryKey(),
-            'taskId' => $this->string(36)->notNull(),
-            'executorId' => $this->string(36)->notNull(),
+            'taskId' => $this->integer()->notNull(),
+            'executorId' => $this->integer()->notNull(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'price' => $this->string(128)->notNull(),
@@ -27,7 +27,7 @@ class m220926_083746_create_responds_table extends Migration
             'responds',
             'taskId',
             'tasks',
-            'uuid',
+            'id',
             'CASCADE'
         );
 
@@ -36,7 +36,7 @@ class m220926_083746_create_responds_table extends Migration
             'responds',
             'executorId',
             'users',
-            'uuid',
+            'id',
             'CASCADE'
         );
     }

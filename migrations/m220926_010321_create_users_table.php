@@ -13,17 +13,20 @@ class m220926_010321_create_users_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%users}}', [
-            'uuid' => $this->string(36)->notNull()->unique(),
+            'id' => $this->primaryKey(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'email' => $this->string(128)->unique()->notNull(),
             'name' => $this->string(255)->notNull(),
             'password' => $this->char(255)->notNull(),
             'role' => $this->integer()->notNull(),
-            'city' => $this->integer()->notNull()
+            'city' => $this->integer()->notNull(),
+            'avatarSrc' => $this->string(255),
+            'birthDate' => $this->timestamp(),
+            'phone' => $this->char(255),
+            'telegram' => $this->string(255),
+            'bio' => $this->text()
         ]);
-
-        $this->addPrimaryKey('USER_UUID', 'users', 'uuid');
 
         $this->addForeignKey(
             'USER_ROLE',
@@ -51,8 +54,6 @@ class m220926_010321_create_users_table extends Migration
     {
         $this->dropForeignKey('USER_CITY', 'users');
         $this->dropForeignKey('USER_ROLE','users');
-
-        $this->dropPrimaryKey('USER_UUID', 'users');
 
         $this->dropTable('{{%users}}');
     }

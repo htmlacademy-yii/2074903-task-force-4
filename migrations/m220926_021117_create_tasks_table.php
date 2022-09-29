@@ -13,7 +13,7 @@ class m220926_021117_create_tasks_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%tasks}}', [
-            'uuid' => $this->string(36)->notNull()->unique(),
+            'id' => $this->primaryKey(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'name' => $this->string(255)->notNull(),
@@ -23,10 +23,10 @@ class m220926_021117_create_tasks_table extends Migration
             'categoryId' => $this->integer()->notNull(),
             'lat' => $this->decimal(9,7),
             'lng' => $this->decimal(10,7),
-            'status' => $this->integer()->notNull()
+            'status' => $this->integer()->notNull(),
+            'executorId' => $this->integer(),
+            'clientId' => $this->integer()->notNull()
         ]);
-
-        $this->addPrimaryKey('TASK_UUID', 'tasks', 'uuid');
 
         $this->addForeignKey(
             'TASK_CATEGORY_ID',
@@ -46,6 +46,24 @@ class m220926_021117_create_tasks_table extends Migration
             'CASCADE'
         );
 
+        $this->addForeignKey(
+            'TASK_EXECUTOR_ID',
+            'tasks',
+            'executorId',
+            'users',
+            'id',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'TASK_CLIENT_ID',
+            'tasks',
+            'clientId',
+            'users',
+            'id',
+            'CASCADE'
+        );
+
         $this->createIndex('t_name', 'tasks', 'name');
     }
 
@@ -56,10 +74,10 @@ class m220926_021117_create_tasks_table extends Migration
     {
         $this->dropIndex('t_name', 'tasks');
 
+        $this->dropForeignKey('TASK_CLIENT_ID', 'tasks');
+        $this->dropForeignKey('TASK_EXECUTOR_ID', 'tasks');
         $this->dropForeignKey('TASK_STATUS', 'tasks');
         $this->dropForeignKey('TASK_CATEGORY_ID', 'tasks');
-
-        $this->dropPrimaryKey('TASK_UUID', 'tasks');
 
         $this->dropTable('{{%tasks}}');
     }

@@ -15,7 +15,7 @@ class m220926_023134_create_taskFiles_table extends Migration
         $this->createTable('{{%taskFiles}}', [
             'id' => $this->primaryKey(),
             'fileId' => $this->integer()->notNull(),
-            'taskId' => $this->string(36)->notNull()
+            'taskId' => $this->integer()->notNull()
         ]);
 
         $this->addForeignKey(
@@ -32,7 +32,7 @@ class m220926_023134_create_taskFiles_table extends Migration
             'taskFiles',
             'taskId',
             'tasks',
-            'uuid',
+            'id',
             'CASCADE'
         );
     }
