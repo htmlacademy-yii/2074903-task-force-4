@@ -21,8 +21,7 @@ class m220926_021117_create_tasks_table extends Migration
             'expiryDate' => $this->timestamp()->notNull(),
             'budget' => $this->string(128)->notNull(),
             'categoryId' => $this->integer()->notNull(),
-            'lat' => $this->decimal(9,7),
-            'lng' => $this->decimal(10,7),
+            'cityId' => $this->integer(),
             'status' => $this->integer()->notNull(),
             'executorId' => $this->integer(),
             'clientId' => $this->integer()->notNull()
@@ -64,6 +63,15 @@ class m220926_021117_create_tasks_table extends Migration
             'CASCADE'
         );
 
+        $this->addForeignKey(
+            'TASK_CITY_ID',
+            'tasks',
+            'cityId',
+            'cities',
+            'id',
+            'CASCADE'
+        );
+
         $this->createIndex('t_name', 'tasks', 'name');
     }
 
@@ -74,6 +82,7 @@ class m220926_021117_create_tasks_table extends Migration
     {
         $this->dropIndex('t_name', 'tasks');
 
+        $this->dropForeignKey('TASK_CITY_ID', 'tasks');
         $this->dropForeignKey('TASK_CLIENT_ID', 'tasks');
         $this->dropForeignKey('TASK_EXECUTOR_ID', 'tasks');
         $this->dropForeignKey('TASK_STATUS', 'tasks');

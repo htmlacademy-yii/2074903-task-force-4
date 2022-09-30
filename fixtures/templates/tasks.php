@@ -22,10 +22,9 @@ return [
         )
     ),
     'budget' => $faker->randomNumber(4,true),
-    'categoryId' => $faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8]),
-    'lat' => $faker->randomFloat(7,41,81),
-    'lng' => $faker->randomFloat(7, 19,169),
-    'status' => $faker->randomElement([1, 2, 3, 4, 5]),
+    'categoryId' => $faker->numberBetween(1, 8),
+    'cityId' => $faker->numberBetween(1,1087),
+    'status' => $faker->numberBetween(1, 5),
     'executorId' => $faker->randomElement([$faker->randomElement($executors), null]),
     'clientId' => $faker->randomElement($clients)
 ];

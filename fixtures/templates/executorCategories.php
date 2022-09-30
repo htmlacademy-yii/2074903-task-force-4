@@ -11,5 +11,5 @@ $executors = array_map(
  */
 return [
     'executorId' => $faker->randomElement($executors),
-    'categoryId' => $faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8])
+    'categoryId' => $faker->numberBetween(1, 8)
 ];

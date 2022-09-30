@@ -2,51 +2,51 @@
 
 return [
     'executorCategories0' => [
-        'executorId' => 5,
-        'categoryId' => 3,
+        'executorId' => 3,
+        'categoryId' => 2,
     ],
     'executorCategories1' => [
-        'executorId' => 4,
-        'categoryId' => 1,
+        'executorId' => 3,
+        'categoryId' => 4,
     ],
     'executorCategories2' => [
-        'executorId' => 5,
-        'categoryId' => 3,
+        'executorId' => 3,
+        'categoryId' => 7,
     ],
     'executorCategories3' => [
-        'executorId' => 5,
-        'categoryId' => 6,
+        'executorId' => 3,
+        'categoryId' => 1,
     ],
     'executorCategories4' => [
-        'executorId' => 5,
-        'categoryId' => 1,
+        'executorId' => 3,
+        'categoryId' => 3,
     ],
     'executorCategories5' => [
         'executorId' => 3,
-        'categoryId' => 4,
+        'categoryId' => 1,
     ],
     'executorCategories6' => [
-        'executorId' => 5,
-        'categoryId' => 4,
+        'executorId' => 3,
+        'categoryId' => 6,
     ],
     'executorCategories7' => [
-        'executorId' => 4,
-        'categoryId' => 1,
+        'executorId' => 3,
+        'categoryId' => 2,
     ],
     'executorCategories8' => [
-        'executorId' => 4,
-        'categoryId' => 5,
+        'executorId' => 3,
+        'categoryId' => 6,
     ],
     'executorCategories9' => [
-        'executorId' => 5,
-        'categoryId' => 1,
+        'executorId' => 3,
+        'categoryId' => 4,
     ],
     'executorCategories10' => [
-        'executorId' => 4,
-        'categoryId' => 8,
+        'executorId' => 3,
+        'categoryId' => 6,
     ],
     'executorCategories11' => [
         'executorId' => 3,
-        'categoryId' => 3,
+        'categoryId' => 5,
     ],
 ];
