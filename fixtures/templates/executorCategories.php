@@ -1,25 +1,15 @@
 <?php
 
-use omarinina\domain\models\user\Users;
-use omarinina\domain\models\Categories;
+use omarinina\domain\models\user\Roles;
 
-$users = Users::find();
-$users->joinWith('roles', true)->where(['roles.role' => 'executor']);
-$executors = $users->all();
-if ($executors) {
-    $executorsAr = $users->select('uuid')->asArray();
-}
-if (!$executors) {
-    \PHPUnit\Framework\throwException();
-}
-
-$categories = Categories::find();
-$categoriesId = $categories->select('id')->asArray();
+$executors = array_map(
+    function ($users) { return $users->id; },
+    Roles::findOne(['role' => 'executor'])->users);
 
 /**
  * @var $faker \Faker\Generator
  */
 return [
-    'executorId' => $faker->unique()->randomElement($executorsAr),
-    'categoryId' => $faker->randomElement($categoriesId)
+    'executorId' => $faker->randomElement($executors),
+    'categoryId' => $faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8])
 ];
