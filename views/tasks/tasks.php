@@ -16,11 +16,11 @@ function countTimeAgoPost($createAt):string
     $diff = $unixNow - $unixCreateAt;
 
     if ($diff/86400 >= 1) {
-        return floor($diff/86400).' дней ';
+        return morphos\Russian\pluralize(floor($diff/86400), 'день');
     } elseif ($diff/3600 >= 1) {
-        return floor($diff/3600).' часов ';
+        return morphos\Russian\pluralize(floor($diff/3600), 'час');
     }
-    return floor($diff/60).' минут ';
+    return morphos\Russian\pluralize(floor($diff/60), 'минута');
 }
 ?>
 
@@ -33,7 +33,7 @@ function countTimeAgoPost($createAt):string
                 <a  href="#" class="link link--block link--big"><?= $newTask->name; ?></a>
                 <p class="price price--task"><?= $newTask->budget; ?> ₽</p>
             </div>
-            <p class="info-text"><span class="current-time"><?= countTimeAgoPost($newTask->createAt) ?></span>назад</p>
+            <p class="info-text"><span class="current-time"><?= countTimeAgoPost($newTask->createAt) ?></span> назад</p>
             <p class="task-text"><?= $newTask->description; ?></p>
             <div class="footer-task">
                 <p class="info-text town-text"><?= $newTask->city->name; ?></p>
