@@ -2,21 +2,19 @@
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\valueObjects\UniqueIdentification;
-
 abstract class AbstractAction
 {
-    /** @var UniqueIdentification */
-    protected UniqueIdentification $idClient;
+    /** @var int */
+    protected int $idClient;
 
-    /** @var UniqueIdentification */
-    protected UniqueIdentification $idExecutor;
+    /** @var int */
+    protected int $idExecutor;
 
     /**
-     * @param UniqueIdentification $idClient
-     * @param UniqueIdentification $idExecutor
+     * @param int $idClient
+     * @param int $idExecutor
      */
-    public function __construct(UniqueIdentification $idClient, UniqueIdentification $idExecutor)
+    public function __construct(int $idClient, int $idExecutor)
     {
         $this->idClient = $idClient;
         $this->idExecutor = $idExecutor;
@@ -33,8 +31,8 @@ abstract class AbstractAction
     abstract public static function getName(): string;
 
     /**
-     * @param UniqueIdentification $idUser
+     * @param int $idUser
      * @return boolean
      */
-    abstract public function isAvailableForUser(UniqueIdentification $idUser): bool;
+    abstract public function isAvailableForUser(int $idUser): bool;
 }
