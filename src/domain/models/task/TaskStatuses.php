@@ -11,6 +11,7 @@ use Yii;
  * @property string $taskStatus
  *
  * @property Tasks[] $tasks
+ * @property Tasks[] $newTasks
  */
 class TaskStatuses extends \yii\db\ActiveRecord
 {
@@ -52,5 +53,17 @@ class TaskStatuses extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Tasks::class, ['status' => 'id']);
+    }
+
+    /**
+     * Gets query for [[NewTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNewTasks()
+    {
+        return $this->hasMany(Tasks::class, ['status' => 'id'])
+            ->where('expiryDate' > new \yii\db\Expression('NOW()'))
+            ->orderBy('createAt DESC');
     }
 }

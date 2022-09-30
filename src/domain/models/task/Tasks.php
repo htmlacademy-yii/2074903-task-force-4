@@ -2,6 +2,7 @@
 
 namespace omarinina\domain\models\task;
 
+use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
@@ -17,8 +18,7 @@ use Yii;
  * @property string $expiryDate
  * @property string $budget
  * @property int $categoryId
- * @property float|null $lat
- * @property float|null $lng
+ * @property int $cityId
  * @property int $status
  * @property int|null $executorId
  * @property int $clientId
@@ -31,6 +31,7 @@ use Yii;
  * @property TaskStatuses $taskStatus
  * @property TaskFiles[] $taskFiles
  * @property Files[] $files
+ * @property Cities $city
  *
  */
 class Tasks extends \yii\db\ActiveRecord
@@ -52,8 +53,7 @@ class Tasks extends \yii\db\ActiveRecord
             [['createAt', 'expiryDate'], 'safe'],
             [['name', 'expiryDate', 'budget', 'categoryId', 'status', 'clientId'], 'required'],
             [['description'], 'string'],
-            [['categoryId', 'status', 'executorId', 'clientId'], 'integer'],
-            [['lat', 'lng'], 'number'],
+            [['categoryId', 'status', 'executorId', 'clientId', 'cityId'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['budget'], 'string', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
@@ -76,8 +76,7 @@ class Tasks extends \yii\db\ActiveRecord
             'expiryDate' => 'Expiry Date',
             'budget' => 'Budget',
             'categoryId' => 'Category ID',
-            'lat' => 'Lat',
-            'lng' => 'Lng',
+            'cityId' => 'City ID',
             'status' => 'Status',
             'executorId' => 'Executor ID',
             'clientId' => 'Client ID',
@@ -165,4 +164,15 @@ class Tasks extends \yii\db\ActiveRecord
         return $this->hasMany(Files::class, ['id' => 'fileId'])
             ->viaTable('taskFiles', ['taskId' => 'id']);
     }
+
+    /**
+     * Gets query for [[City]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCity()
+    {
+        return $this->hasOne(Cities::class, ['id' => 'cityId']);
+    }
+
 }
