@@ -23,7 +23,7 @@ return [
     ),
     'budget' => $faker->randomNumber(4,true),
     'categoryId' => $faker->numberBetween(1, 8),
-    'cityId' => $faker->numberBetween(1,1087),
+    'cityId' => $faker->randomElement([$faker->numberBetween(1,1087), null]),
     'status' => $faker->numberBetween(1, 5),
     'executorId' => $faker->randomElement([$faker->randomElement($executors), null]),
     'clientId' => $faker->randomElement($clients)

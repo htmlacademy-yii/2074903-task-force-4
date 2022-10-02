@@ -1,7 +1,5 @@
 <?php
 
-use omarinina\domain\valueObjects\UniqueIdentification;
-
 /**
  * @var $faker \Faker\Generator
  */
