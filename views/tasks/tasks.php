@@ -14,6 +14,7 @@ use omarinina\infrastructure\models\form\TaskFilterForm;
  *
  * @param $createAt
  * @return string
+ * @throws Exception
  */
 function countTimeAgoPost($createAt):string
 {
@@ -90,7 +91,7 @@ function countTimeAgoPost($createAt):string
                     <?= $form->field($model, 'remote')
                         ->checkbox(['class' => 'form-group control-label']); ?>
                     <?= $form->field($model, 'period', ['options' => ['class' => 'head-card']])
-                        ->dropDownList($model->getPeriods(), ['class' => 'form-group']) ?>
+                        ->dropDownList($model->getPeriods(), ['class' => 'form-group', 'prompt' => '-выбрать-']) ?>
                     <input type="submit" class="button button--blue" value="Искать">
                 <?php ActiveForm::end(); ?>
             </div>
