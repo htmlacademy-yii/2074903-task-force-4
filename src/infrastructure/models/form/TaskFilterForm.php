@@ -79,11 +79,11 @@ class TaskFilterForm extends Model
         if (in_array($this->period, array_keys($this->getPeriods()))){
             switch($this->period){
                 case self::PERIOD_1_HOUR:
-                    $tasks->andWhere('createAt >= NOW() - INTERVAL 1 HOUR'); break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 1 HOUR'); break;
                 case self::PERIOD_12_HOURS:
-                    $tasks->andWhere('createAt >= NOW() - INTERVAL 12 HOUR'); break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 12 HOUR'); break;
                 case self::PERIOD_24_HOURS:
-                    $tasks->andWhere('createAt >= NOW() - INTERVAL 24 HOUR'); break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 24 HOUR'); break;
                 case self::PERIOD_ALL: break;
             }
         }

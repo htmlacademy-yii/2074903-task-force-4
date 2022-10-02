@@ -11,6 +11,7 @@ class TasksController extends Controller
 {
     public function actionIndex(): string
     {
+        unset(TaskStatuses::findOne(['taskStatus' => 'new'])->newTasks);
         $newTasks = TaskStatuses::findOne(['taskStatus' => 'new'])->newTasks;
         $categories = Categories::find()->all();
 
