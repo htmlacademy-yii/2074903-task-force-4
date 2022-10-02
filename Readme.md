@@ -40,13 +40,11 @@ DIRECTORY STRUCTURE
       commands/           contains console commands (controllers)
       config/             contains application configurations
       controllers/        contains Web controller classes
-      data/               contains csv-data for DB
       docker/             contains data from DB volumes
+      fixtures/           contains fake data for DB
       mail/               contains view files for e-mails
-      models/             contains model classes
       runtime/            contains files generated during runtime
-      sql/                contains schema mysql DB and some instructions for mysql
-      src/                contains individual classes creating by us
+      src/                contains classes (domain, infrustacture, application)
       tests/              contains various tests for the basic application (just unit)
       vendor/             contains dependent 3rd-party packages
       views/              contains view files for the Web application
@@ -75,7 +73,7 @@ CONFIGURATION
 
 ### Database
 
-Edit the file `config/db.php` with real data, for example:
+File `config/db.php` with real data. For example:
 
 ```php
 return [
@@ -88,16 +86,60 @@ return [
 ```
 
 
+### Migrations
+
+Migrations can be started via the command
+
+```
+docker-compose run php ./yii migrate
+```
+
+Migrations can be denied via the command
+
+```
+docker-compose run --rm php ./yii migrate/down
+```
+
+
+### Fake data aka fixtures
+
+We have already generated data and add they `app/fistures/data`.
+You should run they sequentially via the command (for example, for ExampleFixture)
+
+```
+docker-compose run --rm php yii fixture/load Example
+```
+
+**The sequence**:
+* Users
+* ExecutorCategories
+* Tasks
+* Responds
+* Reviews
+
+If you want to generate your personal data then use our templates in `app/fixtures/templates` but you should keep *these rules*:
+1. absolutely follow the sequence above
+2. generate data one at a time
+3. run the same fixture
+4. take new table and generate data for this
+
+The command to generate data
+
+```
+docker-compose run --rm php yii fixture/generate example --count=n
+```
+
+
 
 TESTING
 -------
 
 Tests are located in `tests` directory. We use only unit tests on this project.
 
-Tests can be executed by running
+Unit tests can be executed by running
 
 ```
-vendor/bin/codecept run
+vendor/bin/codecept run unit
 ```
 
 The command above will execute unit. Unit tests are testing the system components. 

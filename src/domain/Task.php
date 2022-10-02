@@ -7,7 +7,6 @@ use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
 use omarinina\domain\actions\AbstractAction;
-use omarinina\domain\valueObjects\UniqueIdentification;
 use omarinina\domain\exception\task\IdUSerException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
@@ -20,23 +19,23 @@ class Task
     const STATUS_DONE = 'done';
     const STATUS_FAILED = 'failed';
 
-    /** @var UniqueIdentification */
-    private UniqueIdentification $idClient;
+    /** @var int */
+    private int $idClient;
 
-    /** @var UniqueIdentification */
-    private UniqueIdentification $idExecutor;
+    /** @var int */
+    private int $idExecutor;
 
     /** @var string */
     private string $currentStatus;
 
     /**
-     * @param UniqueIdentification $idClient
-     * @param UniqueIdentification $idExecutor
+     * @param int $idClient
+     * @param int $idExecutor
      * @param string $currentStatus
      */
     public function __construct(
-        UniqueIdentification $idClient,
-        UniqueIdentification $idExecutor,
+        int $idClient,
+        int $idExecutor,
         string $currentStatus)
     {
         $this->idClient = $idClient;
@@ -85,7 +84,7 @@ class Task
 
     /**
      * @param string $currentAction
-     * @param UniqueIdentification $idUser
+     * @param int $idUser
      * @return string
      * @throws CurrentActionException Exception when user tries to choose action
      * which is unavailable for this task status
@@ -93,9 +92,9 @@ class Task
      * @throws AvailableActionsException
      * changes in this task status
      */
-    public function changeStatusByAction(string $currentAction, UniqueIdentification $idUser): string
+    public function changeStatusByAction(string $currentAction, int $idUser): string
     {
-        if ($this->isValidAction($currentAction,  $idUser)) {
+        if ($this->isValidAction($currentAction, $idUser)) {
             return $this->currentStatus = $this->getLinkActionToStatus()[$currentAction];
         }
         if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
@@ -108,14 +107,14 @@ class Task
     }
 
     /**
-     * @param UniqueIdentification $idUser
+     * @param int $idUser
      * @return AbstractAction|null
      * @throws AvailableActionsException Exception when task has such status
      * which doesn't have any available action for any users
      * @throws IdUserException Exception when user doesn't have rights to add
      * changes in this task status
      */
-    public function getAvailableActions(UniqueIdentification $idUser): ?AbstractAction
+    public function getAvailableActions(int $idUser): ?AbstractAction
     {
         if (!array_key_exists($this->currentStatus, $this->getLinkStatusToAction())) {
             throw new AvailableActionsException;
@@ -166,12 +165,12 @@ class Task
 
     /**
      * @param string $currentAction
-     * @param UniqueIdentification $idUser
+     * @param int $idUser
      * @return boolean
      * @throws AvailableActionsException
      * @throws IdUSerException
      */
-    private function isValidAction(string $currentAction, UniqueIdentification $idUser): bool
+    private function isValidAction(string $currentAction, int $idUser): bool
     {
         if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;

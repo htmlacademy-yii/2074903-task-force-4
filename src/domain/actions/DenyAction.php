@@ -2,8 +2,6 @@
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\valueObjects\UniqueIdentification;
-
 class DenyAction extends AbstractAction
 {
     /**
@@ -23,11 +21,11 @@ class DenyAction extends AbstractAction
     }
 
     /**
-     * @param UniqueIdentification $idUser
+     * @param int $idUser
      * @return boolean
      */
-    public function isAvailableForUser(UniqueIdentification $idUser): bool
+    public function isAvailableForUser(int $idUser): bool
     {
-        return $this->idExecutor->getId() === $idUser->getId();
+        return $this->idExecutor === $idUser;
     }
 }
