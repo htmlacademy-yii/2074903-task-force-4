@@ -1,7 +1,13 @@
 <?php
 
+use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use omarinina\infrastructure\models\form\TaskFilterForm;
+
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\task\Tasks $newTasks */
+/** @var omarinina\domain\models\Categories $categories */
+/** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
 
 /**
  * Counts how much time ago this task was created by days/hours/minutes
@@ -66,38 +72,25 @@ function countTimeAgoPost($createAt):string
     <div class="right-column">
         <div class="right-card black">
             <div class="search-form">
-                <form>
-                    <h4 class="head-card">Категории</h4>
-                    <div class="form-group">
-                        <div class="checkbox-wrapper">
-                            <label class="control-label" for="сourier-services">
-                                <input type="checkbox" id="сourier-services" checked>
-                                Курьерские услуги</label>
-                            <label class="control-label" for="cargo-transportation">
-                                <input id="cargo-transportation" type="checkbox">
-                                Грузоперевозки</label>
-                            <label class="control-label" for="translations">
-                                <input id="translations" type="checkbox">
-                                Переводы</label>
-                        </div>
-                    </div>
-                    <h4 class="head-card">Дополнительно</h4>
-                    <div class="form-group">
-                        <label class="control-label" for="without-performer">
-                            <input id="without-performer" type="checkbox" checked>
-                            Без исполнителя</label>
-                    </div>
-                    <h4 class="head-card">Период</h4>
-                    <div class="form-group">
-                        <label for="period-value"></label>
-                        <select id="period-value">
-                            <option>1 час</option>
-                            <option>12 часов</option>
-                            <option>24 часа</option>
-                        </select>
-                    </div>
+                <?php
+                $form = ActiveForm::begin([
+                    'id' => 'search-form'
+                ])
+                ?>
+                <h4 class="head-card">Категории</h4>
+                    <?= $form->field($model, 'categories')->
+                        checkboxList(ArrayHelper::map($categories, 'id', 'name'),
+                            ['class' => 'form-group checkbox-wrapper control-label']) ?>
+
+                <h4 class="head-card">Дополнительно</h4><br>
+                    <?= $form->field($model, 'noResponds')
+                        ->checkbox(['class' => 'form-group control-label']); ?>
+                    <?= $form->field($model, 'remote')
+                        ->checkbox(['class' => 'form-group control-label']); ?>
+                    <?= $form->field($model, 'period', ['options' => ['class' => 'head-card']])
+                        ->dropDownList($model->getPeriods(), ['class' => 'form-group']) ?>
                     <input type="submit" class="button button--blue" value="Искать">
-                </form>
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>
