@@ -19,7 +19,8 @@ class TaskFilterForm extends Model
     const NAME_PERIOD_24 = '24 часа';
     const NAME_PERIOD_ALL = 'За всё время';
 
-    public $categories;
+    /** @var array */
+    public array $categories = [];
 
     /** @var bool */
     public bool $noResponds = false;
@@ -27,7 +28,8 @@ class TaskFilterForm extends Model
     /** @var bool */
     public bool $remote = false;
 
-    public $period;
+    /** @var string */
+    public string $period = '';
 
     public function attributeLabels(): array
     {

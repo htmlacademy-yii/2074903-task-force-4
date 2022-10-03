@@ -83,13 +83,13 @@ function countTimeAgoPost($createAt):string
                 <h4 class="head-card">Категории</h4>
                     <?= $form->field($model, 'categories')->
                         checkboxList(ArrayHelper::map($categories, 'id', 'name'),
-                            ['class' => 'form-group checkbox-wrapper control-label']) ?>
+                            ['class' => 'form-group checkbox-wrapper control-label', 'unselect' => null]) ?>
 
                 <h4 class="head-card">Дополнительно</h4><br>
                     <?= $form->field($model, 'noResponds')
-                        ->checkbox(['class' => 'form-group control-label']); ?>
+                        ->checkbox(['class' => 'form-group control-label', 'unselect' => null]); ?>
                     <?= $form->field($model, 'remote')
-                        ->checkbox(['class' => 'form-group control-label']); ?>
+                        ->checkbox(['class' => 'form-group control-label', 'unselect' => null]); ?>
                     <?= $form->field($model, 'period', ['options' => ['class' => 'head-card']])
                         ->dropDownList($model->getPeriods(), ['class' => 'form-group', 'prompt' => '-выбрать-']) ?>
                     <input type="submit" class="button button--blue" value="Искать">
