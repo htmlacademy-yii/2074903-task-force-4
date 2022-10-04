@@ -2,10 +2,10 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use omarinina\infrastructure\models\form\TaskFilterForm;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
-/** @var omarinina\domain\models\task\Tasks $newTasks */
+/** @var omarinina\domain\models\task\Tasks[] $newTasks */
 /** @var omarinina\domain\models\Categories $categories */
 /** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
 
@@ -22,14 +22,20 @@ function countTimeAgoPost($createAt):string
     $unixNow = Yii::$app->formatter->asTimestamp(new DateTime('now'));
     $diff = $unixNow - $unixCreateAt;
 
-    if ($diff/86400 >= 1) {
-        return morphos\Russian\pluralize(floor($diff/86400), 'день');
-    } elseif ($diff/3600 >= 1) {
-        return morphos\Russian\pluralize(floor($diff/3600), 'час');
+    if ($diff / 86400 >= 1) {
+        return morphos\Russian\pluralize(floor($diff / 86400), 'день');
+    } elseif ($diff / 3600 >= 1) {
+        return morphos\Russian\pluralize(floor($diff / 3600), 'час');
     }
-    return morphos\Russian\pluralize(floor($diff/60), 'минута');
+    return morphos\Russian\pluralize(floor($diff / 60), 'минута');
 }
 ?>
+
+<?php $this->beginBlock('block1'); ?>
+
+...content of block1...
+
+<?php $this->endBlock(); ?>
 
 <div class="main-content container">
     <div class="left-column">
@@ -37,7 +43,7 @@ function countTimeAgoPost($createAt):string
         <?php foreach ($newTasks as $newTask): ?>
         <div class="task-card">
             <div class="header-task">
-                <a  href="#" class="link link--block link--big"><?= $newTask->name; ?></a>
+                <a  href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="link link--block link--big"><?= $newTask->name; ?></a>
                 <p class="price price--task"><?= $newTask->budget; ?> ₽</p>
             </div>
             <p class="info-text"><span class="current-time"><?= countTimeAgoPost($newTask->createAt) ?></span> назад</p>
@@ -47,7 +53,7 @@ function countTimeAgoPost($createAt):string
                 <p class="info-text town-text"><?= $newTask->city->name; ?></p>
                 <?php endif; ?>
                 <p class="info-text category-text"><?= $newTask->category->name ?></p>
-                <a href="#" class="button button--black">Смотреть Задание</a>
+                <a href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="button button--black">Смотреть Задание</a>
             </div>
         </div>
         <?php endforeach; ?>

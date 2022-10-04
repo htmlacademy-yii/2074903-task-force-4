@@ -1,15 +1,21 @@
 <?php
 namespace app\controllers;
 
-use http\Exception\RuntimeException;
+use yii\web\BadRequestHttpException;
 use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
+use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\models\form\TaskFilterForm;
 use yii\web\Controller;
 use Yii;
+use yii\web\NotFoundHttpException;
 
 class TasksController extends Controller
 {
+    /**
+     * @return string
+     * @throws BadRequestHttpException
+     */
     public function actionIndex(): string
     {
         $categories = Categories::find()->all();
@@ -20,14 +26,34 @@ class TasksController extends Controller
             $newTasks = $TaskFilterForm->filter(TaskStatuses::findOne(['taskStatus' => 'new'])
                 ->getNewTasks())->all();
         } else {
-            throw new RuntimeException('Bad request', 400);
+            throw new BadRequestHttpException('Bad request', 400);
         }
 
-
-        return $this->render('tasks', [
+        return $this->render('index', [
             'newTasks' => $newTasks,
             'categories' => $categories,
-            'model' => $TaskFilterForm
+            'model' => $TaskFilterForm,
+        ]);
+    }
+
+    /**
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionView(int $id): string
+    {
+        if ($id) {
+            $currentTask = Tasks::findOne($id);
+            if (!$currentTask) {
+                throw new NotFoundHttpException('Task is not found', 404);
+            }
+        } else {
+            throw new NotFoundHttpException('Task is not found', 404);
+        }
+
+        return $this->render('view', [
+            'currentTask' => $currentTask,
         ]);
     }
 }
