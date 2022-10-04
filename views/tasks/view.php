@@ -38,8 +38,8 @@ use yii\helpers\Url;
 
             </div>
             <div class="feedback-wrapper">
-                <p class="info-text"><span class="current-time">25 минут </span>назад</p>
-                <p class="price price--small">3700 ₽</p>
+                <p class="info-text"><span class="current-time"><?= $respond->countTimeAgoPost() ?></span> назад</p>
+                <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
             <div class="button-popup">
                 <a href="#" class="button button--blue button--small">Принять</a>
@@ -47,41 +47,19 @@ use yii\helpers\Url;
             </div>
         </div>
         <?php endforeach; ?>
-        <div class="response-card">
-            <img class="customer-photo" src="img/man-sweater.png" width="146" height="156" alt="Фото заказчиков">
-            <div class="feedback-wrapper">
-                <a href="#" class="link link--block link--big">Дмитриев Андрей</a>
-                <div class="response-wrapper">
-                    <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
-                    <p class="reviews">8 отзывов</p>
-                </div>
-                <p class="response-message">
-                    Примусь за выполнение задания в течение часа, сделаю быстро и качественно.
-                </p>
-
-            </div>
-            <div class="feedback-wrapper">
-                <p class="info-text"><span class="current-time">2 часа </span>назад</p>
-                <p class="price price--small">1999 ₽</p>
-            </div>
-            <div class="button-popup">
-                <a href="#" class="button button--blue button--small">Принять</a>
-                <a href="#" class="button button--orange button--small">Отказать</a>
-            </div>
-        </div>
     </div>
     <div class="right-column">
         <div class="right-card black info-card">
             <h4 class="head-card">Информация о задании</h4>
             <dl class="black-list">
                 <dt>Категория</dt>
-                <dd>Уборка</dd>
+                <dd><?= $currentTask->category ?></dd>
                 <dt>Дата публикации</dt>
-                <dd>25 минут назад</dd>
+                <dd><?= $currentTask->countTimeAgoPost() ?> назад</dd>
                 <dt>Срок выполнения</dt>
-                <dd>15 октября, 13:00</dd>
+                <dd><?= Yii::$app->formatter->asDate($currentTask->expiryDate, 'dd MMMM, HH:mm') ?></dd>
                 <dt>Статус</dt>
-                <dd>Открыт для новых заказов</dd>
+                <dd><?= $currentTask->taskStatus ?></dd>
             </dl>
         </div>
         <div class="right-card white file-card">

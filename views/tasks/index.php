@@ -9,33 +9,7 @@ use yii\helpers\Url;
 /** @var omarinina\domain\models\Categories $categories */
 /** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
 
-/**
- * Counts how much time ago this task was created by days/hours/minutes
- *
- * @param $createAt
- * @return string
- * @throws Exception
- */
-function countTimeAgoPost($createAt):string
-{
-    $unixCreateAt = Yii::$app->formatter->asTimestamp($createAt);
-    $unixNow = Yii::$app->formatter->asTimestamp(new DateTime('now'));
-    $diff = $unixNow - $unixCreateAt;
-
-    if ($diff / 86400 >= 1) {
-        return morphos\Russian\pluralize(floor($diff / 86400), 'день');
-    } elseif ($diff / 3600 >= 1) {
-        return morphos\Russian\pluralize(floor($diff / 3600), 'час');
-    }
-    return morphos\Russian\pluralize(floor($diff / 60), 'минута');
-}
 ?>
-
-<?php $this->beginBlock('block1'); ?>
-
-...content of block1...
-
-<?php $this->endBlock(); ?>
 
 <div class="main-content container">
     <div class="left-column">
@@ -46,7 +20,7 @@ function countTimeAgoPost($createAt):string
                 <a  href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="link link--block link--big"><?= $newTask->name; ?></a>
                 <p class="price price--task"><?= $newTask->budget; ?> ₽</p>
             </div>
-            <p class="info-text"><span class="current-time"><?= countTimeAgoPost($newTask->createAt) ?></span> назад</p>
+            <p class="info-text"><span class="current-time"><?= $newTask->countTimeAgoPost() ?></span> назад</p>
             <p class="task-text"><?= $newTask->description; ?></p>
             <div class="footer-task">
                 <?php if(isset($newTask->city->name)): ?>
