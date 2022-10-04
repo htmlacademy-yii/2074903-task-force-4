@@ -78,4 +78,6 @@ class Responds extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Tasks::class, ['id' => 'taskId']);
     }
+
+    use \CountTime;
 }

@@ -175,4 +175,6 @@ class Tasks extends \yii\db\ActiveRecord
         return $this->hasOne(Cities::class, ['id' => 'cityId']);
     }
 
+    use \CountTime;
+
 }
