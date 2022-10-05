@@ -14,13 +14,13 @@ class m220929_151142_add_data_to_taskStatuses extends Migration
     {
         $this->batchInsert(
             'taskStatuses',
-            ['taskStatus'],
+            ['taskStatus', 'name'],
             [
-                ['new'],
-                ['cancelled'],
-                ['in work'],
-                ['done'],
-                ['failed'],
+                ['new', 'Новое'],
+                ['cancelled', 'Отменено'],
+                ['in work', 'В работе'],
+                ['done', 'Выполнено'],
+                ['failed', 'Провалено'],
             ]
         );
     }

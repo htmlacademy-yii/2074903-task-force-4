@@ -14,7 +14,8 @@ class m220925_153721_create_taskStatuses_table extends Migration
     {
         $this->createTable('{{%taskStatuses}}', [
             'id' => $this->primaryKey(),
-            'taskStatus' => $this->string(255)->notNull()
+            'taskStatus' => $this->string(255)->notNull(),
+            'name' => $this->string(255)->notNull()
         ]);
     }
 

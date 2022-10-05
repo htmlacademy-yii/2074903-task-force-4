@@ -14,7 +14,7 @@ class m220925_153913_create_files_table extends Migration
     {
         $this->createTable('{{%files}}', [
             'id' => $this->primaryKey(),
-            'fileSrc' => $this->string(255)->notNull()
+            'fileSrc' => $this->text()->notNull()
         ]);
     }
 
