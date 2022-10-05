@@ -66,4 +66,10 @@ class TaskStatuses extends \yii\db\ActiveRecord
             ->where('expiryDate' > new \yii\db\Expression('NOW()'))
             ->orderBy('createAt DESC');
     }
+
+    public function getDoneExecutorTasks($executorId)
+    {
+        return $this->hasMany(Tasks::class, ['status' => 'id'])
+            ->where('executorId' === $executorId);
+    }
 }

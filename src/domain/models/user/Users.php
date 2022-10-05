@@ -129,7 +129,7 @@ class Users extends \yii\db\ActiveRecord
      */
     public function getExecutorReviews()
     {
-        return $this->hasMany(Reviews::class, ['executorId' => 'id']);
+        return $this->hasMany(Reviews::class, ['executorId' => 'executorId']);
     }
 
     /**
