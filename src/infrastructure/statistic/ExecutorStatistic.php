@@ -100,8 +100,10 @@ class ExecutorStatistic
             ->where('tasks.status = 4')->count();
     }
 
-    //Место в рейтинге расчитывается так: для каждого исполнителя считается его общий балл,
-    // равный среднему арифмитеческому по всем оценкам за выполненные заказы
+    /**
+     * @param Users $user
+     * @return int
+     */
     private function getExecutorRatingPlace(Users $user): int
     {
         $reviewTasks = array_map(
@@ -122,6 +124,9 @@ class ExecutorStatistic
             0;
     }
 
+    /**
+     * @return int
+     */
     public function getExecutorPlace(): int
     {
         $allRating = array_map(
