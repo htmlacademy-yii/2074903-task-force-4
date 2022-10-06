@@ -2,7 +2,9 @@
 
 namespace omarinina\infrastructure\statistic;
 
+use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\user\Users;
+use omarinina\domain\models\user\Roles;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -73,14 +75,60 @@ class ExecutorStatistic
      */
     public function getExecutorRating(): float
     {
-        $commonScore = 0;
-        array_map(function ($executorReviews, $commonScore) {
-            $currentScore = $executorReviews->score;
-            return $commonScore =+ $currentScore; }, $this->executor->executorReviews);
-        $failedTasks = $this->executor->getExecutorTasks()
-            ->where('tasks.status = 5')->count();
+        $commonScore = array_sum(array_map(function ($executorReviews) {
+            return $executorReviews->score; }, $this->executor->executorReviews));
         return $this->getCountReviews() ?
-            round($commonScore / ($this->getCountReviews() + $failedTasks), 2) :
+            round($commonScore / ($this->getCountReviews() + $this->getCountFailedTasks()), 2) :
             0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountFailedTasks(): int
+    {
+        return $this->executor->getExecutorTasks()
+            ->where('tasks.status = 5')->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountDoneTasks(): int
+    {
+        return $this->executor->getExecutorTasks()
+            ->where('tasks.status = 4')->count();
+    }
+
+    //Место в рейтинге расчитывается так: для каждого исполнителя считается его общий балл,
+    // равный среднему арифмитеческому по всем оценкам за выполненные заказы
+    private function getExecutorRatingPlace(Users $user): int
+    {
+        $reviewTasks = array_map(
+            function ($executorReviews) { return $executorReviews->taskId; },
+            $user->executorReviews);
+        $doneTasks = array_map(
+            function ($tasks) { return $tasks->id; },
+            TaskStatuses::findOne(['taskStatus' => 'done'])->tasks);
+        foreach ($reviewTasks as $reviewTask) {
+            if (!in_array($reviewTask, $doneTasks)) {
+                unset($reviewTasks[array_search($reviewTask, $reviewTasks)]);
+            }
+        }
+        $commonScore = array_sum($reviewTasks);
+        $countReviewDoneTasks = count($reviewTasks);
+        return $countReviewDoneTasks ?
+            round($commonScore / $countReviewDoneTasks, 2) :
+            0;
+    }
+
+    public function getExecutorPlace(): int
+    {
+        $allRating = array_map(
+            function ($users) { return $this->getExecutorRatingPlace($users); },
+            Roles::findOne(['role' => 'executor'])->users);
+        $currentExecutorRating = $this->getExecutorRatingPlace($this->executor);
+        rsort($allRating);
+        return array_search($currentExecutorRating, $allRating) + 1;
     }
 }
