@@ -6,7 +6,9 @@ use omarinina\domain\models\Cities;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
+use omarinina\domain\models\Categories;
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "users".
@@ -24,8 +26,8 @@ use Yii;
  * @property string|null $telegram
  * @property string|null $bio
  *
- * @property Cities $city0
- * @property ExecutorCategories[] $executorCategories
+ * @property Cities $userCity
+ * @property Categories[] $executorCategories
  * @property Responds[] $responds
  * @property Reviews[] $clientReviews
  * @property Reviews[] $executorReviews
@@ -84,11 +86,11 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[City0]].
+     * Gets query for [[UserCity]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCity0()
+    public function getUserCity()
     {
         return $this->hasOne(Cities::class, ['id' => 'city']);
     }
@@ -97,10 +99,12 @@ class Users extends \yii\db\ActiveRecord
      * Gets query for [[ExecutorCategories]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws InvalidConfigException
      */
     public function getExecutorCategories()
     {
-        return $this->hasMany(ExecutorCategories::class, ['executorId' => 'id']);
+        return $this->hasMany(Categories::class, ['id' => 'categoryId'])
+            ->viaTable('executorCategories', ['executorId' => 'executorId']);
     }
 
     /**
@@ -130,7 +134,7 @@ class Users extends \yii\db\ActiveRecord
      */
     public function getExecutorReviews()
     {
-        return $this->hasMany(Reviews::class, ['executorId' => 'executorId']);
+        return $this->hasMany(Reviews::class, ['executorId' => 'id']);
     }
 
     /**
