@@ -18,7 +18,7 @@ $this->registerJsFile('js/main.js');
         <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
         <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
         <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
-        <?php if($currentTask->city->name): ?>
+        <?php if(isset($currentTask->city->name)): ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
             <p class="map-address town"><?= $currentTask->city->name; ?></p>
@@ -30,13 +30,12 @@ $this->registerJsFile('js/main.js');
         <div class="response-card">
             <img class="customer-photo" src="<?= $respond->executor->avatarSrc ?>" width="146" height="156" alt="Фото заказчиков">
             <div class="feedback-wrapper">
-                <a href="<?= Url::to(['users/view', 'id' => $respond->executor->id]) ?>" class="link link--block link--big">
+                <a href="<?= Url::to(['profile/view', 'id' => $respond->executor->id]) ?>" class="link link--block link--big">
                     <?= $respond->executor->name ?></a>
                 <div class="response-wrapper">
                     <div class="stars-rating small">
                         <?= str_repeat('<span class="fill-star">&nbsp;</span>', round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
                         <?= str_repeat('<span>&nbsp;</span>', ExecutorStatistic::MAX_RATING - round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
-<!--                        <span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span>-->
                     </div>
                     <p class="reviews">
                         <?= \morphos\Russian\pluralize((new ExecutorStatistic($respond->executorId))->getCountReviews(), 'отзыв') ?></p>
