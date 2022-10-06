@@ -2,8 +2,11 @@
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
 
+use yii\web\View;
 use yii\helpers\Url;
+use omarinina\infrastructure\statistic\ExecutorStatistic;
 
+$this->registerJsFile('js/main.js');
 ?>
 <div class="main-content container">
     <div class="left-column">
@@ -15,13 +18,13 @@ use yii\helpers\Url;
         <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
         <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
         <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
+        <?php if(isset($newTask->city->name)): ?>
         <div class="task-map">
-            <?php if(isset($newTask->city->name)): ?>
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
             <p class="map-address town"><?= $currentTask->city->name; ?></p>
             <p class="map-address">Новый арбат, 23, к. 1</p>
-            <?php endif; ?>
         </div>
+        <?php endif; ?>
         <h4 class="head-regular">Отклики на задание</h4>
         <?php foreach ($currentTask->responds as $respond): ?>
         <div class="response-card">
@@ -30,9 +33,13 @@ use yii\helpers\Url;
                 <a href="<?= Url::to(['users/view', 'id' => $respond->executor->id]) ?>" class="link link--block link--big">
                     <?= $respond->executor->name ?></a>
                 <div class="response-wrapper">
-                    <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
+                    <div class="stars-rating small">
+                        <?= str_repeat('<span class="fill-star">&nbsp;</span>', round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
+                        <?= str_repeat('<span>&nbsp;</span>', ExecutorStatistic::MAX_RATING - round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
+<!--                        <span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span>-->
+                    </div>
                     <p class="reviews">
-                        <?= \morphos\Russian\pluralize($respond->executor->getExecutorReviews()->count(), 'отзыв') ?></p>
+                        <?= \morphos\Russian\pluralize((new ExecutorStatistic($respond->executorId))->getCountReviews(), 'отзыв') ?></p>
                 </div>
                 <p class="response-message">
                     <?= $respond->comment ?>
@@ -61,7 +68,7 @@ use yii\helpers\Url;
                 <dt>Срок выполнения</dt>
                 <dd><?= Yii::$app->formatter->asDate($currentTask->expiryDate, 'dd MMMM, HH:mm') ?></dd>
                 <dt>Статус</dt>
-                <dd><?= $currentTask->taskStatus->taskStatus ?></dd>
+                <dd><?= $currentTask->taskStatus->name ?></dd>
             </dl>
         </div>
         <div class="right-card white file-card">
