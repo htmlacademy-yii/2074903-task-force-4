@@ -18,7 +18,7 @@ $this->registerJsFile('js/main.js');
         <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
         <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
         <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
-        <?php if(isset($newTask->city->name)): ?>
+        <?php if($currentTask->city->name): ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
             <p class="map-address town"><?= $currentTask->city->name; ?></p>
