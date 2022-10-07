@@ -4,16 +4,18 @@ namespace app\controllers;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
 use Yii;
+use yii\base\Exception;
 use yii\web\Controller;
+use yii\web\Response;
 
 class RegistrationController extends Controller
 {
 
     /**
-     * @return string
-     * @throws \yii\base\Exception
+     * @return string|Response
+     * @throws Exception
      */
-    public function actionIndex(): string
+    public function actionIndex(): string|Response
     {
         $registrationForm = new RegistrationForm();
         $cities = Cities::find()->all();
@@ -23,7 +25,7 @@ class RegistrationController extends Controller
 
             if ($registrationForm->validate()) {
                 $registrationForm->createNewUser();
-                $this->goHome();
+                return $this->goHome();
             }
         }
 
