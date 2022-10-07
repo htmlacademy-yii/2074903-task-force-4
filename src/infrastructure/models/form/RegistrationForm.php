@@ -5,9 +5,8 @@ use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Cities;
 use Yii;
 use yii\base\Model;
-use yii\web\IdentityInterface;
 
-class RegistrationForm extends Model implements IdentityInterface
+class RegistrationForm extends Model
 {
     /** @var string */
     public string $name = '';
@@ -26,17 +25,6 @@ class RegistrationForm extends Model implements IdentityInterface
 
     /** @var boolean */
     public bool $executor = false;
-
-    /** @var Users */
-    private Users $newUser;
-
-    /**
-     * @return Users
-     */
-    private function getNewUser(): Users
-    {
-        return $this->newUser = new Users();
-    }
 
     public function rules(): array
     {
@@ -69,36 +57,12 @@ class RegistrationForm extends Model implements IdentityInterface
      */
     public function createNewUser(): void
     {
-        $this->newUser->name = $this->name;
-        $this->newUser->email = $this->email;
-        $this->newUser->city = $this->city;
-        $this->newUser->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
-        $this->newUser->role =  ($this->executor === true) ? 2 : 1;
-        $this->newUser->save(false);
-    }
-
-    public static function findIdentity($id)
-    {
-        return Users::findOne($id);
-    }
-
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        // TODO: Implement findIdentityByAccessToken() method.
-    }
-
-    public function getId()
-    {
-        return $this->newUser->getPrimaryKey();
-    }
-
-    public function getAuthKey()
-    {
-        // TODO: Implement getAuthKey() method.
-    }
-
-    public function validateAuthKey($authKey)
-    {
-        // TODO: Implement validateAuthKey() method.
+        $newUser = new Users();
+        $newUser->name = $this->name;
+        $newUser->email = $this->email;
+        $newUser->city = $this->city;
+        $newUser->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
+        $newUser->role =  ($this->executor === true) ? 2 : 1;
+        $newUser->save(false);
     }
 }

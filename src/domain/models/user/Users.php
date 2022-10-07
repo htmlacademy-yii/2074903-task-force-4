@@ -9,6 +9,7 @@ use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
@@ -35,7 +36,7 @@ use yii\base\InvalidConfigException;
  * @property Tasks[] $clientTasks
  * @property Tasks[] $executorTasks
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends \yii\db\ActiveRecord implements IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -165,5 +166,30 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorTasks()
     {
         return $this->hasMany(Tasks::class, ['executorId' => 'id']);
+    }
+
+    public static function findIdentity($id)
+    {
+        return self::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        // TODO: Implement findIdentityByAccessToken() method.
+    }
+
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    public function getAuthKey()
+    {
+        // TODO: Implement getAuthKey() method.
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        // TODO: Implement validateAuthKey() method.
     }
 }
