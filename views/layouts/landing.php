@@ -53,7 +53,9 @@ use yii\helpers\Url;
                 <p>Работа там, где ты!</p>
             </div>
             <div class="header__account--index">
-                <a href="<?= Url::to(['login/index']) ?>" class="header__account-enter open-modal" data-for="enter-form">
+                <a href="<?= Url::to(['login/index']) ?>"
+                   class="header__account-enter open-modal"
+                   data-for="enter-form">
                     <span>Вход</span></a>
                 или
                 <a href="<?= Url::to(['registration/index']) ?>" class="header__account-registration">
@@ -199,10 +201,6 @@ use yii\helpers\Url;
             </div>
         </div>
     </footer>
-
-    <?php if (isset($this->blocks['login'])): ?>
-        <?= $this->blocks['login'] ?>
-    <?php endif; ?>
 
     <section class="modal enter-form form-modal" id="enter-form">
         <h2>Вход на сайт</h2>
