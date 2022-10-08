@@ -5,6 +5,7 @@
 use yii\web\View;
 use yii\helpers\Url;
 use omarinina\infrastructure\statistic\ExecutorStatistic;
+use omarinina\domain\models\user\Users;
 
 $this->registerJsFile('js/main.js');
 ?>
@@ -18,7 +19,7 @@ $this->registerJsFile('js/main.js');
         <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
         <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
         <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
-        <?php if(isset($currentTask->city->name)): ?>
+        <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
             <p class="map-address town"><?= $currentTask->city->name; ?></p>
@@ -26,19 +27,35 @@ $this->registerJsFile('js/main.js');
         </div>
         <?php endif; ?>
         <h4 class="head-regular">Отклики на задание</h4>
-        <?php foreach ($currentTask->responds as $respond): ?>
+        <?php foreach ($currentTask->responds as $respond) : ?>
         <div class="response-card">
-            <img class="customer-photo" src="<?= $respond->executor->avatarSrc ?>" width="146" height="156" alt="Фото заказчиков">
+            <img class="customer-photo"
+                 src="<?= $respond->executor->avatarSrc ?>"
+                 width="146" height="156" alt="Фото заказчиков">
             <div class="feedback-wrapper">
-                <a href="<?= Url::to(['profile/view', 'id' => $respond->executor->id]) ?>" class="link link--block link--big">
+                <a href="<?= Url::to(['profile/view', 'id' => $respond->executor->id]) ?>"
+                   class="link link--block link--big">
                     <?= $respond->executor->name ?></a>
                 <div class="response-wrapper">
                     <div class="stars-rating small">
-                        <?= str_repeat('<span class="fill-star">&nbsp;</span>', round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
-                        <?= str_repeat('<span>&nbsp;</span>', ExecutorStatistic::MAX_RATING - round((new ExecutorStatistic($respond->executorId))->getExecutorRating())) ?>
+                        <?= str_repeat(
+                            '<span class="fill-star">&nbsp;</span>',
+                            round(
+                                (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getExecutorRating()
+                            )
+                        ) ?>
+                        <?= str_repeat(
+                            '<span>&nbsp;</span>',
+                            ExecutorStatistic::MAX_RATING - round(
+                                (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getExecutorRating()
+                            )
+                        ) ?>
                     </div>
                     <p class="reviews">
-                        <?= \morphos\Russian\pluralize((new ExecutorStatistic($respond->executorId))->getCountReviews(), 'отзыв') ?></p>
+                        <?= \morphos\Russian\pluralize(
+                            (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getCountReviews(),
+                            'отзыв'
+                        ) ?></p>
                 </div>
                 <p class="response-message">
                     <?= $respond->comment ?>
@@ -46,7 +63,9 @@ $this->registerJsFile('js/main.js');
 
             </div>
             <div class="feedback-wrapper">
-                <p class="info-text"><span class="current-time"><?= $respond->countTimeAgoPost() ?></span> назад</p>
+                <p class="info-text">
+                    <span class="current-time"><?= $respond->countTimeAgoPost($respond->createAt) ?>
+                    </span> назад</p>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
             <div class="button-popup">
@@ -63,7 +82,7 @@ $this->registerJsFile('js/main.js');
                 <dt>Категория</dt>
                 <dd><?= $currentTask->category->name ?></dd>
                 <dt>Дата публикации</dt>
-                <dd><?= $currentTask->countTimeAgoPost() ?> назад</dd>
+                <dd><?= $currentTask->countTimeAgoPost($currentTask->createAt) ?> назад</dd>
                 <dt>Срок выполнения</dt>
                 <dd><?= Yii::$app->formatter->asDate($currentTask->expiryDate, 'dd MMMM, HH:mm') ?></dd>
                 <dt>Статус</dt>

@@ -12,11 +12,19 @@ use Yii;
         <h3 class="head-main"><?= $currentUser->name ?></h3>
         <div class="user-card">
             <div class="photo-rate">
-                <img class="card-photo" src="<?= $currentUser->avatarSrc ?>" width="191" height="190" alt="Фото пользователя">
+                <img class="card-photo"
+                     src="<?= $currentUser->avatarSrc ?>"
+                     width="191" height="190" alt="Фото пользователя">
                 <div class="card-rate">
                     <div class="stars-rating big">
-                        <?= str_repeat('<span class="fill-star">&nbsp;</span>', round($executorStatistic->getExecutorRating())) ?>
-                        <?= str_repeat('<span>&nbsp;</span>', ExecutorStatistic::MAX_RATING - round($executorStatistic->getExecutorRating())) ?>
+                        <?= str_repeat(
+                            '<span class="fill-star">&nbsp;</span>',
+                            round($executorStatistic->getExecutorRating())
+                        ) ?>
+                        <?= str_repeat(
+                            '<span>&nbsp;</span>',
+                            ExecutorStatistic::MAX_RATING - round($executorStatistic->getExecutorRating())
+                        ) ?>
                     </div>
                     <span class="current-rate"><?= $executorStatistic->getExecutorRating() ?></span>
                 </div>
@@ -72,7 +80,9 @@ use Yii;
                     ) ?>
                 </div>
                 <p class="info-text">
-                    <span class="current-time"><?= $executorReview->countTimeAgoPost() ?></span> назад</p>
+                    <span class="current-time">
+                        <?= $executorReview->countTimeAgoPost($executorReview->createAt) ?>
+                    </span> назад</p>
             </div>
         </div>
         <?php endforeach; ?>
@@ -83,7 +93,8 @@ use Yii;
             <h4 class="head-card">Статистика исполнителя</h4>
             <dl class="black-list">
                 <dt>Всего заказов</dt>
-                <dd><?= $executorStatistic->getCountDoneTasks() ?> выполнено, <?= $executorStatistic->getCountFailedTasks() ?> провалено</dd>
+                <dd><?= $executorStatistic->getCountDoneTasks() ?> выполнено,
+                    <?= $executorStatistic->getCountFailedTasks() ?> провалено</dd>
                 <dt>Место в рейтинге</dt>
                 <dd><?= $executorStatistic->getExecutorPlace() ?> место</dd>
                 <dt>Дата регистрации</dt>
