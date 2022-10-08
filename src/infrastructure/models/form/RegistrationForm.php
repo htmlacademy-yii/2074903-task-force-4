@@ -30,6 +30,7 @@ class RegistrationForm extends Model
     {
         return [
             [['name', 'email', 'city', 'password', 'repeatedPassword', 'executor'], 'required'],
+            [['name', 'email', 'city'], 'safe'],
             ['name', 'string'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => Users::class, 'message' => 'Пользователь с таким e-mail уже существует'],
@@ -49,20 +50,5 @@ class RegistrationForm extends Model
             'repeatedPassword' => 'Повтор пароля',
             'executor' => 'я собираюсь откликаться на заказы'
         ];
-    }
-
-    /**
-     * @return void
-     * @throws \yii\base\Exception
-     */
-    public function createNewUser(): void
-    {
-        $newUser = new Users();
-        $newUser->name = $this->name;
-        $newUser->email = $this->email;
-        $newUser->city = $this->city;
-        $newUser->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
-        $newUser->role =  ($this->executor === true) ? 2 : 1;
-        $newUser->save(false);
     }
 }
