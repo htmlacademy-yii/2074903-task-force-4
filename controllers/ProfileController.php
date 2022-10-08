@@ -17,7 +17,7 @@ class ProfileController extends Controller
     {
         if ($id) {
             $currentUser = Users::findOne($id);
-            $executorStatistic = new ExecutorStatistic($id);
+            $executorStatistic = new ExecutorStatistic($currentUser);
             if (!$currentUser || $currentUser->userRole->role !== 'executor') {
                 throw new NotFoundHttpException('Task is not found', 404);
             }

@@ -6,16 +6,15 @@ use Yii;
 use DateTime;
 use function morphos\Russian\pluralize;
 
-trait CountTime
+trait TimeCounter
 {
     /**
      * @return string
      * @throws \Exception
      */
-    public function countTimeAgoPost():string
+    public function countTimeAgoPost($createAt):string
     {
-        //$createAt is received from every used model
-        $unixCreateAt = Yii::$app->formatter->asTimestamp($this->createAt);
+        $unixCreateAt = Yii::$app->formatter->asTimestamp($createAt);
         $unixNow = Yii::$app->formatter->asTimestamp(new DateTime('now'));
         $diff = $unixNow - $unixCreateAt;
 

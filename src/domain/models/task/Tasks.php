@@ -7,7 +7,7 @@ use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
 use Yii;
-use omarinina\domain\traits\CountTime;
+use omarinina\domain\traits\TimeCounter;
 
 /**
  * This is the model class for table "tasks".
@@ -176,6 +176,6 @@ class Tasks extends \yii\db\ActiveRecord
         return $this->hasOne(Cities::class, ['id' => 'cityId']);
     }
 
-    use CountTime;
+    use TimeCounter;
 
 }
