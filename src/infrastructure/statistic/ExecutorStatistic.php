@@ -2,32 +2,26 @@
 
 namespace omarinina\infrastructure\statistic;
 
-use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\user\Roles;
 use Yii;
-use yii\db\ActiveRecord;
 
 class ExecutorStatistic
 {
-    /** @var int */
-    private int $id;
-
     /** @var Users */
     private Users $executor;
 
-    const STATUS_BUSY = 'busy';
-    const STATUS_FREE = 'free';
+    public const STATUS_BUSY = 'busy';
+    public const STATUS_FREE = 'free';
 
-    const STATUS_BUSY_NAME = 'Занят';
-    const STATUS_FREE_NAME = 'Открыт для новых заказов';
+    public const STATUS_BUSY_NAME = 'Занят';
+    public const STATUS_FREE_NAME = 'Открыт для новых заказов';
 
-    const MAX_RATING = 5;
+    public const MAX_RATING = 5;
 
-    public function __construct(int $id)
+    public function __construct(Users $model)
     {
-        $this->id = $id;
-        $this->executor = Users::findOne($this->id);
+        $this->executor = $model;
     }
 
     /**
@@ -46,8 +40,7 @@ class ExecutorStatistic
      */
     public function getExecutorCurrentStatus(): string
     {
-        $currentTask = $this->executor->getExecutorTasks()
-            ->where('tasks.status = 3')->all();
+        $currentTask = $this->executor->executorInWorkTasks;
         return $currentTask ?
             $this->getMapExecutorStatus()[self::STATUS_BUSY] :
             $this->getMapExecutorStatus()[self::STATUS_FREE];
@@ -75,8 +68,14 @@ class ExecutorStatistic
      */
     public function getExecutorRating(): float
     {
-        $commonScore = array_sum(array_map(function ($executorReviews) {
-            return $executorReviews->score; }, $this->executor->executorReviews));
+        $commonScore = array_sum(
+            array_map(
+                function ($executorReviews) {
+                    return $executorReviews->score;
+                },
+                $this->executor->executorReviews
+            )
+        );
         return $this->getCountReviews() ?
             round($commonScore / ($this->getCountReviews() + $this->getCountFailedTasks()), 2) :
             0;
@@ -87,8 +86,7 @@ class ExecutorStatistic
      */
     public function getCountFailedTasks(): int
     {
-        return $this->executor->getExecutorTasks()
-            ->where('tasks.status = 5')->count();
+        return $this->executor->getExecutorFailedTasks()->count();
     }
 
     /**
@@ -96,25 +94,31 @@ class ExecutorStatistic
      */
     public function getCountDoneTasks(): int
     {
-        return $this->executor->getExecutorTasks()
-            ->where('tasks.status = 4')->count();
+        return $this->executor->getExecutorDoneTasks()->count();
     }
 
     /**
      * @param Users $user
-     * @return int
+     * @return float
      */
-    private function getExecutorRatingPlace(Users $user): int
+    private function getExecutorRatingPlace(Users $user): float
     {
         $reviewTasks = array_map(
-            function ($executorReviews) { return $executorReviews->taskId; },
-            $user->executorReviews);
+            function ($executorReviews) {
+                return $executorReviews->taskId;
+            },
+            $user->executorReviews
+        );
         $doneTasks = array_map(
-            function ($tasks) { return $tasks->id; },
-            TaskStatuses::findOne(['taskStatus' => 'done'])->tasks);
+            function ($executorDoneTasks) {
+                return $executorDoneTasks->id;
+            },
+            $user->executorDoneTasks
+        );
         foreach ($reviewTasks as $reviewTask) {
             if (!in_array($reviewTask, $doneTasks)) {
-                unset($reviewTasks[array_search($reviewTask, $reviewTasks)]);
+                $taskKey = array_search($reviewTask, $reviewTasks);
+                unset($reviewTasks[$taskKey]);
             }
         }
         $commonScore = array_sum($reviewTasks);
@@ -130,8 +134,11 @@ class ExecutorStatistic
     public function getExecutorPlace(): int
     {
         $allRating = array_map(
-            function ($users) { return $this->getExecutorRatingPlace($users); },
-            Roles::findOne(['role' => 'executor'])->users);
+            function ($users) {
+                return $this->getExecutorRatingPlace($users);
+            },
+            Roles::findOne(['role' => 'executor'])->users
+        );
         $currentExecutorRating = $this->getExecutorRatingPlace($this->executor);
         rsort($allRating);
         return array_search($currentExecutorRating, $allRating) + 1;

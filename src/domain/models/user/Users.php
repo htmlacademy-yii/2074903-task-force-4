@@ -34,6 +34,9 @@ use yii\base\InvalidConfigException;
  * @property Roles $userRole
  * @property Tasks[] $clientTasks
  * @property Tasks[] $executorTasks
+ * @property Tasks[] $executorInWorkTasks
+ * @property Tasks[] $executorFailedTasks
+ * @property Tasks[] $executorDoneTasks
  */
 class Users extends \yii\db\ActiveRecord
 {
@@ -104,7 +107,7 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorCategories()
     {
         return $this->hasMany(Categories::class, ['id' => 'categoryId'])
-            ->viaTable('executorCategories', ['executorId' => 'executorId']);
+            ->viaTable('executorCategories', ['executorId' => 'id']);
     }
 
     /**
@@ -165,5 +168,38 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorTasks()
     {
         return $this->hasMany(Tasks::class, ['executorId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ExecutorInWorkTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorInWorkTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 3');
+    }
+
+    /**
+     * Gets query for [[ExecutorFailedTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorFailedTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 5');
+    }
+
+    /**
+     * Gets query for [[ExecutorDoneTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorDoneTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 4');
     }
 }
