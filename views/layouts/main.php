@@ -13,6 +13,7 @@ use yii\helpers\Url;
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->sourceLanguage ?>">
 <head>
+    <?php $this->registerCsrfMetaTags()?>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?= Html::encode($this->title) ?></title>
@@ -70,7 +71,7 @@ use yii\helpers\Url;
         </div>
         <?php else: ?>
         <div class="header__account--index">
-            <a href="#" class="header__account-enter open-modal" data-for="enter-form">
+            <a href="<?= Url::to(['login/index']) ?>" class="header__account-enter open-modal" data-for="enter-form">
                 <span>Вход</span></a>
             или
             <a href="<?= Url::to(['registration/index']) ?>" class="header__account-registration">
