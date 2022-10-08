@@ -107,7 +107,7 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorCategories()
     {
         return $this->hasMany(Categories::class, ['id' => 'categoryId'])
-            ->viaTable('executorCategories', ['executorId' => 'executorId']);
+            ->viaTable('executorCategories', ['executorId' => 'id']);
     }
 
     /**

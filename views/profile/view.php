@@ -29,7 +29,7 @@ use Yii;
             <div class="specialization">
                 <p class="head-info">Специализации</p>
                 <ul class="special-list">
-                    <?php foreach ($currentUser->executorCategories as $category): ?>
+                    <?php foreach ($currentUser->executorCategories as $category) : ?>
                     <li class="special-item">
                         <a href="#" class="link link--regular"><?= $category->name ?></a>
                     </li>
@@ -42,23 +42,37 @@ use Yii;
                     <span class="town-info"><?= $currentUser->userCity->name ?></span>,
                     <span class="age-info"><?= \morphos\Russian\pluralize(
                         round(Yii::$app->formatter->asTimestamp($currentUser->birthDate) / (365 * 24 * 60 * 60)),
-                        'год') ?></span>
+                        'год'
+                    ) ?></span>
                 </p>
             </div>
         </div>
         <h4 class="head-regular">Отзывы заказчиков</h4>
-        <?php foreach ($currentUser->executorReviews as $executorReview): ?>
+        <?php foreach ($currentUser->executorReviews as $executorReview) : ?>
         <div class="response-card">
-            <img class="customer-photo" src="<?= $executorReview->client->avatarSrc ?>" width="120" height="127" alt="Фото заказчиков">
+            <img class="customer-photo"
+                 src="<?= $executorReview->client->avatarSrc ?>"
+                 width="120" height="127" alt="Фото заказчиков">
             <div class="feedback-wrapper">
                 <p class="feedback"><?= $executorReview->comment ?></p>
-                <p class="task">Задание «<a href="<?= Url::to(['tasks/view', 'id' => $executorReview->taskId]) ?>" class="link link--small"><?= $executorReview->task->name ?></a>» <?= $executorReview->task->taskStatus->name ?></p>
+                <p class="task">
+                    Задание «
+                    <a href="<?= Url::to(['tasks/view', 'id' => $executorReview->taskId]) ?>" class="link link--small">
+                        <?= $executorReview->task->name ?></a>»
+                    <?= $executorReview->task->taskStatus->name ?></p>
             </div>
             <div class="feedback-wrapper">
                 <div class="stars-rating small">
-                    <?= str_repeat('<span class="fill-star">&nbsp;</span>', round($executorReview->score)) ?><?= str_repeat('<span>&nbsp;</span>', ExecutorStatistic::MAX_RATING - round($executorReview->score)) ?>
+                    <?= str_repeat(
+                        '<span class="fill-star">&nbsp;</span>',
+                        round($executorReview->score)
+                    ) ?><?= str_repeat(
+                        '<span>&nbsp;</span>',
+                        ExecutorStatistic::MAX_RATING - round($executorReview->score)
+                    ) ?>
                 </div>
-                <p class="info-text"><span class="current-time"><?= $executorReview->countTimeAgoPost() ?></span> назад</p>
+                <p class="info-text">
+                    <span class="current-time"><?= $executorReview->countTimeAgoPost() ?></span> назад</p>
             </div>
         </div>
         <?php endforeach; ?>
