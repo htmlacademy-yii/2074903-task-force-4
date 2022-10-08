@@ -6,7 +6,7 @@ use Yii;
 use DateTime;
 use function morphos\Russian\pluralize;
 
-trait CountTime
+trait TimeCounter
 {
     /**
      * @return string
