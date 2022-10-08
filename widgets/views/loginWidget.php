@@ -4,13 +4,28 @@ use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Modal;
 
+
+
 Modal::begin([
-    'header'=>'<h4>Login</h4>',
+    'header'=>'<h2>Вход на сайт</h2>',
     'id'=>'login-modal',
+    'options' => [
+        'class' => 'modal enter-form form-modal'
+    ]
 ]);
 ?>
-
-    <p>Please fill out the following fields to login:</p>
+        <form action="#" method="post">
+            <p>
+                <label class="form-modal-description" for="enter-email">Email</label>
+                <input class="enter-form-email input input-middle" type="email" name="enter-email" id="enter-email">
+            </p>
+            <p>
+                <label class="form-modal-description" for="enter-password">Пароль</label>
+                <input class="enter-form-email input input-middle" type="password" name="enter-email" id="enter-password">
+            </p>
+            <button class="button" type="submit">Войти</button>
+        </form>
+        <button class="form-modal-close" type="button">Закрыть</button>
 
 <?php $form = ActiveForm::begin([
     'id' => 'login-form',
