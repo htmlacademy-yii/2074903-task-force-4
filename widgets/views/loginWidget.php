@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\bootstrap5\ActiveForm;
+use yii\widgets\ActiveForm;
 use yii\bootstrap5\Modal;
 
 /** @var omarinina\infrastructure\models\form\LoginForm $model */
@@ -28,7 +28,7 @@ $form = ActiveForm::begin([
         'labelOptions' => ['class' => 'form-modal-description'],
         'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
     ],
-    'action' => ['site/login']
+    'action' => ['site/ajax-login']
 ]);
 ?>
 

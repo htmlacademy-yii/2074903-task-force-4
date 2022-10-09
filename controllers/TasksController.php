@@ -6,11 +6,11 @@ use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\models\form\TaskFilterForm;
-use yii\web\Controller;
+use app\controllers\SecurityController;
 use Yii;
 use yii\web\NotFoundHttpException;
 
-class TasksController extends Controller
+class TasksController extends SecurityController
 {
     /**
      * @return string
