@@ -3,6 +3,7 @@ namespace omarinina\infrastructure\models\form;
 
 use omarinina\domain\models\user\Users;
 use yii\base\Model;
+use Yii;
 
 class LoginForm extends Model
 {
@@ -37,5 +38,13 @@ class LoginForm extends Model
                 $this->addError($attribute, 'Неправильный email или пароль');
             }
         }
+    }
+
+    public function login()
+    {
+        if ($this->validate()) {
+            return Yii::$app->user->login($this->getUser());
+        }
+        return false;
     }
 }

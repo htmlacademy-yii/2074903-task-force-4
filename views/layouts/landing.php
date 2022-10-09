@@ -5,6 +5,7 @@
 
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
+use app\widgets\LoginWidget;
 
 \app\assets\LandingAsset::register($this);
 ?>
@@ -20,6 +21,8 @@ use yii\helpers\Url;
 </head>
 <body class="landing">
 <?php $this->beginBody() ?>
+<?= (Yii::$app->user->isGuest ? LoginWidget::widget([]) : ''); ?>
+
 <div class="table-layout">
     <header class=" page-header--index">
         <div class="main-container page-header__container page-header__container--index">
@@ -53,9 +56,10 @@ use yii\helpers\Url;
                 <p>Работа там, где ты!</p>
             </div>
             <div class="header__account--index">
-                <a href="<?= Url::to(['login/index']) ?>"
+                <a href="#"
                    class="header__account-enter open-modal"
-                   data-for="enter-form">
+                   data-for="enter-form"
+                   data-bs-toggle="modal" data-bs-target="#enter-form">
                     <span>Вход</span></a>
                 или
                 <a href="<?= Url::to(['registration/index']) ?>" class="header__account-registration">
@@ -65,7 +69,7 @@ use yii\helpers\Url;
         </div>
     </header>
     <main>
-        //there will be $content here
+<!--        //there will be $content here-->
         <div class="landing-container">
             <div class="landing-top">
                 <h1>Работа для всех.<br>
@@ -202,21 +206,21 @@ use yii\helpers\Url;
         </div>
     </footer>
 
-    <section class="modal enter-form form-modal" id="enter-form">
-        <h2>Вход на сайт</h2>
-        <form action="#" method="post">
-            <p>
-                <label class="form-modal-description" for="enter-email">Email</label>
-                <input class="enter-form-email input input-middle" type="email" name="enter-email" id="enter-email">
-            </p>
-            <p>
-                <label class="form-modal-description" for="enter-password">Пароль</label>
-                <input class="enter-form-email input input-middle" type="password" name="enter-email" id="enter-password">
-            </p>
-            <button class="button" type="submit">Войти</button>
-        </form>
-        <button class="form-modal-close" type="button">Закрыть</button>
-    </section>
+<!--    <section class="modal enter-form form-modal" id="enter-form">-->
+<!--        <h2>Вход на сайт</h2>-->
+<!--        <form action="#" method="post">-->
+<!--            <p>-->
+<!--                <label class="form-modal-description" for="enter-email">Email</label>-->
+<!--                <input class="enter-form-email input input-middle" type="email" name="enter-email" id="enter-email">-->
+<!--            </p>-->
+<!--            <p>-->
+<!--                <label class="form-modal-description" for="enter-password">Пароль</label>-->
+<!--                <input class="enter-form-email input input-middle" type="password" name="enter-email" id="enter-password">-->
+<!--            </p>-->
+<!--            <button class="button" type="submit">Войти</button>-->
+<!--        </form>-->
+<!--        <button class="form-modal-close" type="button">Закрыть</button>-->
+<!--    </section>-->
 </div>
 <div class="overlay"></div>
 

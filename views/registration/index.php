@@ -19,7 +19,7 @@ use yii\helpers\ArrayHelper;
                     'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
                 ]
             ])
-            ?>
+?>
                 <h3 class="head-main head-task">Регистрация нового пользователя</h3>
                 <?= $form->field($model, 'name', ['options' => ['class' => 'form-group']])
                     ->textInput(['placeholder' => 'Иван Иванов']); ?>

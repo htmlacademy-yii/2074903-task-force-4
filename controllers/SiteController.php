@@ -7,7 +7,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
+use omarinina\infrastructure\models\form\LoginForm;
 use app\models\ContactForm;
 
 class SiteController extends Controller
@@ -59,8 +59,9 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex() : string
     {
+        $this->layout = 'landing';
         return $this->render('index');
     }
 
@@ -75,14 +76,15 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $loginForm = new LoginForm();
+        if ($loginForm->load(Yii::$app->request->post()) && $loginForm->validate()) {
+            $user = $loginForm->getUser();
+            \Yii::$app->user->login($user);
+            return $this->goHome();
         }
 
-        $model->password = '';
         return $this->render('login', [
-            'model' => $model,
+            'model' => $loginForm
         ]);
     }
 

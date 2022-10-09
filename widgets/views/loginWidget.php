@@ -4,24 +4,48 @@ use yii\helpers\Html;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Modal;
 
+/** @var omarinina\infrastructure\models\form\LoginForm $model */
+
 Modal::begin([
-    'header'=>'<h2>Вход на сайт</h2>',
-    'id'=>'login-modal',
+    'id' => 'enter-form',
     'options' => [
-        'class' => 'modal enter-form form-modal'
-    ]
+        'class' => 'modal enter-form form-modal',
+    ],
+    'closeButton' => false,
 ]);
 
+
+?>
+
+    <h2>Вход на сайт</h2>
+
+<?php
 $form = ActiveForm::begin([
     'id' => 'login-form',
     'enableAjaxValidation' => true,
-    'action' => ['site/ajax-login']
+    'fieldConfig' => [
+        'template' => "{label}\n{input}\n{error}",
+        'labelOptions' => ['class' => 'form-modal-description'],
+        'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+    ],
+    'action' => ['site/login']
 ]);
-echo $form->field($model, 'email')->textInput(['placeholder' => 'example@google.com']);
-echo $form->field($model, 'password')->passwordInput(['placeholder' => 'введите ваш пароль']);
+?>
 
-echo Html::button('Закрыть', ['class' => 'form-modal-close', 'data-dismiss' => 'modal']);
+<p>
+<?= $form->field($model, 'email', ['options' => ['class' => 'enter-form-email input input-middle']])
+    ->textInput(['placeholder' => 'example@google.com']); ?>
+</p>
+<p>
+<?= $form->field($model, 'password', ['options' => ['class'=> 'enter-form-email input input-middle']])
+    ->passwordInput(['placeholder' => 'введите ваш пароль']); ?>
+</p>
+
+<?php
 echo Html::submitButton('Войти', ['class' => 'button']);
 
 ActiveForm::end();
-Modal::end();
+
+echo Html::button('Закрыть', ['class' => 'form-modal-close', 'data-bs-dismiss' => 'modal']);
+?>
+<?php Modal::end(); ?>
