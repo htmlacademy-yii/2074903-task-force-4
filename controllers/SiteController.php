@@ -57,10 +57,14 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return string
+     * @return string|Response
      */
-    public function actionIndex() : string
+    public function actionIndex() : string|Response
     {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
         $this->layout = 'landing';
         return $this->render('index');
     }
