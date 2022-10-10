@@ -6,7 +6,6 @@ use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\models\form\TaskFilterForm;
-use app\controllers\SecurityController;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -54,6 +53,12 @@ class TasksController extends SecurityController
 
         return $this->render('view', [
             'currentTask' => $currentTask,
+        ]);
+    }
+
+    public function actionCreate()
+    {
+        return $this->render('create', [
         ]);
     }
 }
