@@ -71,27 +71,10 @@ class SiteController extends Controller
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
+     * @return array|null|Response
+     * @throws NotFoundHttpException
      */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $loginForm = new LoginForm();
-        if ($loginForm->load(Yii::$app->request->post()) && $loginForm->validate()) {
-            $user = $loginForm->getUser();
-            \Yii::$app->user->login($user);
-            return $this->goHome();
-        }
-
-        return $this->redirect(['index']);
-    }
-
-    public function actionAjaxLogin()
+    public function actionAjaxLogin() : array|null|Response
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
