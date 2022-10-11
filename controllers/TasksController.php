@@ -58,6 +58,8 @@ class TasksController extends SecurityController
 
     public function actionCreate()
     {
+
+        //need to save notnull params - clientId and status
         return $this->render('create', [
         ]);
     }
