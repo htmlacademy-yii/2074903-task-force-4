@@ -9,7 +9,6 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use omarinina\infrastructure\models\form\LoginForm;
 use yii\web\NotFoundHttpException;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
@@ -71,27 +70,10 @@ class SiteController extends Controller
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
+     * @return array|null|Response
+     * @throws NotFoundHttpException
      */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $loginForm = new LoginForm();
-        if ($loginForm->load(Yii::$app->request->post()) && $loginForm->validate()) {
-            $user = $loginForm->getUser();
-            \Yii::$app->user->login($user);
-            return $this->goHome();
-        }
-
-        return $this->redirect(['index']);
-    }
-
-    public function actionAjaxLogin()
+    public function actionAjaxLogin() : array|null|Response
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -127,31 +109,4 @@ class SiteController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }
