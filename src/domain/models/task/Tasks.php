@@ -16,7 +16,7 @@ use omarinina\domain\traits\TimeCounter;
  * @property string $createAt
  * @property string $name
  * @property string $description
- * @property string $expiryDate
+ * @property string|null $expiryDate
  * @property int $budget
  * @property int $categoryId
  * @property int $cityId
@@ -52,7 +52,7 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return [
             [['createAt', 'expiryDate'], 'safe'],
-            [['name', 'expiryDate', 'budget', 'categoryId', 'status', 'clientId', 'description'], 'required'],
+            [['name',  'budget', 'categoryId', 'status', 'clientId', 'description'], 'required'],
             [['description'], 'string'],
             [['categoryId', 'status', 'executorId', 'clientId', 'cityId'], 'integer'],
             [['name'], 'string', 'max' => 255],
