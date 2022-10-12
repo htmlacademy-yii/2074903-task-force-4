@@ -2,7 +2,7 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use \yii\widgets\MaskedInput;
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\Categories $categories */
@@ -45,16 +45,17 @@ use \yii\widgets\MaskedInput;
                 <?= $form->field($model, 'budget', ['options' => ['class' => 'form-group']])
                     ->textInput(['placeholder' => '1000', 'class' => 'budget-icon']); ?>
                 <?= $form->field($model, 'expiryDate', ['options' => ['class' => 'form-group']])
-                    ->widget(MaskedInput::class, ['mask' => '9999-99-99 99:99:99']); ?>
+                    ->input('date'); ?>
             </div>
 
-            <?= $form->field($model, 'files[]', ['options' => ['class' => 'form-label']])
-                ->fileInput(['multiple' => true, 'class' => 'new-file']); ?>
-<!--            <p class="form-label">Файлы</p>-->
-<!--            <div class="new-file">-->
-<!--                Добавить новый файл-->
-<!--            </div>-->
-            <input type="submit" class="button button--blue" value="Опубликовать">
+            <p class="form-label">Файлы</p>
+            <?= $form->field($model, 'files[]', [
+                'template' => "<label class=\"new-file\" >Добавить новый файл{input}",
+                'inputOptions' => ['style' => 'display: none'],
+            ])->fileInput(['multiple' => true]); ?>
+
+            <?= Html::submitInput('Опубликовать', ['class' => 'button button--blue']); ?>
+
         <?php ActiveForm::end(); ?>
     </div>
 </div>

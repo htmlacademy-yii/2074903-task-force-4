@@ -51,7 +51,7 @@ class CreateTaskForm extends Model
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['cityId', 'expiryDate'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
-            [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024],
+            [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
         ];
     }
 }
