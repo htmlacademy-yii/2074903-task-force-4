@@ -59,8 +59,9 @@ class TasksController extends SecurityController
 
     public function actionCreate()
     {
-        $model = new CreateTaskForm();
         $categories = Categories::find()->all();
+        $model = new CreateTaskForm();
+
 
         //need to save notnull params - clientId and status
         return $this->render('create', [

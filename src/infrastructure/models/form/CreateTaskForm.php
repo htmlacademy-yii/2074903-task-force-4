@@ -14,7 +14,7 @@ class CreateTaskForm extends Model
     public string $description = '';
 
     /** @var int */
-    public int $categoryId;
+    public int $categoryId = 0;
 
     /** @var int|null */
     public ?int $cityId = null;
@@ -49,7 +49,7 @@ class CreateTaskForm extends Model
             [['name'], 'string', 'min' => 10, 'max' => 255],
             [['description'], 'string', 'min' => 30, 'max' => 2000],
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
-            [['cityId', 'expiryDate'], 'default' => null],
+            [['cityId', 'expiryDate'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024],
         ];

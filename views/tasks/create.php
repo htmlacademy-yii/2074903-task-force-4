@@ -5,8 +5,8 @@ use yii\helpers\ArrayHelper;
 use \yii\widgets\MaskedInput;
 
 /** @var yii\web\View $this */
-/** @var omarinina\infrastructure\models\form\CreateTaskForm $model */
 /** @var omarinina\domain\models\Categories $categories */
+/** @var omarinina\infrastructure\models\form\CreateTaskForm $model */
 
 ?>
 <div class="main-content main-content--center container">
