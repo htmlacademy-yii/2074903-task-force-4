@@ -22,8 +22,8 @@ class CreateTaskForm extends Model
     /** @var string */
     public string $budget = '';
 
-    /** @var string */
-    public string $expiryDate = '';
+    /** @var string|null */
+    public ?string $expiryDate = null;
 
     /** @var array */
     public array $files = [];
@@ -46,12 +46,12 @@ class CreateTaskForm extends Model
         return [
             [['name', 'description', 'cityId', 'categoryId', 'budget'], 'safe'],
             [['name', 'budget', 'categoryId', 'description'], 'required'],
-            [['name'], 'min' => 10, 'max' => 255],
-            [['description'], 'min' => 30, 'max' => 2000],
+            [['name'], 'string', 'min' => 10, 'max' => 255],
+            [['description'], 'string', 'min' => 30, 'max' => 2000],
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['cityId', 'expiryDate'], 'default' => null],
             [['budget'], 'integer', 'min' => 1],
-            [['files'], 'file', 'multiple' => true, 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024],
+            [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024],
         ];
     }
 }

@@ -6,6 +6,7 @@ use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\models\form\TaskFilterForm;
+use omarinina\infrastructure\models\form\CreateTaskForm;
 use Yii;
 use yii\web\NotFoundHttpException;
 
@@ -58,9 +59,13 @@ class TasksController extends SecurityController
 
     public function actionCreate()
     {
+        $model = new CreateTaskForm();
+        $categories = Categories::find()->all();
 
         //need to save notnull params - clientId and status
         return $this->render('create', [
+            'model' => $model,
+            'categories' => $categories
         ]);
     }
 }
