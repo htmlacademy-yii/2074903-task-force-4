@@ -31,7 +31,7 @@ class RegistrationController extends Controller
                 $newUser->role =  ($registrationForm->executor === true) ? 2 : 1;
                 $newUser->save(false);
 
-                return $this->goHome();
+                return $this->redirect(['site/index']);
             }
         }
 
