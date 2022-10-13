@@ -1,6 +1,8 @@
 <?php
 namespace app\controllers;
 
+use omarinina\domain\models\Files;
+use omarinina\domain\models\task\TaskFiles;
 use yii\web\BadRequestHttpException;
 use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
@@ -9,6 +11,7 @@ use omarinina\infrastructure\models\form\TaskFilterForm;
 use omarinina\infrastructure\models\form\CreateTaskForm;
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class TasksController extends SecurityController
 {
@@ -63,12 +66,39 @@ class TasksController extends SecurityController
             throw new NotFoundHttpException('You do not have access to create tasks', 403);
         }
         $categories = Categories::find()->all();
-        $model = new CreateTaskForm();
+        $createTaskForm = new CreateTaskForm();
+        $newTask = new Tasks();
 
+        if (Yii::$app->request->getIsPost()) {
+            $createTaskForm->load(Yii::$app->request->post());
 
-        //need to save notnull params - clientId and status
+            if ($createTaskForm->validate()) {
+                $newTask->attributes = Yii::$app->request->post('CreateTaskForm');
+                $newTask->clientId = Yii::$app->user->identity->id;
+                $newTask->status = TaskStatuses::findOne(['taskStatus' => 'new'])->id;
+                if ($createTaskForm->expiryDate !== null) {
+                    $newTask->expiryDate = Yii::$app->formatter->asDate(
+                        $createTaskForm->expiryDate,
+                        'yyyy-MM-dd HH:mm:ss'
+                    );
+                }
+                $newTask->save(false);
+                foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
+                    $newFile = new Files();
+                    $taskFile = new TaskFiles();
+                    $name = uniqid('upload') . '.' . $file->getExtension();
+                    $file->saveAs(Yii::getAlias('@webroot/upload') . '/' . $name);
+                    $newFile->fileSrc = '/uploads/' . $name;
+                    $newFile->save(false);
+                    $taskFile->fileId = $newFile->id;
+                    $taskFile->taskId = $newTask->id;
+                    $taskFile->save(false);
+                }
+                return $this->redirect(['site/index']);
+            }
+        }
         return $this->render('create', [
-            'model' => $model,
+            'model' => $createTaskForm,
             'categories' => $categories
         ]);
     }
