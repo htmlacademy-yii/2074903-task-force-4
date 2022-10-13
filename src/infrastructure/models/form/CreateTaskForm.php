@@ -44,12 +44,11 @@ class CreateTaskForm extends Model
     public function rules()
     {
         return [
-            [['name', 'description', 'cityId', 'categoryId', 'budget'], 'safe'],
             [['name', 'budget', 'categoryId', 'description'], 'required'],
             [['name'], 'string', 'min' => 10, 'max' => 255],
             [['description'], 'string', 'min' => 30, 'max' => 2000],
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
-            [['cityId', 'expiryDate'], 'default', 'value' => null],
+            [['expiryDate'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
         ];

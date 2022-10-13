@@ -87,7 +87,7 @@ class TasksController extends SecurityController
                     $newFile = new Files();
                     $taskFile = new TaskFiles();
                     $name = uniqid('upload') . '.' . $file->getExtension();
-                    $file->saveAs(Yii::getAlias('@webroot/upload') . '/' . $name);
+                    $file->saveAs('@webroot/uploads/' . $name);
                     $newFile->fileSrc = '/uploads/' . $name;
                     $newFile->save(false);
                     $taskFile->fileId = $newFile->id;
