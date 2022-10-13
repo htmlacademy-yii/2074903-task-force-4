@@ -4,7 +4,6 @@
 
 use yii\web\View;
 use yii\helpers\Url;
-use omarinina\infrastructure\statistic\ExecutorStatistic;
 use omarinina\domain\models\user\Users;
 
 $this->registerJsFile('js/main.js');
@@ -41,19 +40,19 @@ $this->registerJsFile('js/main.js');
                         <?= str_repeat(
                             '<span class="fill-star">&nbsp;</span>',
                             round(
-                                (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getExecutorRating()
+                                Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
                         <?= str_repeat(
                             '<span>&nbsp;</span>',
-                            ExecutorStatistic::MAX_RATING - round(
-                                (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getExecutorRating()
+                            Users::MAX_RATING - round(
+                                Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
                     </div>
                     <p class="reviews">
                         <?= \morphos\Russian\pluralize(
-                            (new ExecutorStatistic(Users::findOne($respond->executor->id)))->getCountReviews(),
+                            Users::findOne($respond->executor->id)->getCountReviews(),
                             'отзыв'
                         ) ?></p>
                 </div>
