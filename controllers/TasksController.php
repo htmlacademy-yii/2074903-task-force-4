@@ -94,7 +94,7 @@ class TasksController extends SecurityController
                     $taskFile->taskId = $newTask->id;
                     $taskFile->save(false);
                 }
-                return $this->redirect(['site/index']);
+                return $this->redirect(['view', 'id' => $newTask->id]);
             }
         }
         return $this->render('create', [
