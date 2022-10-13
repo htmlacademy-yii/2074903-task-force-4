@@ -30,7 +30,6 @@ class RegistrationForm extends Model
     {
         return [
             [['name', 'email', 'city', 'password', 'repeatedPassword', 'executor'], 'required'],
-            [['name', 'email', 'city'], 'safe'],
             ['name', 'string'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => Users::class, 'message' => 'Пользователь с таким e-mail уже существует'],
