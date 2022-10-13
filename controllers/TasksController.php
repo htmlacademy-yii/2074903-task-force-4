@@ -59,6 +59,9 @@ class TasksController extends SecurityController
 
     public function actionCreate()
     {
+        if (Yii::$app->user->identity->userRole->role === 'executor') {
+            throw new NotFoundHttpException('You do not have access to create tasks', 403);
+        }
         $categories = Categories::find()->all();
         $model = new CreateTaskForm();
 
