@@ -26,7 +26,7 @@ class RegistrationController extends Controller
             $registrationForm->load(Yii::$app->request->post());
 
             if ($registrationForm->validate()) {
-                $newUser->attributes = $_POST['RegistrationForm'];
+                $newUser->attributes = Yii::$app->request->post('RegistrationForm');
                 $newUser->password = Yii::$app->getSecurity()->generatePasswordHash($registrationForm->password);
                 $newUser->role =  ($registrationForm->executor === true) ? 2 : 1;
                 $newUser->save(false);
