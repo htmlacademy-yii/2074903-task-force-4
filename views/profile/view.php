@@ -1,9 +1,8 @@
 <?php
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\user\Users $currentUser */
-/** @var omarinina\infrastructure\statistic\ExecutorStatistic $executorStatistic */
 
-use omarinina\infrastructure\statistic\ExecutorStatistic;
+use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
 use Yii;
 ?>
@@ -19,14 +18,14 @@ use Yii;
                     <div class="stars-rating big">
                         <?= str_repeat(
                             '<span class="fill-star">&nbsp;</span>',
-                            round($executorStatistic->getExecutorRating())
+                            round($currentUser->getExecutorRating())
                         ) ?>
                         <?= str_repeat(
                             '<span>&nbsp;</span>',
-                            ExecutorStatistic::MAX_RATING - round($executorStatistic->getExecutorRating())
+                            Users::MAX_RATING - round($currentUser->getExecutorRating())
                         ) ?>
                     </div>
-                    <span class="current-rate"><?= $executorStatistic->getExecutorRating() ?></span>
+                    <span class="current-rate"><?= $currentUser->getExecutorRating() ?></span>
                 </div>
             </div>
             <p class="user-description">
@@ -76,7 +75,7 @@ use Yii;
                         round($executorReview->score)
                     ) ?><?= str_repeat(
                         '<span>&nbsp;</span>',
-                        ExecutorStatistic::MAX_RATING - round($executorReview->score)
+                        Users::MAX_RATING - round($executorReview->score)
                     ) ?>
                 </div>
                 <p class="info-text">
@@ -93,14 +92,14 @@ use Yii;
             <h4 class="head-card">Статистика исполнителя</h4>
             <dl class="black-list">
                 <dt>Всего заказов</dt>
-                <dd><?= $executorStatistic->getCountDoneTasks() ?> выполнено,
-                    <?= $executorStatistic->getCountFailedTasks() ?> провалено</dd>
+                <dd><?= $currentUser->getCountDoneTasks() ?> выполнено,
+                    <?= $currentUser->getCountFailedTasks() ?> провалено</dd>
                 <dt>Место в рейтинге</dt>
-                <dd><?= $executorStatistic->getExecutorPlace() ?> место</dd>
+                <dd><?= $currentUser->getExecutorPlace($currentUser) ?> место</dd>
                 <dt>Дата регистрации</dt>
-                <dd><?= $executorStatistic->getExecutorCreateAt() ?></dd>
+                <dd><?= $currentUser->getExecutorCreateAt() ?></dd>
                 <dt>Статус</dt>
-                <dd><?= $executorStatistic->getExecutorCurrentStatus() ?></dd>
+                <dd><?= $currentUser->getExecutorCurrentStatus() ?></dd>
             </dl>
         </div>
         <div class="right-card white">
