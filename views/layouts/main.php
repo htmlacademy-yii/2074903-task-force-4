@@ -87,7 +87,7 @@ use yii\helpers\Url;
     </div>
 </main>
 
-<?php if (isset($this->blocks['pop-ups'])): ?>
+<?php if (isset($this->blocks['pop-ups'])) : ?>
     <?= $this->blocks['pop-ups'] ?>
 <?php endif; ?>
 
