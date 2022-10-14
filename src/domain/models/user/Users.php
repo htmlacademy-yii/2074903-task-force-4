@@ -316,10 +316,9 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param Users $currentUser
      * @return int
      */
-    public function getExecutorPlace(Users $currentUser): int
+    public function getExecutorPlace(): int
     {
         $allRating = array_map(
             function ($users) {
@@ -327,7 +326,7 @@ class Users extends \yii\db\ActiveRecord
             },
             Roles::findOne(['role' => 'executor'])->users
         );
-        $currentExecutorRating = $this->getExecutorRatingPlace($currentUser);
+        $currentExecutorRating = $this->getExecutorRatingPlace($this);
         rsort($allRating);
         return array_search($currentExecutorRating, $allRating) + 1;
     }
