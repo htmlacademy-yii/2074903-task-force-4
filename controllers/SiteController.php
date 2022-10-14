@@ -82,9 +82,7 @@ class SiteController extends Controller
         if (Yii::$app->request->isAjax) {
             $loginForm = new LoginForm();
             if ($loginForm->load(Yii::$app->request->post())) {
-                if ($loginForm->validate()) {
-                    $user = $loginForm->getUser();
-                    \Yii::$app->user->login($user);
+                if ($loginForm->login()) {
                     return $this->goHome();
                 } else {
                     Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
@@ -103,8 +101,7 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        $user = Yii::$app->user->identity;
-        Yii::$app->user->logout($user);
+        Yii::$app->user->logout();
 
         return $this->redirect(['index']);
     }

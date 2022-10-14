@@ -7,12 +7,16 @@ use Yii;
 
 class LoginForm extends Model
 {
-    public $email;
-    public $password;
+    /** @var string */
+    public string $email = '';
 
-    private $_user;
+    /** @var string */
+    public string $password = '';
 
-    public function rules()
+    /** @var Users|null */
+    private ?Users $user = null;
+
+    public function rules(): array
     {
         return [
             [['email', 'password'], 'required'],
@@ -20,15 +24,23 @@ class LoginForm extends Model
         ];
     }
 
-    public function getUser()
+    /**
+     * @return Users|null
+     */
+    public function getUser(): ?Users
     {
-        if ($this->_user === null) {
-            $this->_user = Users::findOne(['email' => $this->email]);
+        if ($this->user === null) {
+            $this->user = Users::findOne(['email' => $this->email]);
         }
 
-        return $this->_user;
+        return $this->user;
     }
 
+    /**
+     * @param $attribute
+     * @param $params
+     * @return void
+     */
     public function validatePassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
@@ -40,7 +52,10 @@ class LoginForm extends Model
         }
     }
 
-    public function login()
+    /**
+     * @return bool
+     */
+    public function login(): bool
     {
         if ($this->validate()) {
             return Yii::$app->user->login($this->getUser());
