@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $taskStatus
+ * @property string $name
  *
  * @property Tasks[] $tasks
  * @property Tasks[] $newTasks
@@ -29,8 +30,8 @@ class TaskStatuses extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['taskStatus'], 'required'],
-            [['taskStatus'], 'string', 'max' => 255],
+            [['taskStatus', 'name'], 'required'],
+            [['taskStatus', 'name'], 'string', 'max' => 255],
         ];
     }
 
@@ -42,6 +43,7 @@ class TaskStatuses extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'taskStatus' => 'Task Status',
+            'name' => 'Russian name Status'
         ];
     }
 

@@ -6,7 +6,9 @@ use omarinina\domain\models\Cities;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
+use omarinina\domain\models\Categories;
 use Yii;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "users".
@@ -24,17 +26,28 @@ use Yii;
  * @property string|null $telegram
  * @property string|null $bio
  *
- * @property Cities $city0
- * @property ExecutorCategories[] $executorCategories
+ * @property Cities $userCity
+ * @property Categories[] $executorCategories
  * @property Responds[] $responds
  * @property Reviews[] $clientReviews
  * @property Reviews[] $executorReviews
  * @property Roles $userRole
  * @property Tasks[] $clientTasks
  * @property Tasks[] $executorTasks
+ * @property Tasks[] $executorInWorkTasks
+ * @property Tasks[] $executorFailedTasks
+ * @property Tasks[] $executorDoneTasks
  */
 class Users extends \yii\db\ActiveRecord
 {
+    public const STATUS_BUSY = 'busy';
+    public const STATUS_FREE = 'free';
+
+    public const STATUS_BUSY_NAME = 'Занят';
+    public const STATUS_FREE_NAME = 'Открыт для новых заказов';
+
+    public const MAX_RATING = 5;
+
     /**
      * {@inheritdoc}
      */
@@ -52,9 +65,10 @@ class Users extends \yii\db\ActiveRecord
             [['createAt', 'birthDate'], 'safe'],
             [['email', 'name', 'password', 'role', 'city'], 'required'],
             [['role', 'city'], 'integer'],
-            [['bio'], 'string'],
+            [['bio', 'avatarSrc'], 'string'],
             [['email'], 'string', 'max' => 128],
-            [['name', 'password', 'avatarSrc', 'phone', 'telegram'], 'string', 'max' => 255],
+            [['name', 'password'], 'string', 'max' => 255],
+            [['phone', 'telegram'], 'string', 'max' => 30],
             [['email'], 'unique'],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['city' => 'id']],
             [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
@@ -83,11 +97,11 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[City0]].
+     * Gets query for [[UserCity]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCity0()
+    public function getUserCity()
     {
         return $this->hasOne(Cities::class, ['id' => 'city']);
     }
@@ -96,10 +110,12 @@ class Users extends \yii\db\ActiveRecord
      * Gets query for [[ExecutorCategories]].
      *
      * @return \yii\db\ActiveQuery
+     * @throws InvalidConfigException
      */
     public function getExecutorCategories()
     {
-        return $this->hasMany(ExecutorCategories::class, ['executorId' => 'id']);
+        return $this->hasMany(Categories::class, ['id' => 'categoryId'])
+            ->viaTable('executorCategories', ['executorId' => 'id']);
     }
 
     /**
@@ -160,5 +176,159 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorTasks()
     {
         return $this->hasMany(Tasks::class, ['executorId' => 'id']);
+    }
+
+    /**
+     * Gets query for [[ExecutorInWorkTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorInWorkTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 3');
+    }
+
+    /**
+     * Gets query for [[ExecutorFailedTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorFailedTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 5');
+    }
+
+    /**
+     * Gets query for [[ExecutorDoneTasks]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getExecutorDoneTasks()
+    {
+        return $this->getExecutorTasks()
+            ->where('tasks.status = 4');
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getMapExecutorStatus(): array
+    {
+        return [
+            self::STATUS_BUSY => self::STATUS_BUSY_NAME,
+            self::STATUS_FREE => self::STATUS_FREE_NAME
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getExecutorCurrentStatus(): string
+    {
+        $currentTask = $this->executorInWorkTasks;
+        return $currentTask ?
+            $this->getMapExecutorStatus()[self::STATUS_BUSY] :
+            $this->getMapExecutorStatus()[self::STATUS_FREE];
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountReviews(): int
+    {
+        return $this->getExecutorReviews()->count();
+    }
+
+    /**
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getExecutorCreateAt(): string
+    {
+        return Yii::$app->formatter->asDate($this->createAt, 'dd MMMM, HH:mm');
+    }
+
+    /**
+     * @return float
+     */
+    public function getExecutorRating(): float
+    {
+        $commonScore = array_sum(
+            array_map(
+                function ($executorReviews) {
+                    return $executorReviews->score;
+                },
+                $this->executorReviews
+            )
+        );
+        return $this->getCountReviews() ?
+            round($commonScore / ($this->getCountReviews() + $this->getCountFailedTasks()), 2) :
+            0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountFailedTasks(): int
+    {
+        return $this->getExecutorFailedTasks()->count();
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountDoneTasks(): int
+    {
+        return $this->getExecutorDoneTasks()->count();
+    }
+
+    /**
+     * @param Users $user
+     * @return float
+     */
+    private function getExecutorRatingPlace(Users $user): float
+    {
+        $reviewTasks = array_map(
+            function ($executorReviews) {
+                return $executorReviews->taskId;
+            },
+            $user->executorReviews
+        );
+        $doneTasks = array_map(
+            function ($executorDoneTasks) {
+                return $executorDoneTasks->id;
+            },
+            $user->executorDoneTasks
+        );
+        foreach ($reviewTasks as $reviewTask) {
+            if (!in_array($reviewTask, $doneTasks)) {
+                $taskKey = array_search($reviewTask, $reviewTasks);
+                unset($reviewTasks[$taskKey]);
+            }
+        }
+        $commonScore = array_sum($reviewTasks);
+        $countReviewDoneTasks = count($reviewTasks);
+        return $countReviewDoneTasks ?
+            round($commonScore / $countReviewDoneTasks, 2) :
+            0;
+    }
+
+    /**
+     * @param Users $currentUser
+     * @return int
+     */
+    public function getExecutorPlace(Users $currentUser): int
+    {
+        $allRating = array_map(
+            function ($users) {
+                return $this->getExecutorRatingPlace($users);
+            },
+            Roles::findOne(['role' => 'executor'])->users
+        );
+        $currentExecutorRating = $this->getExecutorRatingPlace($currentUser);
+        rsort($allRating);
+        return array_search($currentExecutorRating, $allRating) + 1;
     }
 }

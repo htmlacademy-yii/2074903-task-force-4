@@ -4,6 +4,7 @@
 /** @var string $content */
 
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
 
 \app\assets\BasicAsset::register($this);
 ?>
@@ -29,7 +30,7 @@ use yii\bootstrap5\Html;
         <div class="nav-wrapper">
             <ul class="nav-list">
                 <li class="list-item list-item--active">
-                    <a class="link link--nav" >Новое</a>
+                    <a href="<?= Url::to(['tasks/index']) ?>" class="link link--nav" >Новое</a>
                 </li>
                 <li class="list-item">
                     <a href="#" class="link link--nav" >Мои задания</a>
@@ -72,6 +73,10 @@ use yii\bootstrap5\Html;
         <?= $content ?>
     </div>
 </main>
+
+<?php if (isset($this->blocks['pop-ups'])) : ?>
+    <?= $this->blocks['pop-ups'] ?>
+<?php endif; ?>
 
 <?php $this->endBody() ?>
 </body>

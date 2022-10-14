@@ -2,6 +2,7 @@
 
 use omarinina\domain\models\user\Roles;
 
+unset(Roles::findOne(['role' => 'executor'])->users);
 $executors = array_map(
     function ($users) { return $users->id; },
     Roles::findOne(['role' => 'executor'])->users);

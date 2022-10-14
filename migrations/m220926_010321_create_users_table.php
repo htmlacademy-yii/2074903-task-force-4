@@ -21,10 +21,10 @@ class m220926_010321_create_users_table extends Migration
             'password' => $this->char(255)->notNull(),
             'role' => $this->integer()->notNull(),
             'city' => $this->integer()->notNull(),
-            'avatarSrc' => $this->string(255),
+            'avatarSrc' => $this->text(),
             'birthDate' => $this->date(),
-            'phone' => $this->char(255),
-            'telegram' => $this->string(255),
+            'phone' => $this->char(30),
+            'telegram' => $this->string(30),
             'bio' => $this->text()
         ]);
 

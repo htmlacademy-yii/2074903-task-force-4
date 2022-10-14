@@ -11,11 +11,11 @@ return [
     'city' => $faker->numberBetween(1,1087),
     'avatarSrc' => $faker->randomElement(
         [
-            '@app/web/img/avatars/1.png',
-            '@app/web/img/avatars/2.png',
-            '@app/web/img/avatars/3.png',
-            '@app/web/img/avatars/4.png',
-            '@app/web/img/avatars/5.png',
+            '/img/avatars/1.png',
+            '/img/avatars/2.png',
+            '/img/avatars/3.png',
+            '/img/avatars/4.png',
+            '/img/avatars/5.png',
         ]
     ),
     'birthDate' => $faker->date('Y-m-d','-18 years'),

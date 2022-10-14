@@ -4,6 +4,7 @@ namespace omarinina\domain\models\task;
 
 use omarinina\domain\models\user\Users;
 use Yii;
+use omarinina\domain\traits\TimeCounter;
 
 /**
  * This is the model class for table "responds".
@@ -78,4 +79,6 @@ class Responds extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Tasks::class, ['id' => 'taskId']);
     }
+
+    use TimeCounter;
 }

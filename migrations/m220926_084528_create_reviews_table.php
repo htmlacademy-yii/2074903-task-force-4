@@ -16,6 +16,8 @@ class m220926_084528_create_reviews_table extends Migration
             'id' => $this->primaryKey(),
             'taskId' => $this->integer()->notNull(),
             'score' => $this->integer()->notNull(),
+            'executorId' => $this->integer(),
+            'clientId' => $this->integer()->notNull(),
             'comment' => $this->text(),
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull()
@@ -30,6 +32,24 @@ class m220926_084528_create_reviews_table extends Migration
             'CASCADE'
         );
 
+        $this->addForeignKey(
+            'REVIEW_EXECUTOR_ID',
+            'reviews',
+            'executorId',
+            'users',
+            'id',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            'REVIEW_CLIENT_ID',
+            'reviews',
+            'clientId',
+            'users',
+            'id',
+            'CASCADE'
+        );
+
     }
 
     /**
@@ -37,6 +57,8 @@ class m220926_084528_create_reviews_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('REVIEW_CLIENT_ID', 'reviews');
+        $this->dropForeignKey('REVIEW_EXECUTOR_ID', 'reviews');
         $this->dropForeignKey('REVIEW_TASK_ID', 'reviews');
 
         $this->dropTable('{{%reviews}}');

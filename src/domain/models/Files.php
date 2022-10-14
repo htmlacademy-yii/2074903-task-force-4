@@ -32,7 +32,7 @@ class Files extends \yii\db\ActiveRecord
     {
         return [
             [['fileSrc'], 'required'],
-            [['fileSrc'], 'string', 'max' => 255],
+            [['fileSrc'], 'string'],
         ];
     }
 

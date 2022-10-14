@@ -43,6 +43,7 @@ DIRECTORY STRUCTURE
       docker/             contains data from DB volumes
       fixtures/           contains fake data for DB
       mail/               contains view files for e-mails
+      migrations/         contains migrations to create current tables for DB
       runtime/            contains files generated during runtime
       src/                contains classes (domain, infrustacture, application)
       tests/              contains various tests for the basic application (just unit)

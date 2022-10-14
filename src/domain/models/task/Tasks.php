@@ -7,6 +7,7 @@ use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
 use Yii;
+use omarinina\domain\traits\TimeCounter;
 
 /**
  * This is the model class for table "tasks".
@@ -27,7 +28,7 @@ use Yii;
  * @property Users $client
  * @property Users $executor
  * @property Responds[] $responds
- * @property Reviews[] $reviews
+ * @property Reviews $review
  * @property TaskStatuses $taskStatus
  * @property TaskFiles[] $taskFiles
  * @property Files[] $files
@@ -128,9 +129,9 @@ class Tasks extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getReviews()
+    public function getReview()
     {
-        return $this->hasMany(Reviews::class, ['taskId' => 'id']);
+        return $this->hasOne(Reviews::class, ['taskId' => 'id']);
     }
 
     /**
@@ -174,5 +175,7 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Cities::class, ['id' => 'cityId']);
     }
+
+    use TimeCounter;
 
 }

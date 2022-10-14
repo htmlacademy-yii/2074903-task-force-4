@@ -19,7 +19,8 @@ class TaskFilterForm extends Model
     const NAME_PERIOD_24 = '24 часа';
     const NAME_PERIOD_ALL = 'За всё время';
 
-    public $categories;
+    /** @var array */
+    public array $categories = [];
 
     /** @var bool */
     public bool $noResponds = false;
@@ -27,7 +28,8 @@ class TaskFilterForm extends Model
     /** @var bool */
     public bool $remote = false;
 
-    public $period;
+    /** @var string */
+    public string $period = '';
 
     public function attributeLabels(): array
     {
@@ -67,24 +69,28 @@ class TaskFilterForm extends Model
      */
     public function filter(ActiveQuery $tasks): ActiveQuery
     {
-        if ($this->categories){
+        if ($this->categories) {
             $tasks->andWhere(['in', 'categoryId', $this->categories]);
         }
         if ($this->noResponds) {
-            $tasks->leftJoin('responds', 'responds.taskId = null');
+            $tasks->joinWith(['responds'], true, 'LEFT JOIN')->where(['taskId' => null]);
         }
         if ($this->remote) {
             $tasks->andWhere(['cityId' => null]);
         }
-        if (in_array($this->period, array_keys($this->getPeriods()))){
-            switch($this->period){
+        if (in_array($this->period, array_keys($this->getPeriods()))) {
+            switch ($this->period) {
                 case self::PERIOD_1_HOUR:
-                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 1 HOUR'); break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 1 HOUR');
+                    break;
                 case self::PERIOD_12_HOURS:
-                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 12 HOUR'); break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 12 HOUR');
+                    break;
                 case self::PERIOD_24_HOURS:
-                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 24 HOUR'); break;
-                case self::PERIOD_ALL: break;
+                    $tasks->andWhere('tasks.createAt >= NOW() - INTERVAL 24 HOUR');
+                    break;
+                case self::PERIOD_ALL:
+                    break;
             }
         }
 
