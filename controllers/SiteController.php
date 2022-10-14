@@ -7,8 +7,8 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+use omarinina\infrastructure\models\form\LoginForm;
+use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {
@@ -32,7 +32,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['get', 'post'],
                 ],
             ],
         ];
@@ -57,33 +57,43 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return string
+     * @return string|Response
      */
-    public function actionIndex()
-    {
-        return $this->render('index');
-    }
-
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
+    public function actionIndex() : string|Response
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+        $this->layout = 'landing';
+        return $this->render('index');
+    }
+
+    /**
+     * @return array|null|Response
+     * @throws NotFoundHttpException
+     */
+    public function actionAjaxLogin() : array|null|Response
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
         }
 
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        if (Yii::$app->request->isAjax) {
+            $loginForm = new LoginForm();
+            if ($loginForm->load(Yii::$app->request->post())) {
+                if ($loginForm->validate()) {
+                    $user = $loginForm->getUser();
+                    \Yii::$app->user->login($user);
+                    return $this->goHome();
+                } else {
+                    Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
+                    return \yii\widgets\ActiveForm::validate($loginForm);
+                }
+            }
+        } else {
+            throw new NotFoundHttpException('Page not found', 404);
+        }
     }
 
     /**
@@ -93,36 +103,10 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
+        $user = Yii::$app->user->identity;
+        Yii::$app->user->logout($user);
 
-        return $this->goHome();
+        return $this->redirect(['index']);
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 }

@@ -2,6 +2,8 @@
 
 /** @var yii\web\View $this */
 /** @var string $content */
+/** @var omarinina\domain\models\user\Users $user */
+$user = Yii::$app->user->identity;
 
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
@@ -13,6 +15,7 @@ use yii\helpers\Url;
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->sourceLanguage ?>">
 <head>
+    <?php $this->registerCsrfMetaTags()?>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?= Html::encode($this->title) ?></title>
@@ -27,7 +30,7 @@ use yii\helpers\Url;
         <a href='#' class="header-logo">
             <img class="logo-image" src="/img/logotype.png" width=227 height=60 alt="taskforce">
         </a>
-        <?php if (!Yii::$app->user->isGuest): ?>
+        <?php if (!Yii::$app->user->isGuest) : ?>
         <div class="nav-wrapper">
             <ul class="nav-list">
                 <li class="list-item list-item--active">
@@ -46,13 +49,13 @@ use yii\helpers\Url;
         </div>
         <?php endif; ?>
     </nav>
-    <?php if (!Yii::$app->user->isGuest): ?>
+    <?php if (!Yii::$app->user->isGuest) : ?>
     <div class="user-block">
         <a href="#">
             <img class="user-photo" src="/img/man-glasses.png" width="55" height="55" alt="Аватар">
         </a>
         <div class="user-menu">
-            <p class="user-name">Василий</p>
+            <p class="user-name"><?= $user->name ?></p>
             <div class="popup-head">
                 <ul class="popup-menu">
                     <li class="menu-item">
@@ -62,22 +65,13 @@ use yii\helpers\Url;
                         <a href="#" class="link">Связаться с нами</a>
                     </li>
                     <li class="menu-item">
-                        <a href="#" class="link">Выход из системы</a>
+                        <a href="<?= Url::to(['site/logout']) ?>" class="link" data-method="post">Выход из системы</a>
                     </li>
 
                 </ul>
             </div>
         </div>
-        <?php else: ?>
-        <div class="header__account--index">
-            <a href="#" class="header__account-enter open-modal" data-for="enter-form">
-                <span>Вход</span></a>
-            или
-            <a href="<?= Url::to(['registration/index']) ?>" class="header__account-registration">
-                Регистрация
-            </a>
-        </div>
-        <?php endif; ?>
+    <?php endif; ?>
     </div>
 </header>
 

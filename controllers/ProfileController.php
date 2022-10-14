@@ -1,11 +1,11 @@
 <?php
 namespace app\controllers;
 
-use yii\web\Controller;
+use app\controllers\SecurityController;
 use omarinina\domain\models\user\Users;
 use yii\web\NotFoundHttpException;
 
-class ProfileController extends Controller
+class ProfileController extends SecurityController
 {
     /**
      * @param int $id

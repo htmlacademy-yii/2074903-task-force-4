@@ -95,7 +95,7 @@ use Yii;
                 <dd><?= $currentUser->getCountDoneTasks() ?> выполнено,
                     <?= $currentUser->getCountFailedTasks() ?> провалено</dd>
                 <dt>Место в рейтинге</dt>
-                <dd><?= $currentUser->getExecutorPlace($currentUser) ?> место</dd>
+                <dd><?= $currentUser->getExecutorPlace() ?> место</dd>
                 <dt>Дата регистрации</dt>
                 <dd><?= $currentUser->getExecutorCreateAt() ?></dd>
                 <dt>Статус</dt>

@@ -9,6 +9,7 @@ use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
@@ -38,7 +39,7 @@ use yii\base\InvalidConfigException;
  * @property Tasks[] $executorFailedTasks
  * @property Tasks[] $executorDoneTasks
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends \yii\db\ActiveRecord implements IdentityInterface
 {
     public const STATUS_BUSY = 'busy';
     public const STATUS_FREE = 'free';
@@ -176,6 +177,31 @@ class Users extends \yii\db\ActiveRecord
     public function getExecutorTasks()
     {
         return $this->hasMany(Tasks::class, ['executorId' => 'id']);
+    }
+
+    public static function findIdentity($id)
+    {
+        return self::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        // TODO: Implement findIdentityByAccessToken() method.
+    }
+
+    public function getId()
+    {
+        return $this->getPrimaryKey();
+    }
+
+    public function getAuthKey()
+    {
+        // TODO: Implement getAuthKey() method.
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        // TODO: Implement validateAuthKey() method.
     }
 
     /**
@@ -316,10 +342,9 @@ class Users extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param Users $currentUser
      * @return int
      */
-    public function getExecutorPlace(Users $currentUser): int
+    public function getExecutorPlace(): int
     {
         $allRating = array_map(
             function ($users) {
@@ -327,7 +352,7 @@ class Users extends \yii\db\ActiveRecord
             },
             Roles::findOne(['role' => 'executor'])->users
         );
-        $currentExecutorRating = $this->getExecutorRatingPlace($currentUser);
+        $currentExecutorRating = $this->getExecutorRatingPlace($this);
         rsort($allRating);
         return array_search($currentExecutorRating, $allRating) + 1;
     }

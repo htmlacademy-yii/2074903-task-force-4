@@ -2414,16 +2414,7 @@ footer {
   display: none; }
 
 .form-modal {
-  background-color: #ffffff;
-  position: fixed;
-  top: 100px;
-  width: 300px;
-  z-index: 30;
-  left: 50%;
-  margin-left: -180px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 20px;
+  margin-left: 400px;
   display: block; }
   .form-modal h2 {
     font-size: 20px;
