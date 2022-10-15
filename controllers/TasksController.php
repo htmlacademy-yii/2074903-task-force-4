@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers;
 
+use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\domain\models\Files;
 use omarinina\domain\models\task\TaskFiles;
 use yii\web\BadRequestHttpException;
@@ -79,34 +80,18 @@ class TasksController extends SecurityController
     {
         $categories = Categories::find()->all();
         $createTaskForm = new CreateTaskForm();
-        $newTask = new Tasks();
+        $newTask = new ServiceTaskCreate($createTaskForm);
 
         if (Yii::$app->request->getIsPost()) {
             $createTaskForm->load(Yii::$app->request->post());
 
             if ($createTaskForm->validate()) {
-                $newTask->attributes = Yii::$app->request->post('CreateTaskForm');
-                $newTask->clientId = Yii::$app->user->identity->id;
-                $newTask->status = TaskStatuses::findOne(['taskStatus' => 'new'])->id;
-                if ($createTaskForm->expiryDate !== null) {
-                    $newTask->expiryDate = Yii::$app->formatter->asDate(
-                        $createTaskForm->expiryDate,
-                        'yyyy-MM-dd HH:mm:ss'
-                    );
-                }
-                $newTask->save(false);
+                $newTask->saveMainContent();
                 foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
-                    $newFile = new Files();
-                    $taskFile = new TaskFiles();
-                    $name = uniqid('upload') . '.' . $file->getExtension();
-                    $file->saveAs('@webroot/uploads/' . $name);
-                    $newFile->fileSrc = '/uploads/' . $name;
-                    $newFile->save(false);
-                    $taskFile->fileId = $newFile->id;
-                    $taskFile->taskId = $newTask->id;
-                    $taskFile->save(false);
+                    $newTask->saveFile($file);
+                    $newTask->saveRelationsTaskFile();
                 }
-                return $this->redirect(['view', 'id' => $newTask->id]);
+                return $this->redirect(['view', 'id' => $newTask->getIdNewTask()]);
             }
         }
         return $this->render('create', [
