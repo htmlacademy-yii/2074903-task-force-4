@@ -1,6 +1,7 @@
 <?php
 namespace app\controllers;
 
+use omarinina\application\services\user\create\ServiceUserCreate;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
@@ -40,18 +41,12 @@ class RegistrationController extends Controller
     {
         $registrationForm = new RegistrationForm();
         $cities = Cities::find()->all();
-        $newUser = new Users();
 
         if (Yii::$app->request->getIsPost()) {
             $registrationForm->load(Yii::$app->request->post());
 
             if ($registrationForm->validate()) {
-                $newUser->attributes = Yii::$app->request->post('RegistrationForm');
-                $newUser->email = mb_strtolower($registrationForm->email);
-                $newUser->password = Yii::$app->getSecurity()->generatePasswordHash($registrationForm->password);
-                $newUser->role =  ($registrationForm->executor === true) ? 2 : 1;
-                $newUser->save(false);
-
+                ServiceUserCreate::createNewUser($registrationForm);
                 return $this->redirect(['site/index']);
             }
         }

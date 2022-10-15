@@ -1,7 +1,7 @@
 <?php
 namespace app\controllers;
 
-use omarinina\application\services\profile\show\ServiceProfileShow;
+use omarinina\application\services\user\show\ServiceProfileShow;
 use yii\web\NotFoundHttpException;
 
 class ProfileController extends SecurityController

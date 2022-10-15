@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\application\services\profile\show;
+namespace omarinina\application\services\user\show;
 
 use omarinina\domain\models\user\Users;
 use yii\web\NotFoundHttpException;
