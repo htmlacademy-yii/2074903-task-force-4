@@ -76,27 +76,30 @@ class SiteController extends Controller
     }
 
     /**
-     * @return array|null|Response
+     * @return array|string|Response
      * @throws NotFoundHttpException
      */
-    public function actionAjaxLogin() : array|null|Response
+    public function actionAjaxLogin() : array|string|Response
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+        try {
+            if (!Yii::$app->user->isGuest) {
+                return $this->goHome();
+            }
 
-        if (Yii::$app->request->isAjax) {
-            $loginForm = new LoginForm();
-            if ($loginForm->load(Yii::$app->request->post())) {
-                if ($loginForm->login()) {
-                    return $this->goHome();
-                } else {
+            if (Yii::$app->request->isAjax) {
+                $loginForm = new LoginForm();
+                if ($loginForm->load(Yii::$app->request->post())) {
+                    if ($loginForm->login()) {
+                        return $this->goHome();
+                    }
                     Yii::$app->response->format = yii\web\Response::FORMAT_JSON;
                     return \yii\widgets\ActiveForm::validate($loginForm);
                 }
+            } else {
+                throw new NotFoundHttpException('Page not found', 404);
             }
-        } else {
-            throw new NotFoundHttpException('Page not found', 404);
+        } catch (NotFoundHttpException $e) {
+            return $e->getMessage();
         }
     }
 

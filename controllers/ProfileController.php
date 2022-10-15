@@ -13,14 +13,20 @@ class ProfileController extends SecurityController
      */
     public function actionView(int $id): string
     {
-        if ($id) {
-            $userProfile = ServiceProfileShow::getUserProfile($id);
-        } else {
-            throw new NotFoundHttpException('Task is not found', 404);
-        }
+        try {
+            if ($id) {
+                $userProfile = ServiceProfileShow::getUserProfile($id);
+            } else {
+                throw new NotFoundHttpException('Task is not found', 404);
+            }
 
-        return $this->render('view', [
-            'currentUser' => $userProfile
-        ]);
+            return $this->render('view', [
+                'currentUser' => $userProfile
+            ]);
+        } catch (NotFoundHttpException|
+            \Exception|
+            \yii\base\InvalidConfigException $e) {
+            return $e->getMessage();
+        }
     }
 }
