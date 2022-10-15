@@ -11,7 +11,7 @@ class SecurityController extends Controller
     public function init()
     {
         parent::init();
-        Yii::$app->user->loginUrl = Yii::$app->homeUrl;
+        Yii::$app->user->loginUrl = ['site/index'];
     }
 
     public function behaviors()
