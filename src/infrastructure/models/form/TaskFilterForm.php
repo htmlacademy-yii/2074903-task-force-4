@@ -69,11 +69,11 @@ class TaskFilterForm extends Model
      */
     public function filter(ActiveQuery $tasks): ActiveQuery
     {
-        if ($this->categories) {
-            $tasks->andWhere(['in', 'categoryId', $this->categories]);
-        }
         if ($this->noResponds) {
             $tasks->joinWith(['responds'], true, 'LEFT JOIN')->where(['taskId' => null]);
+        }
+        if ($this->categories) {
+            $tasks->andWhere(['in', 'categoryId', $this->categories]);
         }
         if ($this->remote) {
             $tasks->andWhere(['cityId' => null]);
