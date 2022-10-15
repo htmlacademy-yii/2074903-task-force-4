@@ -8,9 +8,29 @@ use Yii;
 use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\Response;
+use yii\filters\AccessControl;
 
 class RegistrationController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['?']
+                    ],
+                ],
+            ],
+        ];
+    }
 
     /**
      * @return string|Response

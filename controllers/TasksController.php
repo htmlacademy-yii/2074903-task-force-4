@@ -15,6 +15,21 @@ use yii\web\UploadedFile;
 
 class TasksController extends SecurityController
 {
+    public function behaviors()
+    {
+        $rules = parent::behaviors();
+        $rule = [
+            'allow' => false,
+            'actions' => ['create'],
+            'matchCallback' => function ($rule, $action) {
+                $user = Yii::$app->user->identity;
+                return $user->userRole->role !== 'client';
+            }
+        ];
+        array_unshift($rules['access']['rules'], $rule);
+        return $rules;
+    }
+
     /**
      * @return string
      * @throws BadRequestHttpException
@@ -62,9 +77,6 @@ class TasksController extends SecurityController
 
     public function actionCreate()
     {
-        if (Yii::$app->user->identity->userRole->role === 'executor') {
-            throw new NotFoundHttpException('You do not have access to create tasks', 403);
-        }
         $categories = Categories::find()->all();
         $createTaskForm = new CreateTaskForm();
         $newTask = new Tasks();

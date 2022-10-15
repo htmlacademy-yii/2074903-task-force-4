@@ -12,6 +12,12 @@ use yii\web\NotFoundHttpException;
 
 class SiteController extends Controller
 {
+    public function init()
+    {
+        parent::init();
+        Yii::$app->user->loginUrl = ['site/index'];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -25,8 +31,8 @@ class SiteController extends Controller
                     [
                         'actions' => ['logout'],
                         'allow' => true,
-                        'roles' => ['@'],
-                    ],
+                        'roles' => ['@']
+                    ]
                 ],
             ],
             'verbs' => [
@@ -105,5 +111,4 @@ class SiteController extends Controller
 
         return $this->redirect(['index']);
     }
-
 }
