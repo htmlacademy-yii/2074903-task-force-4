@@ -30,7 +30,8 @@ class LoginForm extends Model
     public function getUser(): ?Users
     {
         if ($this->user === null) {
-            $this->user = Users::findOne(['email' => $this->email]);
+            $email = mb_strtolower($this->email);
+            $this->user = Users::findOne(['email' => $email]);
         }
 
         return $this->user;
