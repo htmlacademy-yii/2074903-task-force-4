@@ -9,7 +9,7 @@ class ProfileController extends SecurityController
     /**
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException
+     * @throws NotFoundHttpException|\yii\base\InvalidConfigException
      */
     public function actionView(int $id): string
     {
