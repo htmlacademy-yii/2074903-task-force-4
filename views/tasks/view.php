@@ -1,7 +1,7 @@
 <?php
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
-/** @var omarinina\domain\models\task\Responds $responds */
+/** @var omarinina\domain\models\task\Responds[] $responds */
 
 use yii\web\View;
 use yii\helpers\Url;
@@ -26,8 +26,9 @@ $this->registerJsFile('js/main.js');
             <p class="map-address">Новый арбат, 23, к. 1</p>
         </div>
         <?php endif; ?>
-        <?php foreach ($responds as $respond) : ?>
+        <?php if (isset($responds)) : ?>
         <h4 class="head-regular">Отклики на задание</h4>
+            <?php foreach ($responds as $respond) : ?>
         <div class="response-card">
             <img class="customer-photo"
                  src="<?= $respond->executor->avatarSrc ?>"
@@ -62,22 +63,31 @@ $this->registerJsFile('js/main.js');
                 </p>
 
             </div>
+
             <div class="feedback-wrapper">
                 <p class="info-text">
                     <span class="current-time"><?= $respond->countTimeAgoPost($respond->createAt) ?>
                     </span> назад</p>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
+                <?php if ($respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
             <div class="button-popup">
                 <a href="<?= Url::to([
                     'task-actions/accept-respond',
                     'respond' => $respond,
-                    'task' => $respond->task
+                    'task' => $respond->task ,
+                    'responds' => $responds
                 ]) ?>" class="button button--blue button--small">Принять</a>
-                <a href="#" class="button button--orange button--small">Отказать</a>
+                <a href="<?= Url::to([
+                    'task-actions/refuse-respond',
+                    'respond' => $respond,
+                    'task' => $respond->task
+                ]) ?>" class="button button--orange button--small">Отказать</a>
             </div>
+                <?php endif; ?>
         </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
     <div class="right-column">
         <div class="right-card black info-card">
