@@ -15,9 +15,11 @@ use omarinina\domain\traits\TimeCounter;
  * @property string $createAt
  * @property int $price
  * @property string|null $comment
+ * @property int|null $status
  *
  * @property Users $executor
  * @property Tasks $task
+ * @property RespondStatuses $currentStatus
  */
 class Responds extends \yii\db\ActiveRecord
 {
@@ -39,6 +41,7 @@ class Responds extends \yii\db\ActiveRecord
             [['taskId', 'executorId'], 'integer'],
             [['createAt'], 'safe'],
             [['comment'], 'string'],
+            [['status'], 'integer'],
             [['price'], 'integer'],
             [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
             [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'id']],
@@ -78,6 +81,16 @@ class Responds extends \yii\db\ActiveRecord
     public function getTask()
     {
         return $this->hasOne(Tasks::class, ['id' => 'taskId']);
+    }
+
+    /**
+     * Gets query for [[CurrentStatus]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCurrentStatus()
+    {
+        return $this->hasOne(RespondStatuses::class, ['id' => 'status']);
     }
 
     use TimeCounter;
