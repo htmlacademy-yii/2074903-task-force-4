@@ -146,7 +146,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorReviews()
     {
-        return $this->hasMany(Reviews::class, ['executorId' => 'id']);
+        return $this->hasMany(Reviews::class, ['executorId' => 'id'])->cache();
     }
 
     /**
@@ -176,7 +176,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorTasks()
     {
-        return $this->hasMany(Tasks::class, ['executorId' => 'id']);
+        return $this->hasMany(Tasks::class, ['executorId' => 'id'])->cache();
     }
 
     public static function findIdentity($id)
@@ -283,7 +283,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $commonScore = array_sum(
             array_map(
-                function ($executorReviews) {
+                function (Reviews $executorReviews) {
                     return $executorReviews->score;
                 },
                 $this->executorReviews
@@ -317,7 +317,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     private function getExecutorRatingPlace(Users $user): float
     {
         $reviewTasks = array_map(
-            function ($executorReviews) {
+            function (Reviews $executorReviews) {
                 return $executorReviews->taskId;
             },
             $user->executorReviews

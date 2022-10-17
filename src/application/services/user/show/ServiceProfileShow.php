@@ -4,6 +4,7 @@ namespace omarinina\application\services\user\show;
 
 use omarinina\domain\models\user\Users;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 class ServiceProfileShow
 {
@@ -14,9 +15,11 @@ class ServiceProfileShow
      */
     public static function getUserProfile($id) : Users
     {
-        $currentUser = Users::findOne($id);
+        $currentUser = Yii::$app->db->cache(function () use ($id) {
+            return Users::findOne($id);
+        });
         if (!$currentUser || $currentUser->userRole->role !== 'executor') {
-            throw new NotFoundHttpException('Task is not found', 404);
+            throw new NotFoundHttpException('User is not found', 404);
         }
         return $currentUser;
     }

@@ -17,7 +17,7 @@ class ProfileController extends SecurityController
             if ($id) {
                 $userProfile = ServiceProfileShow::getUserProfile($id);
             } else {
-                throw new NotFoundHttpException('Task is not found', 404);
+                throw new NotFoundHttpException('User is not found', 404);
             }
 
             return $this->render('view', [
