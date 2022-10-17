@@ -69,7 +69,11 @@ $this->registerJsFile('js/main.js');
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
             <div class="button-popup">
-                <a href="#" class="button button--blue button--small">Принять</a>
+                <a href="<?= Url::to([
+                    'task-actions/accept-respond',
+                    'respond' => $respond,
+                    'task' => $respond->task
+                ]) ?>" class="button button--blue button--small">Принять</a>
                 <a href="#" class="button button--orange button--small">Отказать</a>
             </div>
         </div>
