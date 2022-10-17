@@ -2,7 +2,9 @@
 namespace app\controllers;
 
 use omarinina\application\services\task\create\ServiceTaskCreate;
+use omarinina\domain\models\user\Users;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
 use yii\web\BadRequestHttpException;
 use omarinina\domain\models\task\TaskStatuses;
 use omarinina\domain\models\Categories;
@@ -70,6 +72,8 @@ class TasksController extends SecurityController
         try {
             if ($id) {
                 $currentTask = Tasks::findOne($id);
+                $responds = Yii::$app->user->id === $currentTask->clientId ?
+                    $currentTask->responds : Yii::$app->user->identity->responds;
                 if (!$currentTask) {
                     throw new NotFoundHttpException('Task is not found', 404);
                 }
@@ -79,6 +83,7 @@ class TasksController extends SecurityController
 
             return $this->render('view', [
                 'currentTask' => $currentTask,
+                'responds' => $responds
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();

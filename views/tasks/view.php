@@ -1,6 +1,7 @@
 <?php
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
+/** @var omarinina\domain\models\task\Responds $responds */
 
 use yii\web\View;
 use yii\helpers\Url;
@@ -25,8 +26,8 @@ $this->registerJsFile('js/main.js');
             <p class="map-address">Новый арбат, 23, к. 1</p>
         </div>
         <?php endif; ?>
+        <?php foreach ($responds as $respond) : ?>
         <h4 class="head-regular">Отклики на задание</h4>
-        <?php foreach ($currentTask->responds as $respond) : ?>
         <div class="response-card">
             <img class="customer-photo"
                  src="<?= $respond->executor->avatarSrc ?>"
