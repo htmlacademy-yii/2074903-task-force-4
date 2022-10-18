@@ -11,14 +11,13 @@ class TaskActionsController extends SecurityController
     public const ACCEPT_ACTION = 'accepted';
     public const REFUSE_ACTION = 'refused';
 
-    /**
-     * @param Responds $respond
-     * @param Tasks $task
-     * @param Responds[] $responds
-     * @return \yii\web\Response
-     */
-    public function actionAcceptRespond(Responds $respond, Tasks $task, array $responds) : Response
+
+    public function actionAcceptRespond(int $respondId) : Response
     {
+        $respond = Responds::findOne($respondId);
+        $task = $respond->task;
+        $responds = $task->responds;
+
         if (\Yii::$app->user->id === $task->clientId && $task->taskStatus->taskStatus === Tasks::NEW_STATUS) {
             $task->executorId = $respond->executorId;
             $task->save(false);
@@ -26,7 +25,7 @@ class TaskActionsController extends SecurityController
             $respond->save(false);
 
             foreach ($responds as $uniqueRespond) {
-                if ($uniqueRespond->status === null) {
+                if (!$uniqueRespond->status && $uniqueRespond->id !== $respond->id) {
                     $uniqueRespond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
                     $uniqueRespond->save(false);
                 }
@@ -36,8 +35,11 @@ class TaskActionsController extends SecurityController
         return $this->redirect(['tasks/view', 'id' => $task->id]);
     }
 
-    public function actionRefuseRespond(Responds $respond, Tasks $task) : Response
+    public function actionRefuseRespond(int $respondId) : Response
     {
+        $respond = Responds::findOne($respondId);
+        $task = $respond->task;
+
         if (\Yii::$app->user->id === $task->clientId && $task->taskStatus->taskStatus === Tasks::NEW_STATUS) {
             $respond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
             $respond->save(false);

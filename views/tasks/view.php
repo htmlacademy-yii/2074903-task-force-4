@@ -70,18 +70,15 @@ $this->registerJsFile('js/main.js');
                     </span> назад</p>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
-                <?php if ($respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
+                <?php if (!$respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
             <div class="button-popup">
-                <a href="<?= Url::to([
+                <a href="<?= Url::toRoute([
                     'task-actions/accept-respond',
-                    'respond' => $respond,
-                    'task' => $respond->task ,
-                    'responds' => $responds
+                    'respondId' => $respond->id
                 ]) ?>" class="button button--blue button--small">Принять</a>
                 <a href="<?= Url::to([
                     'task-actions/refuse-respond',
-                    'respond' => $respond,
-                    'task' => $respond->task
+                    'respondId' => $respond->id
                 ]) ?>" class="button button--orange button--small">Отказать</a>
             </div>
                 <?php endif; ?>
