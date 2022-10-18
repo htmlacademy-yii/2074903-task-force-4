@@ -2,6 +2,8 @@
 
 namespace omarinina\domain\actions;
 
+use yii\helpers\Url;
+
 class AcceptAction extends AbstractAction
 {
     /**
@@ -18,6 +20,18 @@ class AcceptAction extends AbstractAction
     public static function getName(): string
     {
         return 'Выполнено';
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewAvailableButton(): string
+    {
+        return '<a href="' .
+            Url::toRoute(['task-actions/accept-task']) .
+            '" class="button button--pink action-btn" data-action="' .
+            static::getInternalName() . '">' .
+            static::getName() . '</a>';
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace omarinina\domain\actions;
 
+use yii\helpers\Url;
+
 class RespondAction extends AbstractAction
 {
     /**
@@ -18,6 +20,18 @@ class RespondAction extends AbstractAction
     public static function getName(): string
     {
         return 'Откликнуться';
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewAvailableButton(): string
+    {
+        return '<a href="' .
+            Url::toRoute(['task-actions/respond-task']) .
+            '" class="button button--blue action-btn" data-action="' .
+            static::getInternalName() . '">' .
+            static::getName() . '</a>';
     }
 
     /**

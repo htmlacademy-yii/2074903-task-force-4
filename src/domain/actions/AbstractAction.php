@@ -28,6 +28,11 @@ abstract class AbstractAction
     abstract public static function getName(): string;
 
     /**
+     * @return string
+     */
+    abstract public function getViewAvailableButton(): string;
+
+    /**
      * @param int $idUser
      * @return bool
      */

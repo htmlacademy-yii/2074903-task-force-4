@@ -16,9 +16,7 @@ $this->registerJsFile('js/main.js');
             <p class="price price--big"><?= $currentTask->budget; ?> ₽</p>
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
-        <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
-        <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
-        <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
+        <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">

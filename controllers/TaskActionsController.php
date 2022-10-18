@@ -11,7 +11,10 @@ class TaskActionsController extends SecurityController
     public const ACCEPT_ACTION = 'accepted';
     public const REFUSE_ACTION = 'refused';
 
-
+    /**
+     * @param int $respondId
+     * @return Response
+     */
     public function actionAcceptRespond(int $respondId) : Response
     {
         $respond = Responds::findOne($respondId);
@@ -35,6 +38,10 @@ class TaskActionsController extends SecurityController
         return $this->redirect(['tasks/view', 'id' => $task->id]);
     }
 
+    /**
+     * @param int $respondId
+     * @return Response
+     */
     public function actionRefuseRespond(int $respondId) : Response
     {
         $respond = Responds::findOne($respondId);
@@ -46,5 +53,25 @@ class TaskActionsController extends SecurityController
         }
 
         return $this->redirect(['tasks/view', 'id' => $task->id]);
+    }
+
+    public function actionCancelTask()
+    {
+
+    }
+
+    public function actionRespondTask()
+    {
+
+    }
+
+    public function actionDenyTask()
+    {
+
+    }
+
+    public function actionAcceptTask()
+    {
+
     }
 }

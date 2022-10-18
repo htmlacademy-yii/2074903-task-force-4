@@ -2,6 +2,8 @@
 
 namespace omarinina\domain\actions;
 
+use yii\helpers\Url;
+
 class DenyAction extends AbstractAction
 {
     /**
@@ -18,6 +20,18 @@ class DenyAction extends AbstractAction
     public static function getName(): string
     {
         return 'Отказаться';
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewAvailableButton(): string
+    {
+        return '<a href="' .
+            Url::toRoute(['task-actions/deny-task']) .
+            '" class="button button--orange action-btn" data-action="' .
+            static::getInternalName() . '">' .
+            static::getName() . '</a>';
     }
 
     /**
