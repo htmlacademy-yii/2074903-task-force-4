@@ -35,7 +35,7 @@ class CancelAction extends AbstractAction
             ]) .
             '" class="button button--pink action-btn" data-action="' .
             static::getInternalName() . '">' .
-            static::getName() . '</a>';
+            static::getName() . 'data-bs-toggle="modal" data-bs-target="#cancellation-form"</a>';
     }
 
     /**
