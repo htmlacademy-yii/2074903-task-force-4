@@ -2,6 +2,7 @@
 
 namespace omarinina\domain\actions;
 
+use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
 
 class RespondAction extends AbstractAction
@@ -40,6 +41,9 @@ class RespondAction extends AbstractAction
      */
     public function isAvailableForUser(int $idUser): bool
     {
-        return $this->task->executorId === $idUser;
+        if (!$this->task->getResponds()->where(['executorId' => $idUser])) {
+            return Users::findOne($idUser)->userRole->role === 'executor';
+        }
+        return false;
     }
 }

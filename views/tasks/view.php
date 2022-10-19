@@ -16,7 +16,9 @@ $this->registerJsFile('js/main.js');
             <p class="price price--big"><?= $currentTask->budget; ?> ₽</p>
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
-        <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
+        <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
+            <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
+        <?php endif; ?>
         <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">

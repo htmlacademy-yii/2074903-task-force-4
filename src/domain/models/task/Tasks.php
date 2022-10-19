@@ -233,7 +233,7 @@ class Tasks extends \yii\db\ActiveRecord
             }
         ))[0] ?? null;
         if (!$availableAction) {
-            throw new IdUserException();
+            return null;
         }
         return $availableAction;
     }
