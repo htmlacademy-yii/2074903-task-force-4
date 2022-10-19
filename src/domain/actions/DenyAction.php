@@ -24,6 +24,7 @@ class DenyAction extends AbstractAction
     }
 
     /**
+     * @param Tasks $currentTask
      * @return string
      */
     public function getViewAvailableButton(Tasks $currentTask): string
@@ -35,7 +36,7 @@ class DenyAction extends AbstractAction
             ]) .
             '" class="button button--orange action-btn" data-action="' .
             static::getInternalName() . '">' .
-            static::getName() . '</a>';
+            static::getName() . 'data-bs-toggle="modal" data-bs-target="#denial-form"</a>';
     }
 
     /**
