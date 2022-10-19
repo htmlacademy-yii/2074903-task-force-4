@@ -71,7 +71,8 @@ class TasksController extends SecurityController
             if ($id) {
                 $currentTask = Tasks::findOne($id);
                 $responds = Yii::$app->user->id === $currentTask->clientId ?
-                    $currentTask->responds : Yii::$app->user->identity->responds;
+                    $currentTask->responds :
+                    Yii::$app->user->identity->getResponds()->where(['taskId' => $currentTask->id])->one();
                 if (!$currentTask) {
                     throw new NotFoundHttpException('Task is not found', 404);
                 }

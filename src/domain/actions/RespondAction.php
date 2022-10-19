@@ -2,6 +2,7 @@
 
 namespace omarinina\domain\actions;
 
+use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
 
@@ -26,10 +27,13 @@ class RespondAction extends AbstractAction
     /**
      * @return string
      */
-    public function getViewAvailableButton(): string
+    public function getViewAvailableButton(Tasks $currentTask): string
     {
         return '<a href="' .
-            Url::toRoute(['task-actions/respond-task']) .
+            Url::toRoute([
+                'task-actions/respond-task',
+                'taskId' => $currentTask->id
+            ]) .
             '" class="button button--blue action-btn" data-action="' .
             static::getInternalName() . '">' .
             static::getName() . '</a>';
@@ -41,7 +45,7 @@ class RespondAction extends AbstractAction
      */
     public function isAvailableForUser(int $idUser): bool
     {
-        if (!$this->task->getResponds()->where(['executorId' => $idUser])) {
+        if (!$this->task->getResponds()->where(['executorId' => $idUser])->one()) {
             return Users::findOne($idUser)->userRole->role === 'executor';
         }
         return false;

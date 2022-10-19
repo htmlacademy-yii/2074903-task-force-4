@@ -3,6 +3,7 @@
 namespace omarinina\domain\actions;
 
 use yii\helpers\Url;
+use omarinina\domain\models\task\Tasks;
 
 class AcceptAction extends AbstractAction
 {
@@ -25,10 +26,13 @@ class AcceptAction extends AbstractAction
     /**
      * @return string
      */
-    public function getViewAvailableButton(): string
+    public function getViewAvailableButton(Tasks $currentTask): string
     {
         return '<a href="' .
-            Url::toRoute(['task-actions/accept-task']) .
+            Url::toRoute([
+                'task-actions/accept-task',
+                'taskId' => $currentTask->id
+            ]) .
             '" class="button button--pink action-btn" data-action="' .
             static::getInternalName() . '">' .
             static::getName() . '</a>';

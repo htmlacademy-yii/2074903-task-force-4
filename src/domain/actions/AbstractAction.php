@@ -30,7 +30,7 @@ abstract class AbstractAction
     /**
      * @return string
      */
-    abstract public function getViewAvailableButton(): string;
+    abstract public function getViewAvailableButton(Tasks $currentTask): string;
 
     /**
      * @param int $idUser

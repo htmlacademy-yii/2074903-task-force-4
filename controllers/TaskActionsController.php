@@ -1,6 +1,10 @@
 <?php
 namespace app\controllers;
 
+use omarinina\domain\actions\AcceptAction;
+use omarinina\domain\actions\CancelAction;
+use omarinina\domain\actions\DenyAction;
+use omarinina\domain\actions\RespondAction;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\RespondStatuses;
 use omarinina\domain\models\task\Tasks;
@@ -55,23 +59,35 @@ class TaskActionsController extends SecurityController
         return $this->redirect(['tasks/view', 'id' => $task->id]);
     }
 
-    public function actionCancelTask()
+    public function actionCancelTask(int $taskId)
     {
-
+        Tasks::findOne($taskId)->changeStatusByAction(
+            CancelAction::getInternalName(),
+            \Yii::$app->user->id
+        );
     }
 
-    public function actionRespondTask()
+    public function actionRespondTask(string $currentStatus, int $taskId)
     {
-
+        Tasks::findOne($taskId)->changeStatusByAction(
+            RespondAction::getInternalName(),
+            \Yii::$app->user->id
+        );
     }
 
-    public function actionDenyTask()
+    public function actionDenyTask(string $currentStatus, int $taskId)
     {
-
+        Tasks::findOne($taskId)->changeStatusByAction(
+            DenyAction::getInternalName(),
+            \Yii::$app->user->id
+        );
     }
 
-    public function actionAcceptTask()
+    public function actionAcceptTask(string $currentStatus, int $taskId)
     {
-
+        Tasks::findOne($taskId)->changeStatusByAction(
+            AcceptAction::getInternalName(),
+            \Yii::$app->user->id
+        );
     }
 }

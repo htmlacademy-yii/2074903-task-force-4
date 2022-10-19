@@ -218,8 +218,6 @@ class Tasks extends \yii\db\ActiveRecord
      * @return AbstractAction|null
      * @throws AvailableActionsException Exception when task has such status
      * which doesn't have any available action for any users
-     * @throws IdUserException Exception when user doesn't have rights to add
-     * changes in this task status
      */
     public function getAvailableActions(int $idUser): ?AbstractAction
     {
@@ -244,6 +242,7 @@ class Tasks extends \yii\db\ActiveRecord
     private function getLinkActionToStatus(): array
     {
         return [
+            RespondAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS]),
             CancelAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => CancelAction::getInternalName()]),
             AcceptAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => AcceptAction::getInternalName()]),
             DenyAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => DenyAction::getInternalName()])
@@ -259,11 +258,11 @@ class Tasks extends \yii\db\ActiveRecord
     private function getLinkStatusToAction(): array
     {
         return [
-            TaskStatuses::findOne(['taskStatus' => self::NEW_STATUS])->id => [
+            TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS])->id => [
                 new CancelAction($this),
                 new RespondAction($this)
             ],
-            TaskStatuses::findOne(['taskStatus' => self::IN_WORK_STATUS])->id => [
+            TaskStatuses::findOne(['taskStatus' => static::IN_WORK_STATUS])->id => [
                 new AcceptAction($this),
                 new DenyAction($this)
             ]

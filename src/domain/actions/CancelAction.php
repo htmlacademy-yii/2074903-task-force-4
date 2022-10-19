@@ -2,6 +2,7 @@
 
 namespace omarinina\domain\actions;
 
+use omarinina\domain\models\task\Tasks;
 use yii\helpers\Url;
 
 class CancelAction extends AbstractAction
@@ -25,10 +26,13 @@ class CancelAction extends AbstractAction
     /**
      * @return string
      */
-    public function getViewAvailableButton(): string
+    public function getViewAvailableButton(Tasks $currentTask): string
     {
         return '<a href="' .
-            Url::toRoute(['task-actions/cancel-task']) .
+            Url::toRoute([
+                'task-actions/cancel-task',
+                'taskId' => $currentTask->id
+            ]) .
             '" class="button button--pink action-btn" data-action="' .
             static::getInternalName() . '">' .
             static::getName() . '</a>';

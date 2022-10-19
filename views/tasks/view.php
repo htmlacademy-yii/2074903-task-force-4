@@ -17,7 +17,7 @@ $this->registerJsFile('js/main.js');
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
-            <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
+            <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton($currentTask) ?>
         <?php endif; ?>
         <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
