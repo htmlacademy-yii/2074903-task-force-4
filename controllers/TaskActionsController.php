@@ -69,6 +69,7 @@ class TaskActionsController extends SecurityController
 
     public function actionRespondTask(string $currentStatus, int $taskId)
     {
+        //check that this executor didn't respond this task
         Tasks::findOne($taskId)->changeStatusByAction(
             RespondAction::getInternalName(),
             \Yii::$app->user->id

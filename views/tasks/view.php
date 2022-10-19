@@ -6,6 +6,7 @@
 use yii\web\View;
 use yii\helpers\Url;
 use omarinina\domain\models\user\Users;
+use app\widgets\DenialWidget;
 
 $this->registerJsFile('js/main.js');
 ?>
@@ -116,22 +117,24 @@ $this->registerJsFile('js/main.js');
     </div>
 </div>
 
+<?= DenialWidget::widget([]) ?>
+
 <?php $this->beginBlock('pop-ups'); ?>
 
-<section class="pop-up pop-up--refusal pop-up--close">
-    <div class="pop-up--wrapper">
-        <h4>Отказ от задания</h4>
-        <p class="pop-up-text">
-            <b>Внимание!</b><br>
-            Вы собираетесь отказаться от выполнения этого задания.<br>
-            Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.
-        </p>
-        <a class="button button--pop-up button--orange">Отказаться</a>
-        <div class="button-container">
-            <button class="button--close" type="button">Закрыть окно</button>
-        </div>
-    </div>
-</section>
+<!--<section class="pop-up pop-up--refusal pop-up--close">-->
+<!--    <div class="pop-up--wrapper">-->
+<!--        <h4>Отказ от задания</h4>-->
+<!--        <p class="pop-up-text">-->
+<!--            <b>Внимание!</b><br>-->
+<!--            Вы собираетесь отказаться от выполнения этого задания.<br>-->
+<!--            Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.-->
+<!--        </p>-->
+<!--        <a class="button button--pop-up button--orange">Отказаться</a>-->
+<!--        <div class="button-container">-->
+<!--            <button class="button--close" type="button">Закрыть окно</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
 <section class="pop-up pop-up--completion pop-up--close">
     <div class="pop-up--wrapper">
         <h4>Завершение задания</h4>
