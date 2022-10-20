@@ -214,8 +214,6 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      * @param int $idUser
      * @return AbstractAction|null
-     * @throws AvailableActionsException Exception when task has such status
-     * which doesn't have any available action for any users
      */
     public function getAvailableActions(int $idUser): ?AbstractAction
     {

@@ -68,22 +68,25 @@ class TaskActionsController extends SecurityController
     public function actionCancelTask(int $taskId)
     {
         $task = Tasks::findOne($taskId);
-        if (Yii::$app->user->id === $task->clientId) {
-            $task->status = $task->changeStatusByAction(
-                CancelAction::getInternalName(),
-                \Yii::$app->user->id
-            );
-            $task->save(false);
-            if ($task->responds) {
-                foreach ($task->responds as $respond) {
-                    if (!$respond->status) {
-                        $respond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
-                        $respond->save(false);
+        if ($taskId) {
+            if (Yii::$app->user->id === $task->clientId) {
+                $task->status = $task->changeStatusByAction(
+                    CancelAction::getInternalName(),
+                    \Yii::$app->user->id
+                );
+                $task->save(false);
+                if ($task->responds) {
+                    foreach ($task->responds as $respond) {
+                        if (!$respond->status) {
+                            $respond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
+                            $respond->save(false);
+                        }
                     }
                 }
+                return $this->redirect(['tasks/view', 'id' => $task->id]);
             }
-            return $this->redirect(['tasks/view', 'id' => $task->id]);
         }
+        throw new NotFoundHttpException('Task is not found', 404);
     }
 
     public function actionRespondTask(int $taskId)
@@ -114,18 +117,29 @@ class TaskActionsController extends SecurityController
 
     public function actionDenyTask(int $taskId)
     {
-        Tasks::findOne($taskId)->changeStatusByAction(
-            DenyAction::getInternalName(),
-            \Yii::$app->user->id
-        );
+        if ($taskId) {
+            $task = Tasks::findOne($taskId);
+            if (Yii::$app->user->id === $task->executorId) {
+                $task->status = $task->changeStatusByAction(
+                    DenyAction::getInternalName(),
+                    \Yii::$app->user->id
+                );
+                $task->save(false);
+                return $this->redirect(['tasks/view', 'id' => $taskId]);
+            }
+        }
+        throw new NotFoundHttpException('Task is not found', 404);
     }
 
     public function actionAcceptTask(int $taskId)
     {
-        //check that this client is the author
-        Tasks::findOne($taskId)->changeStatusByAction(
-            AcceptAction::getInternalName(),
-            \Yii::$app->user->id
-        );
+        if ($taskId) {
+            //check that this client is the author
+            Tasks::findOne($taskId)->changeStatusByAction(
+                AcceptAction::getInternalName(),
+                \Yii::$app->user->id
+            );
+        }
+        throw new NotFoundHttpException('Task is not found', 404);
     }
 }
