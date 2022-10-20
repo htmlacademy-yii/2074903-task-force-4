@@ -2,14 +2,14 @@
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
 /** @var omarinina\domain\models\task\Responds[] $responds */
+/** @var omarinina\infrastructure\models\form\TaskResponseForm $model */
 
 use yii\web\View;
 use yii\helpers\Url;
 use omarinina\domain\models\user\Users;
-use app\widgets\DenialWidget;
-use app\widgets\CancellationWidget;
-use app\widgets\ResponseWidget;
-use app\widgets\AcceptanceWidget;
+use omarinina\infrastructure\models\form\TaskResponseForm;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
 $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
@@ -22,7 +22,6 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
         <p class="task-description"><?= $currentTask->description; ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
-            <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getAvailableWidget() ?>
         <?php endif; ?>
         <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
@@ -31,7 +30,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             <p class="map-address">Новый арбат, 23, к. 1</p>
         </div>
         <?php endif; ?>
-        <?php if (isset($responds)) : ?>
+        <?php if (isset($responds[0])) : ?>
         <h4 class="head-regular">Отклики на задание</h4>
             <?php foreach ($responds as $respond) : ?>
         <div class="response-card">
@@ -121,68 +120,90 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
     </div>
 </div>
 
+<?php $this->beginBlock('pop-ups'); ?>
 
-<!--<section class="pop-up pop-up--refusal pop-up--close">-->
-<!--    <div class="pop-up--wrapper">-->
-<!--        <h4>Отказ от задания</h4>-->
-<!--        <p class="pop-up-text">-->
-<!--            <b>Внимание!</b><br>-->
-<!--            Вы собираетесь отказаться от выполнения этого задания.<br>-->
-<!--            Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.-->
-<!--        </p>-->
-<!--        <a class="button button--pop-up button--orange">Отказаться</a>-->
-<!--        <div class="button-container">-->
-<!--            <button class="button--close" type="button">Закрыть окно</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-<!--<section class="pop-up pop-up--completion pop-up--close">-->
-<!--    <div class="pop-up--wrapper">-->
-<!--        <h4>Завершение задания</h4>-->
-<!--        <p class="pop-up-text">-->
-<!--            Вы собираетесь отметить это задание как выполненное.-->
-<!--            Пожалуйста, оставьте отзыв об исполнителе и отметьте отдельно, если возникли проблемы.-->
-<!--        </p>-->
-<!--        <div class="completion-form pop-up--form regular-form">-->
-<!--            <form>-->
-<!--                <div class="form-group">-->
-<!--                    <label class="control-label" for="completion-comment">Ваш комментарий</label>-->
-<!--                    <textarea id="completion-comment"></textarea>-->
-<!--                </div>-->
-<!--                <p class="completion-head control-label">Оценка работы</p>-->
-<!--                <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>-->
-<!--                <input type="submit" class="button button--pop-up button--blue" value="Завершить">-->
-<!--            </form>-->
-<!--        </div>-->
-<!--        <div class="button-container">-->
-<!--            <button class="button--close" type="button">Закрыть окно</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-<!--<section class="pop-up pop-up--act_response pop-up--close">-->
-<!--    <div class="pop-up--wrapper">-->
-<!--        <h4>Добавление отклика к заданию</h4>-->
-<!--        <p class="pop-up-text">-->
-<!--            Вы собираетесь оставить свой отклик к этому заданию.-->
-<!--            Пожалуйста, укажите стоимость работы и добавьте комментарий, если необходимо.-->
-<!--        </p>-->
-<!--        <div class="addition-form pop-up--form regular-form">-->
-<!--            <form>-->
-<!--                <div class="form-group">-->
-<!--                    <label class="control-label" for="addition-comment">Ваш комментарий</label>-->
-<!--                    <textarea id="addition-comment"></textarea>-->
-<!--                </div>-->
-<!--                <div class="form-group">-->
-<!--                    <label class="control-label" for="addition-price">Стоимость</label>-->
-<!--                    <input id="addition-price" type="text">-->
-<!--                </div>-->
-<!--                <input type="submit" class="button button--pop-up button--blue" value="Завершить">-->
-<!--            </form>-->
-<!--        </div>-->
-<!--        <div class="button-container">-->
-<!--            <button class="button--close" type="button">Закрыть окно</button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
+<section class="pop-up pop-up--refusal pop-up--close">
+    <div class="pop-up--wrapper">
+        <h4>Отказ от задания</h4>
+        <p class="pop-up-text">
+            <b>Внимание!</b><br>
+            Вы собираетесь отказаться от выполнения этого задания.<br>
+            Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.
+        </p>
+        <a class="button button--pop-up button--orange">Отказаться</a>
+        <div class="button-container">
+            <button class="button--close" type="button">Закрыть окно</button>
+        </div>
+    </div>
+</section>
+<section class="pop-up pop-up--completion pop-up--close">
+    <div class="pop-up--wrapper">
+        <h4>Завершение задания</h4>
+        <p class="pop-up-text">
+            Вы собираетесь отметить это задание как выполненное.
+            Пожалуйста, оставьте отзыв об исполнителе и отметьте отдельно, если возникли проблемы.
+        </p>
+        <div class="completion-form pop-up--form regular-form">
+            <form>
+                <div class="form-group">
+                    <label class="control-label" for="completion-comment">Ваш комментарий</label>
+                    <textarea id="completion-comment"></textarea>
+                </div>
+                <p class="completion-head control-label">Оценка работы</p>
+                <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
+                <input type="submit" class="button button--pop-up button--blue" value="Завершить">
+            </form>
+        </div>
+        <div class="button-container">
+            <button class="button--close" type="button">Закрыть окно</button>
+        </div>
+    </div>
+</section>
+<section class="pop-up pop-up--act_response pop-up--close">
+    <div class="pop-up--wrapper">
+        <h4>Добавление отклика к заданию</h4>
+        <p class="pop-up-text">
+            Вы собираетесь оставить свой отклик к этому заданию.
+            Пожалуйста, укажите стоимость работы и добавьте комментарий, если необходимо.
+        </p>
+        <div class="addition-form pop-up--form regular-form">
+            <?php
+            $model = new TaskResponseForm();
+
+            $form = ActiveForm::begin([
+                'id' => $model->formName(),
+//                'enableAjaxValidation' => true,
+                'fieldConfig' => [
+                    'template' => "{label}\n{input}\n{error}",
+                    'labelOptions' => ['class' => 'control-label'],
+                    'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+                ],
+                'action' => ['task-actions/respond-task', 'taskId' => $currentTask->id]
+            ]);
+            ?>
+            <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
+                ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
+            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group', 'placeholder' => '1000']]) ?>
+            <?php
+            echo Html::submitInput(
+                'Завершить',
+                [
+                    'class' => 'button button--pop-up button--blue'
+                ]
+            );
+
+            ActiveForm::end();
+
+            ?>
+        </div>
+        <div class="button-container">
+            <?php
+            echo Html::button('Закрыть', ['class' => 'button--close']);
+            ?>
+        </div>
+    </div>
+</section>
 <div class="overlay"></div>
+
+<?php $this->endBlock(); ?>
 

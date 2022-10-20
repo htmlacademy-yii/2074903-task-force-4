@@ -202,7 +202,7 @@ class Tasks extends \yii\db\ActiveRecord
     {
         if ($this->isValidAction($currentAction, $idUser)) {
             $newStatus = $this->getLinkActionToStatus()[$currentAction];
-            $idNewStatus = self::findOne(['taskStatus' => $newStatus])->id;
+            $idNewStatus = TaskStatuses::findOne(['taskStatus' => $newStatus])->id;
             $this->status = $idNewStatus;
             $this->save(false);
         }

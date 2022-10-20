@@ -5,10 +5,16 @@ use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
 use omarinina\domain\actions\RespondAction;
+use omarinina\domain\exception\task\IdUserException;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\RespondStatuses;
 use omarinina\domain\models\task\Tasks;
+use omarinina\infrastructure\models\form\LoginForm;
+use omarinina\infrastructure\models\form\TaskResponseForm;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use Yii;
+use yii\widgets\ActiveForm;
 
 class TaskActionsController extends SecurityController
 {
@@ -61,20 +67,49 @@ class TaskActionsController extends SecurityController
 
     public function actionCancelTask(int $taskId)
     {
-        Tasks::findOne($taskId)->changeStatusByAction(
-            CancelAction::getInternalName(),
-            \Yii::$app->user->id
-        );
+        $task = Tasks::findOne($taskId);
+        if (Yii::$app->user->id === $task->clientId) {
+            $task->changeStatusByAction(
+                CancelAction::getInternalName(),
+                \Yii::$app->user->id
+            );
+            if ($task->responds) {
+                foreach ($task->responds as $respond) {
+                    if (!$respond->status) {
+                        $respond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
+                        $respond->save(false);
+                    }
+                }
+            }
+            throw new IdUserException();
+        }
     }
 
     public function actionRespondTask(int $taskId)
     {
-        //check that this executor didn't respond this task
-        Tasks::findOne($taskId)->changeStatusByAction(
-            RespondAction::getInternalName(),
-            \Yii::$app->user->id
-        );
+        if ($taskId) {
+            $user = Yii::$app->user->identity;
+            $taskResponseForm = new TaskResponseForm();
+            if ($user->userRole->role === 'executor' &&
+                !$user->getResponds()->where(['taskId' => $taskId])->one()
+            ) {
+                if (Yii::$app->request->getIsPost()) {
+                    $taskResponseForm->load(Yii::$app->request->post());
+                    if ($taskResponseForm->validate()) {
+                        $newRespond = new Responds();
+                        $newRespond->attributes = Yii::$app->request->post('TaskResponseForm');
+                        $newRespond->taskId = $taskId;
+                        $newRespond->executorId = $user->id;
+                        $newRespond->save(false);
+                        return $this->redirect(['tasks/view', 'id' => $taskId]);
+                    }
+                }
+            }
+                throw new NotFoundHttpException('Page not found', 404);
+        }
+            throw new NotFoundHttpException('Task is not found', 404);
     }
+
 
     public function actionDenyTask(int $taskId)
     {

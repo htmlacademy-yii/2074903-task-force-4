@@ -30,22 +30,9 @@ class CancelAction extends AbstractAction
      */
     public function getViewAvailableButton(): string
     {
-        return '<a href="' .
-            Url::toRoute([
-                'task-actions/cancel-task',
-                'taskId' => $this->task->id
-            ]) .
-            '" class="button button--pink action-btn"
-            data-bs-toggle="modal"
-            data-bs-target="#cancellation-form"
-            data-action="' .
-            static::getInternalName() . '">' .
+        return '<a class="button button--pink action-btn"
+            data-action="">' .
             static::getName() . '</a>';
-    }
-
-    public function getAvailableWidget()
-    {
-        return Yii::$app->user->identity->userRole->role === 'client' ? CancellationWidget::widget([]) : '';
     }
 
     /**

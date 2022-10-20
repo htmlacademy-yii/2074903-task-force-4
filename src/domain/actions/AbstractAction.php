@@ -32,8 +32,6 @@ abstract class AbstractAction
      */
     abstract public function getViewAvailableButton(): string;
 
-    abstract public function getAvailableWidget();
-
     /**
      * @param int $idUser
      * @return bool

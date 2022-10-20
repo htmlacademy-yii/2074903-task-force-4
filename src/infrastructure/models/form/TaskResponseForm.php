@@ -6,11 +6,11 @@ use yii\base\Model;
 
 class TaskResponseForm extends Model
 {
-    /** @var null|string */
-    public ?string $comment = null;
+    /** @var string */
+    public string $comment = '';
 
-    /** @var null|string */
-    public ?string $price = null;
+    /** @var int */
+    public int $price = 0;
 
     public function attributeLabels()
     {
@@ -23,6 +23,7 @@ class TaskResponseForm extends Model
     public function rules()
     {
         return [
+            [['comment', 'price'], 'required'],
             [['comment'], 'string', 'min' => 30, 'max' => 2000],
             [['price'], 'integer', 'min' => 1],
         ];

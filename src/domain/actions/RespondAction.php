@@ -30,22 +30,9 @@ class RespondAction extends AbstractAction
      */
     public function getViewAvailableButton(): string
     {
-        return '<a href="' .
-            Url::toRoute([
-                'task-actions/respond-task',
-                'taskId' => $this->task->id
-            ]) .
-            '" class="button button--blue action-btn"
-            data-bs-toggle="modal"
-            data-bs-target="#response-form"
-            data-action="' .
-            static::getInternalName() . '">' .
+        return '<a class="button button--blue action-btn"
+            data-action="act_response">' .
             static::getName() . '</a>';
-    }
-
-    public function getAvailableWidget()
-    {
-        return Yii::$app->user->identity->userRole->role === 'executor' ? ResponseWidget::widget([]) : '';
     }
 
     /**

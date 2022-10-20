@@ -29,22 +29,9 @@ class DenyAction extends AbstractAction
      */
     public function getViewAvailableButton(): string
     {
-        return '<a href="' .
-            Url::toRoute([
-                'task-actions/deny-task',
-                'taskId' => $this->task->id
-            ]) .
-            '" class="button button--orange action-btn"
-            data-bs-toggle="modal"
-            data-bs-target="#denial-form"
-            data-action="' .
-            static::getInternalName() . '">' .
+        return '<a class="button button--orange action-btn"
+            data-action="refusal">' .
             static::getName() . '</a>';
-    }
-
-    public function getAvailableWidget()
-    {
-        return Yii::$app->user->identity->userRole->role === 'executor' ? DenialWidget::widget([]) : '';
     }
 
     /**
