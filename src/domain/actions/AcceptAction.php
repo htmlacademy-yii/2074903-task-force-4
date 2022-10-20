@@ -13,7 +13,7 @@ class AcceptAction extends AbstractAction
      */
     public static function getInternalName(): string
     {
-        return 'accept';
+        return 'done';
     }
 
     /**

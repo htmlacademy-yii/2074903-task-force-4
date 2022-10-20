@@ -69,10 +69,11 @@ class TaskActionsController extends SecurityController
     {
         $task = Tasks::findOne($taskId);
         if (Yii::$app->user->id === $task->clientId) {
-            $task->changeStatusByAction(
+            $task->status = $task->changeStatusByAction(
                 CancelAction::getInternalName(),
                 \Yii::$app->user->id
             );
+            $task->save(false);
             if ($task->responds) {
                 foreach ($task->responds as $respond) {
                     if (!$respond->status) {
@@ -81,7 +82,7 @@ class TaskActionsController extends SecurityController
                     }
                 }
             }
-            throw new IdUserException();
+            return $this->redirect(['tasks/view', 'id' => $task->id]);
         }
     }
 

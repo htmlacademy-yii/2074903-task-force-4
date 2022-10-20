@@ -13,7 +13,7 @@ class DenyAction extends AbstractAction
      */
     public static function getInternalName(): string
     {
-        return 'deny';
+        return 'failed';
     }
 
     /**

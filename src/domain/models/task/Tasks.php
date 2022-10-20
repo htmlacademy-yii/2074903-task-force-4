@@ -192,19 +192,16 @@ class Tasks extends \yii\db\ActiveRecord
     /**
      * @param string $currentAction
      * @param int $idUser
-     * @return void
+     * @return int|null
      * @throws AvailableActionsException changes in this task status
      * @throws CurrentActionException Exception when user tries to choose action
      * which is unavailable for this task status
      * @throws IdUserException Exception when user doesn't have rights to add
      */
-    public function changeStatusByAction(string $currentAction, int $idUser): void
+    public function changeStatusByAction(string $currentAction, int $idUser): ?int
     {
         if ($this->isValidAction($currentAction, $idUser)) {
-            $newStatus = $this->getLinkActionToStatus()[$currentAction];
-            $idNewStatus = TaskStatuses::findOne(['taskStatus' => $newStatus])->id;
-            $this->status = $idNewStatus;
-            $this->save(false);
+            return $this->getLinkActionToStatus()[$currentAction];
         }
         if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
             throw new CurrentActionException();
@@ -223,7 +220,7 @@ class Tasks extends \yii\db\ActiveRecord
     public function getAvailableActions(int $idUser): ?AbstractAction
     {
         if (!array_key_exists($this->taskStatus->id, $this->getLinkStatusToAction())) {
-            throw new AvailableActionsException();
+            return null;
         }
         $availableAction = array_values(array_filter(
             $this->getLinkStatusToAction()[$this->taskStatus->id],
@@ -243,10 +240,10 @@ class Tasks extends \yii\db\ActiveRecord
     private function getLinkActionToStatus(): array
     {
         return [
-            RespondAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS]),
-            CancelAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => CancelAction::getInternalName()]),
-            AcceptAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => AcceptAction::getInternalName()]),
-            DenyAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => DenyAction::getInternalName()])
+            RespondAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS])->id,
+            CancelAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => CancelAction::getInternalName()])->id,
+            AcceptAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => AcceptAction::getInternalName()])->id,
+            DenyAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => DenyAction::getInternalName()])->id
         ];
     }
 

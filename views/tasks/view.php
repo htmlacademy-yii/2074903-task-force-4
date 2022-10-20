@@ -136,6 +136,21 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
         </div>
     </div>
 </section>
+<section class="pop-up pop-up--cancel pop-up--close">
+    <div class="pop-up--wrapper">
+        <h4>Отмена задания</h4>
+        <p class="pop-up-text">
+            <b>Внимание!</b><br>
+            Вы собираетесь отменить ваше задание.<br>
+            Оно пропадёт из поиска и не сможет быть выполненным.
+        </p>
+        <a href="<?= Url::to(['task-actions/cancel-task', 'taskId' => $currentTask->id]) ?>"
+           class="button button--pop-up button--orange">Отменить</a>
+        <div class="button-container">
+            <button class="button--close" type="button">Закрыть окно</button>
+        </div>
+    </div>
+</section>
 <section class="pop-up pop-up--completion pop-up--close">
     <div class="pop-up--wrapper">
         <h4>Завершение задания</h4>
@@ -172,7 +187,6 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 
             $form = ActiveForm::begin([
                 'id' => $model->formName(),
-//                'enableAjaxValidation' => true,
                 'fieldConfig' => [
                     'template' => "{label}\n{input}\n{error}",
                     'labelOptions' => ['class' => 'control-label'],

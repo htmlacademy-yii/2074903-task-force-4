@@ -14,7 +14,7 @@ class CancelAction extends AbstractAction
      */
     public static function getInternalName(): string
     {
-        return 'cancel';
+        return 'cancelled';
     }
 
     /**
@@ -31,7 +31,7 @@ class CancelAction extends AbstractAction
     public function getViewAvailableButton(): string
     {
         return '<a class="button button--pink action-btn"
-            data-action="">' .
+            data-action="cancel">' .
             static::getName() . '</a>';
     }
 
