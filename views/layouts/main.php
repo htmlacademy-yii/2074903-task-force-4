@@ -83,10 +83,6 @@ use yii\widgets\Menu;
     </div>
 </main>
 
-<?php if (isset($this->blocks['pop-ups'])) : ?>
-    <?= $this->blocks['pop-ups'] ?>
-<?php endif; ?>
-
 <?php $this->endBody() ?>
 </body>
 </html>

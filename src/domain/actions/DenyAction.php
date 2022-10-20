@@ -2,8 +2,9 @@
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\models\task\Tasks;
 use yii\helpers\Url;
+use Yii;
+use app\widgets\DenialWidget;
 
 class DenyAction extends AbstractAction
 {
@@ -24,19 +25,26 @@ class DenyAction extends AbstractAction
     }
 
     /**
-     * @param Tasks $currentTask
      * @return string
      */
-    public function getViewAvailableButton(Tasks $currentTask): string
+    public function getViewAvailableButton(): string
     {
         return '<a href="' .
             Url::toRoute([
                 'task-actions/deny-task',
-                'taskId' => $currentTask->id
+                'taskId' => $this->task->id
             ]) .
-            '" class="button button--orange action-btn" data-action="' .
+            '" class="button button--orange action-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#denial-form"
+            data-action="' .
             static::getInternalName() . '">' .
-            static::getName() . 'data-bs-toggle="modal" data-bs-target="#denial-form"</a>';
+            static::getName() . '</a>';
+    }
+
+    public function getAvailableWidget()
+    {
+        return Yii::$app->user->identity->userRole->role === 'executor' ? DenialWidget::widget([]) : '';
     }
 
     /**

@@ -20,5 +20,4 @@ class ResponseWidget extends Widget
             return ;
         }
     }
-
 }

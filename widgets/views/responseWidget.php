@@ -48,14 +48,14 @@ $form = ActiveForm::begin([
     </p>
 
 <?php
-echo Html::submitInput(['class' => 'button button--pop-up button--blue', 'value' => 'Завершить']);
+echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);
 
 ActiveForm::end();
 
 ?>
         <div class="button-container">
 <?php
-echo Html::button('Закрыть', ['class' => 'form-modal-close', 'data-bs-dismiss' => 'modal']);
+echo Html::button('Закрыть', ['class' => 'button--close', 'data-bs-dismiss' => 'modal']);
 ?>
         </div>
     </div>

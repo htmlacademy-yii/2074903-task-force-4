@@ -67,7 +67,7 @@ class TaskActionsController extends SecurityController
         );
     }
 
-    public function actionRespondTask(string $currentStatus, int $taskId)
+    public function actionRespondTask(int $taskId)
     {
         //check that this executor didn't respond this task
         Tasks::findOne($taskId)->changeStatusByAction(
@@ -76,7 +76,7 @@ class TaskActionsController extends SecurityController
         );
     }
 
-    public function actionDenyTask(string $currentStatus, int $taskId)
+    public function actionDenyTask(int $taskId)
     {
         Tasks::findOne($taskId)->changeStatusByAction(
             DenyAction::getInternalName(),
@@ -84,8 +84,9 @@ class TaskActionsController extends SecurityController
         );
     }
 
-    public function actionAcceptTask(string $currentStatus, int $taskId)
+    public function actionAcceptTask(int $taskId)
     {
+        //check that this client is the author
         Tasks::findOne($taskId)->changeStatusByAction(
             AcceptAction::getInternalName(),
             \Yii::$app->user->id

@@ -4,6 +4,8 @@ namespace omarinina\domain\actions;
 
 use omarinina\domain\models\task\Tasks;
 use yii\helpers\Url;
+use Yii;
+use app\widgets\CancellationWidget;
 
 class CancelAction extends AbstractAction
 {
@@ -26,16 +28,24 @@ class CancelAction extends AbstractAction
     /**
      * @return string
      */
-    public function getViewAvailableButton(Tasks $currentTask): string
+    public function getViewAvailableButton(): string
     {
         return '<a href="' .
             Url::toRoute([
                 'task-actions/cancel-task',
-                'taskId' => $currentTask->id
+                'taskId' => $this->task->id
             ]) .
-            '" class="button button--pink action-btn" data-action="' .
+            '" class="button button--pink action-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#cancellation-form"
+            data-action="' .
             static::getInternalName() . '">' .
-            static::getName() . 'data-bs-toggle="modal" data-bs-target="#cancellation-form"</a>';
+            static::getName() . '</a>';
+    }
+
+    public function getAvailableWidget()
+    {
+        return Yii::$app->user->identity->userRole->role === 'client' ? CancellationWidget::widget([]) : '';
     }
 
     /**
