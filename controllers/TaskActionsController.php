@@ -8,9 +8,11 @@ use omarinina\domain\actions\RespondAction;
 use omarinina\domain\exception\task\IdUserException;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\RespondStatuses;
+use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\models\form\LoginForm;
 use omarinina\infrastructure\models\form\TaskResponseForm;
+use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use Yii;
@@ -92,10 +94,12 @@ class TaskActionsController extends SecurityController
     public function actionRespondTask(int $taskId)
     {
         if ($taskId) {
+            $task = Tasks::findOne($taskId);
             $user = Yii::$app->user->identity;
             $taskResponseForm = new TaskResponseForm();
             if ($user->userRole->role === 'executor' &&
-                !$user->getResponds()->where(['taskId' => $taskId])->one()
+                !$user->getResponds()->where(['taskId' => $taskId])->one() &&
+                $task->taskStatus->taskStatus = Tasks::NEW_STATUS
             ) {
                 if (Yii::$app->request->getIsPost()) {
                     $taskResponseForm->load(Yii::$app->request->post());
@@ -134,11 +138,28 @@ class TaskActionsController extends SecurityController
     public function actionAcceptTask(int $taskId)
     {
         if ($taskId) {
-            //check that this client is the author
-            Tasks::findOne($taskId)->changeStatusByAction(
-                AcceptAction::getInternalName(),
-                \Yii::$app->user->id
-            );
+            $task = Tasks::findOne($taskId);
+            $taskAcceptanceForm = new TaskAcceptanceForm();
+            if (Yii::$app->user->id === $task->clientId) {
+                $task->status = $task->changeStatusByAction(
+                    AcceptAction::getInternalName(),
+                    \Yii::$app->user->id
+                );
+                $task->save(false);
+                if (Yii::$app->request->getIsPost()) {
+                    $taskAcceptanceForm->load(Yii::$app->request->post());
+                    if ($taskAcceptanceForm->validate()) {
+                        $newReview = new Reviews();
+                        $newReview->attributes = Yii::$app->request->post('TaskAcceptanceForm');
+                        $newReview->taskId = $taskId;
+                        $newReview->executorId = $task->executorId;
+                        $newReview->clientId = $task->clientId;
+                        $newReview->save(false);
+                        return $this->redirect(['tasks/view', 'id' => $taskId]);
+                    }
+                }
+            }
+            throw new NotFoundHttpException('Page not found', 404);
         }
         throw new NotFoundHttpException('Task is not found', 404);
     }

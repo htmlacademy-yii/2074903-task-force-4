@@ -23,7 +23,8 @@ class TaskAcceptanceForm extends Model
     public function rules()
     {
         return [
-            [['comment'], 'string', 'min' => 30, 'max' => 2000],
+            [['score'], 'required'],
+            [['comment'], 'default', 'value' => null],
             [['score'], 'integer', 'min' => 1, 'max' => 5],
         ];
     }

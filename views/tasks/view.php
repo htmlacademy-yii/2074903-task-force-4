@@ -8,6 +8,7 @@ use yii\web\View;
 use yii\helpers\Url;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\models\form\TaskResponseForm;
+use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
@@ -160,20 +161,42 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             Пожалуйста, оставьте отзыв об исполнителе и отметьте отдельно, если возникли проблемы.
         </p>
         <div class="completion-form pop-up--form regular-form">
-            <form>
-                <div class="form-group">
-                    <label class="control-label" for="completion-comment">Ваш комментарий</label>
-                    <textarea id="completion-comment"></textarea>
-                </div>
-                <p class="completion-head control-label">Оценка работы</p>
-                <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
-                <input type="submit" class="button button--pop-up button--blue" value="Завершить">
-            </form>
+
+            <?php
+            $model = new TaskAcceptanceForm();
+
+            $form = ActiveForm::begin([
+                'id' => 'acceptance-form',
+                'fieldConfig' => [
+                    'template' => "{label}\n{input}\n{error}",
+                    'labelOptions' => ['class' => 'control-label'],
+                    'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+                ],
+                'action' => ['task-actions/accept-task', 'taskId' => $currentTask->id]
+            ]);
+            ?>
+
+            <p>
+                <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
+                    ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
+            </p>
+            <p>
+                <?= $form->field($model, 'score', ['options' => ['class'=> 'completion-head control-label']])
+                    ->textInput(['placeholder' => 'Оцените работу от 1 до 5']); ?>
+            </p>
+
+            <?php
+            echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);
+
+            ActiveForm::end();
+
+            ?>
+            <div class="button-container">
+                <?php
+                echo Html::button('Закрыть', ['class' => 'button--close', 'data-bs-dismiss' => 'modal']);
+                ?>
+            </div>
         </div>
-        <div class="button-container">
-            <button class="button--close" type="button">Закрыть окно</button>
-        </div>
-    </div>
 </section>
 <section class="pop-up pop-up--act_response pop-up--close">
     <div class="pop-up--wrapper">

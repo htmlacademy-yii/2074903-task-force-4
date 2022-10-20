@@ -6,8 +6,8 @@ use yii\base\Model;
 
 class TaskResponseForm extends Model
 {
-    /** @var string */
-    public string $comment = '';
+    /** @var null|string */
+    public ?string $comment = null;
 
     /** @var int */
     public int $price = 0;
@@ -23,8 +23,8 @@ class TaskResponseForm extends Model
     public function rules()
     {
         return [
-            [['comment', 'price'], 'required'],
-            [['comment'], 'string', 'min' => 30, 'max' => 2000],
+            [['price'], 'required'],
+            [['comment'], 'default', 'value' => null],
             [['price'], 'integer', 'min' => 1],
         ];
     }
