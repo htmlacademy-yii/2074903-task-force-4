@@ -1,7 +1,7 @@
 <?php
 namespace app\controllers;
 
-use omarinina\application\services\user\show\ServiceProfileShow;
+use omarinina\application\services\user\show\ServiceUserShow;
 use yii\web\NotFoundHttpException;
 
 class ProfileController extends SecurityController
@@ -15,7 +15,7 @@ class ProfileController extends SecurityController
     {
         try {
             if ($id) {
-                $userProfile = ServiceProfileShow::getUserProfile($id);
+                $userProfile = ServiceUserShow::getUserExecutorById($id);
             } else {
                 throw new NotFoundHttpException('Task is not found', 404);
             }

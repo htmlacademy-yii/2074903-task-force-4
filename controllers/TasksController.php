@@ -4,6 +4,8 @@ namespace app\controllers;
 use omarinina\application\services\file\save\ServiceFileSave;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
 use omarinina\application\services\task\create\ServiceTaskCreate;
+use omarinina\infrastructure\constants\UserRoleConstants;
+use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use omarinina\domain\models\task\TaskStatuses;
@@ -27,7 +29,7 @@ class TasksController extends SecurityController
             'actions' => ['create'],
             'matchCallback' => function ($rule, $action) {
                 $user = Yii::$app->user->identity;
-                return $user->userRole->role !== 'client';
+                return $user->userRole->role !== UserRoleConstants::CLIENT_ROLE;
             }
         ];
         array_unshift($rules['access']['rules'], $rule);
@@ -46,7 +48,8 @@ class TasksController extends SecurityController
 
             $taskFilterForm->load(Yii::$app->request->post());
             if ($taskFilterForm->validate()) {
-                $newTasks = $taskFilterForm->filter(TaskStatuses::findOne(['taskStatus' => 'new'])
+                $newTasks = $taskFilterForm
+                    ->filter(TaskStatuses::findOne(['taskStatus' => TaskStatusConstants::NEW_STATUS])
                     ->getNewTasks())->all();
             } else {
                 throw new BadRequestHttpException('Bad request', 400);
