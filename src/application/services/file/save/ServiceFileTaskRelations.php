@@ -18,7 +18,6 @@ class  ServiceFileTaskRelations
         $taskFile = new TaskFiles();
         $taskFile->fileId = $fileId;
         $taskFile->taskId = $taskId;
-        $taskFile->save(false);
 
         if (!$taskFile->save(false)) {
             throw new ServerErrorHttpException(

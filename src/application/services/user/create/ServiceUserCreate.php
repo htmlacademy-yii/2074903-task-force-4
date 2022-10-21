@@ -27,7 +27,6 @@ class ServiceUserCreate
         $createdUser->role =  ($form->executor === true) ?
             UserRoleConstants::ID_EXECUTOR_ROLE :
             UserRoleConstants::ID_CLIENT_ROLE;
-        $createdUser->save(false);
 
         if (!$createdUser->save(false)) {
             throw new ServerErrorHttpException(
