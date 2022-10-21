@@ -1,76 +1,74 @@
 <?php
 namespace app\controllers;
 
+use omarinina\application\services\respond\add_status\ServiceRespondStatusAdd;
+use omarinina\application\services\task\add_data\ServiceTaskDataAdd;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;
 use omarinina\domain\actions\DenyAction;
-use omarinina\domain\actions\RespondAction;
-use omarinina\domain\exception\task\IdUserException;
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\RespondStatuses;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
-use omarinina\infrastructure\models\form\LoginForm;
+use omarinina\infrastructure\constants\RespondStatusConstants;
+use omarinina\infrastructure\constants\TaskStatusConstants;
 use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use Yii;
-use yii\widgets\ActiveForm;
+use yii\web\ServerErrorHttpException;
 
 class TaskActionsController extends SecurityController
 {
-    public const ACCEPT_ACTION = 'accepted';
-    public const REFUSE_ACTION = 'refused';
-
     /**
      * @param int $respondId
      * @return Response
+     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionAcceptRespond(int $respondId) : Response
     {
-        $respond = Responds::findOne($respondId);
-        $task = $respond->task;
-        $responds = $task->responds;
+        if ($respondId) {
+            $respond = Responds::findOne($respondId);
+            $userId = \Yii::$app->user->id;
 
-        if (\Yii::$app->user->id === $task->clientId && $task->taskStatus->taskStatus === Tasks::NEW_STATUS) {
-            $task->executorId = $respond->executorId;
-            $task->save(false);
-            $respond->status = RespondStatuses::findOne(['status' => static::ACCEPT_ACTION])->id;
-            $respond->save(false);
+            $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
 
-            foreach ($responds as $uniqueRespond) {
-                if (!$uniqueRespond->status && $uniqueRespond->id !== $respond->id) {
-                    $uniqueRespond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
-                    $uniqueRespond->save(false);
-                }
+            if (ServiceRespondStatusAdd::addAcceptStatus($respond, $userId)->status) {
+                ServiceRespondStatusAdd::addRestRespondsRefuseStatus(
+                    $task->responds,
+                    $respond
+                );
             }
-        }
 
-        return $this->redirect(['tasks/view', 'id' => $task->id]);
+            return $this->redirect(['tasks/view', 'id' => $task->id]);
+        }
+        throw new NotFoundHttpException('Respond is not found', 404);
     }
 
     /**
      * @param int $respondId
      * @return Response
+     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionRefuseRespond(int $respondId) : Response
     {
-        $respond = Responds::findOne($respondId);
-        $task = $respond->task;
+        if ($respondId) {
+            $respond = Responds::findOne($respondId);
+            $task = $respond->task;
+            $userId = \Yii::$app->user->id;
 
-        if (\Yii::$app->user->id === $task->clientId && $task->taskStatus->taskStatus === Tasks::NEW_STATUS) {
-            $respond->status = RespondStatuses::findOne(['status' => static::REFUSE_ACTION])->id;
-            $respond->save(false);
+            ServiceRespondStatusAdd::addRefuseStatus($respond, $userId);
+
+            return $this->redirect(['tasks/view', 'id' => $task->id]);
         }
-
-        return $this->redirect(['tasks/view', 'id' => $task->id]);
+        throw new NotFoundHttpException('Respond is not found', 404);
     }
 
     public function actionCancelTask(int $taskId)
     {
-        $task = Tasks::findOne($taskId);
         if ($taskId) {
+            $task = Tasks::findOne($taskId);
             if (Yii::$app->user->id === $task->clientId) {
                 $task->status = $task->changeStatusByAction(
                     CancelAction::getInternalName(),
