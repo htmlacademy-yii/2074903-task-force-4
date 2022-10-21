@@ -17,7 +17,7 @@ class ServiceUserShow
     {
         $currentUser = Users::findOne($id);
         if (!$currentUser || $currentUser->userRole->role !== UserRoleConstants::EXECUTOR_ROLE) {
-            throw new NotFoundHttpException('Task is not found', 404);
+            throw new NotFoundHttpException('User is not found', 404);
         }
         return $currentUser;
     }
