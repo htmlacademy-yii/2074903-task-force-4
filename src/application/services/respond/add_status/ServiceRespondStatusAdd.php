@@ -3,8 +3,6 @@
 namespace omarinina\application\services\respond\add_status;
 
 use omarinina\domain\models\task\Responds;
-use omarinina\domain\models\task\RespondStatuses;
-use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\constants\RespondStatusConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\web\ServerErrorHttpException;
@@ -22,16 +20,17 @@ class ServiceRespondStatusAdd
         $task = $respond->task;
         if ($userId === $task->clientId && $task->status === TaskStatusConstants::ID_NEW_STATUS) {
             $respond->status = RespondStatusConstants::ID_ACCEPTED_STATUS;
-        }
 
-        if (!$respond->save(false)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
-        }
+            if (!$respond->save(false)) {
+                throw new ServerErrorHttpException(
+                    'Your data has not been recorded, please try again later',
+                    500
+                );
+            }
 
-        return $respond;
+            return $respond;
+        }
+        return null;
     }
 
     /**
@@ -45,12 +44,13 @@ class ServiceRespondStatusAdd
         $task = $respond->task;
         if ($userId === $task->clientId && $task->status === TaskStatusConstants::ID_NEW_STATUS) {
             $respond->status = RespondStatusConstants::ID_REFUSED_STATUS;
-        }
-        if (!$respond->save(false)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
+
+            if (!$respond->save(false)) {
+                throw new ServerErrorHttpException(
+                    'Your data has not been recorded, please try again later',
+                    500
+                );
+            }
         }
     }
 
@@ -65,12 +65,13 @@ class ServiceRespondStatusAdd
         foreach ($responds as $respond) {
             if (!$respond->status && $respond->id !== $acceptedRespond->id) {
                 $respond->status = RespondStatusConstants::ID_REFUSED_STATUS;
-            }
-            if (!$respond->save(false)) {
-                throw new ServerErrorHttpException(
-                    'Your data has not been recorded, please try again later',
-                    500
-                );
+
+                if (!$respond->save(false)) {
+                    throw new ServerErrorHttpException(
+                        'Your data has not been recorded, please try again later',
+                        500
+                    );
+                }
             }
         }
     }
