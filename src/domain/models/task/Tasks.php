@@ -6,6 +6,7 @@ use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
+use omarinina\infrastructure\constants\TaskStatusConstants;
 use Yii;
 use omarinina\domain\traits\TimeCounter;
 use omarinina\domain\actions\AcceptAction;
@@ -45,9 +46,6 @@ use omarinina\domain\exception\task\AvailableActionsException;
  */
 class Tasks extends \yii\db\ActiveRecord
 {
-    public const NEW_STATUS = 'new';
-    public const IN_WORK_STATUS = 'in work';
-
     use TimeCounter;
 
     /**
@@ -238,10 +236,10 @@ class Tasks extends \yii\db\ActiveRecord
     private function getLinkActionToStatus(): array
     {
         return [
-            RespondAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS])->id,
-            CancelAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => CancelAction::getInternalName()])->id,
-            AcceptAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => AcceptAction::getInternalName()])->id,
-            DenyAction::getInternalName() => TaskStatuses::findOne(['taskStatus' => DenyAction::getInternalName()])->id
+            RespondAction::getInternalName() => TaskStatusConstants::ID_NEW_STATUS,
+            CancelAction::getInternalName() => TaskStatusConstants::ID_CANCELLED_STATUS,
+            AcceptAction::getInternalName() => TaskStatusConstants::ID_DONE_STATUS,
+            DenyAction::getInternalName() => TaskStatusConstants::ID_FAILED_STATUS
         ];
     }
 
@@ -254,11 +252,11 @@ class Tasks extends \yii\db\ActiveRecord
     private function getLinkStatusToAction(): array
     {
         return [
-            TaskStatuses::findOne(['taskStatus' => static::NEW_STATUS])->id => [
+            TaskStatusConstants::ID_NEW_STATUS => [
                 new CancelAction($this),
                 new RespondAction($this)
             ],
-            TaskStatuses::findOne(['taskStatus' => static::IN_WORK_STATUS])->id => [
+            TaskStatusConstants::ID_IN_WORK_STATUS => [
                 new AcceptAction($this),
                 new DenyAction($this)
             ]
