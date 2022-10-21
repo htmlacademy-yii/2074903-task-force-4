@@ -1,6 +1,8 @@
 <?php
 namespace app\controllers;
 
+use omarinina\application\services\file\save\ServiceFileSave;
+use omarinina\application\services\file\save\ServiceFileTaskRelations;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
@@ -40,11 +42,11 @@ class TasksController extends SecurityController
     {
         try {
             $categories = Categories::find()->all();
-            $TaskFilterForm = new TaskFilterForm();
+            $taskFilterForm = new TaskFilterForm();
 
-            $TaskFilterForm->load(Yii::$app->request->post());
-            if ($TaskFilterForm->validate()) {
-                $newTasks = $TaskFilterForm->filter(TaskStatuses::findOne(['taskStatus' => 'new'])
+            $taskFilterForm->load(Yii::$app->request->post());
+            if ($taskFilterForm->validate()) {
+                $newTasks = $taskFilterForm->filter(TaskStatuses::findOne(['taskStatus' => 'new'])
                     ->getNewTasks())->all();
             } else {
                 throw new BadRequestHttpException('Bad request', 400);
@@ -53,7 +55,7 @@ class TasksController extends SecurityController
             return $this->render('index', [
                 'newTasks' => $newTasks,
                 'categories' => $categories,
-                'model' => $TaskFilterForm,
+                'model' => $taskFilterForm,
             ]);
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
@@ -95,18 +97,21 @@ class TasksController extends SecurityController
         try {
             $categories = Categories::find()->all();
             $createTaskForm = new CreateTaskForm();
-            $newTask = new ServiceTaskCreate($createTaskForm);
 
             if (Yii::$app->request->getIsPost()) {
                 $createTaskForm->load(Yii::$app->request->post());
 
                 if ($createTaskForm->validate()) {
-                    $newTask->saveMainContent();
+                    $createdTask = ServiceTaskCreate::saveNewTask(
+                        Yii::$app->request->post('CreateTaskForm'),
+                        Yii::$app->user->id,
+                        $createTaskForm->expiryDate
+                    );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
-                        $newTask->saveFile($file);
-                        $newTask->saveRelationsTaskFile();
+                        $savedFile = ServiceFileSave::saveNewFile($file);
+                        ServiceFileTaskRelations::saveRelationsFileTask($createdTask->id, $savedFile->id);
                     }
-                    return $this->redirect(['view', 'id' => $newTask->getIdNewTask()]);
+                    return $this->redirect(['view', 'id' => $createdTask->id]);
                 }
             }
             return $this->render('create', [
