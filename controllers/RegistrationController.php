@@ -47,7 +47,10 @@ class RegistrationController extends Controller
                 $registrationForm->load(Yii::$app->request->post());
 
                 if ($registrationForm->validate()) {
-                    ServiceUserCreate::createNewUser($registrationForm);
+                    ServiceUserCreate::createNewUser(
+                        $registrationForm,
+                        Yii::$app->request->post('RegistrationForm')
+                    );
                     return $this->redirect(['site/index']);
                 }
             }

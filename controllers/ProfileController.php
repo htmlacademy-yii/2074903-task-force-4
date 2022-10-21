@@ -1,7 +1,7 @@
 <?php
 namespace app\controllers;
 
-use omarinina\application\services\user\show\ServiceProfileShow;
+use omarinina\application\services\user\show\ServiceUserShow;
 use yii\web\NotFoundHttpException;
 
 class ProfileController extends SecurityController
@@ -9,13 +9,13 @@ class ProfileController extends SecurityController
     /**
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException
+     * @throws NotFoundHttpException|\yii\base\InvalidConfigException
      */
     public function actionView(int $id): string
     {
         try {
             if ($id) {
-                $userProfile = ServiceProfileShow::getUserProfile($id);
+                $userProfile = ServiceUserShow::getUserExecutorById($id);
             } else {
                 throw new NotFoundHttpException('User is not found', 404);
             }
