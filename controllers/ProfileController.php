@@ -1,8 +1,7 @@
 <?php
 namespace app\controllers;
 
-use app\controllers\SecurityController;
-use omarinina\domain\models\user\Users;
+use omarinina\application\services\user\show\ServiceUserShow;
 use yii\web\NotFoundHttpException;
 
 class ProfileController extends SecurityController
@@ -14,17 +13,20 @@ class ProfileController extends SecurityController
      */
     public function actionView(int $id): string
     {
-        if ($id) {
-            $currentUser = Users::findOne($id);
-            if (!$currentUser || $currentUser->userRole->role !== 'executor') {
+        try {
+            if ($id) {
+                $userProfile = ServiceUserShow::getUserExecutorById($id);
+            } else {
                 throw new NotFoundHttpException('Task is not found', 404);
             }
-        } else {
-            throw new NotFoundHttpException('Task is not found', 404);
-        }
 
-        return $this->render('view', [
-            'currentUser' => $currentUser
-        ]);
+            return $this->render('view', [
+                'currentUser' => $userProfile
+            ]);
+        } catch (NotFoundHttpException|
+            \Exception|
+            \yii\base\InvalidConfigException $e) {
+            return $e->getMessage();
+        }
     }
 }

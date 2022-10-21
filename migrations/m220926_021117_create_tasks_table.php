@@ -17,7 +17,7 @@ class m220926_021117_create_tasks_table extends Migration
             'createAt' => $this->timestamp()
                 ->defaultValue(new \yii\db\Expression('NOW()'))->notNull(),
             'name' => $this->string(255)->notNull(),
-            'description' => $this->text(),
+            'description' => $this->text()->notNull(),
             'expiryDate' => $this->timestamp()->notNull(),
             'budget' => $this->string(128)->notNull(),
             'categoryId' => $this->integer()->notNull(),

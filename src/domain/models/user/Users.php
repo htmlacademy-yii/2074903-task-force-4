@@ -7,6 +7,8 @@ use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
+use omarinina\infrastructure\constants\TaskStatusConstants;
+use omarinina\infrastructure\constants\UserRoleConstants;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\web\IdentityInterface;
@@ -212,7 +214,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function getExecutorInWorkTasks()
     {
         return $this->getExecutorTasks()
-            ->where('tasks.status = 3');
+            ->where(['tasks.status' => TaskStatusConstants::ID_IN_WORK_STATUS]);
     }
 
     /**
@@ -223,7 +225,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function getExecutorFailedTasks()
     {
         return $this->getExecutorTasks()
-            ->where('tasks.status = 5');
+            ->where(['tasks.status' => TaskStatusConstants::ID_FAILED_STATUS]);
     }
 
     /**
@@ -234,7 +236,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function getExecutorDoneTasks()
     {
         return $this->getExecutorTasks()
-            ->where('tasks.status = 4');
+            ->where(['tasks.status' => TaskStatusConstants::ID_DONE_STATUS]);
     }
 
     /**
@@ -350,7 +352,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             function ($users) {
                 return $this->getExecutorRatingPlace($users);
             },
-            Roles::findOne(['role' => 'executor'])->users
+            Roles::findOne(['role' => UserRoleConstants::EXECUTOR_ROLE])->users
         );
         $currentExecutorRating = $this->getExecutorRatingPlace($this);
         rsort($allRating);

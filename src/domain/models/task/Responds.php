@@ -13,7 +13,7 @@ use omarinina\domain\traits\TimeCounter;
  * @property int $taskId
  * @property int $executorId
  * @property string $createAt
- * @property string $price
+ * @property int $price
  * @property string|null $comment
  *
  * @property Users $executor
@@ -39,7 +39,7 @@ class Responds extends \yii\db\ActiveRecord
             [['taskId', 'executorId'], 'integer'],
             [['createAt'], 'safe'],
             [['comment'], 'string'],
-            [['price'], 'string', 'max' => 128],
+            [['price'], 'integer'],
             [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
             [['taskId'], 'exist', 'skipOnError' => true, 'targetClass' => Tasks::class, 'targetAttribute' => ['taskId' => 'id']],
         ];

@@ -7,6 +7,7 @@ $user = Yii::$app->user->identity;
 
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
+use yii\widgets\Menu;
 
 \app\assets\BasicAsset::register($this);
 ?>
@@ -27,25 +28,26 @@ use yii\helpers\Url;
 
 <header class="page-header">
     <nav class="main-nav">
-        <a href='#' class="header-logo">
+        <a href='<?= Url::to(['tasks/index']) ?>' class="header-logo">
             <img class="logo-image" src="/img/logotype.png" width=227 height=60 alt="taskforce">
         </a>
         <?php if (!Yii::$app->user->isGuest) : ?>
         <div class="nav-wrapper">
-            <ul class="nav-list">
-                <li class="list-item list-item--active">
-                    <a href="<?= Url::to(['tasks/index']) ?>" class="link link--nav" >Новое</a>
-                </li>
-                <li class="list-item">
-                    <a href="#" class="link link--nav" >Мои задания</a>
-                </li>
-                <li class="list-item">
-                    <a href="#" class="link link--nav" >Создать задание</a>
-                </li>
-                <li class="list-item">
-                    <a href="#" class="link link--nav" >Настройки</a>
-                </li>
-            </ul>
+            <?php echo Menu::widget([
+                'items' => [
+                    ['label' => 'Новое', 'url' => ['tasks/index']],
+                    ['label' => 'Мои задания', 'url' => ['']],
+                    ['label' => 'Создать задание', 'url' => ['tasks/create']],
+                    ['label' => 'Настройки', 'url' => ['']]
+                ],
+                'options' => [
+                    'class' => 'nav-list'
+                ],
+                'itemOptions' => [
+                    'class' => 'list-item'],
+                'linkTemplate' => '<a href="{url}" class="link link--nav">{label}</a>',
+                'activeCssClass' => 'list-item--active'
+]) ?>
         </div>
         <?php endif; ?>
     </nav>

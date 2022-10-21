@@ -28,13 +28,20 @@ use yii\helpers\ArrayHelper;
                     <?= $form->field($model, 'email', ['options' => ['class' => ' form-group']])
                         ->textInput(['placeholder' => 'something@google.com']); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
-                        ->dropDownList(ArrayHelper::map($cities, 'id', 'name'), ['class' => 'form-group']); ?>
+                        ->dropDownList(
+                            ArrayHelper::map($cities, 'id', 'name'),
+                            ['class' => 'form-group', 'prompt' => '-выбрать-']
+                        ); ?>
                 </div>
                 <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'пароль']); ?>
                 <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'повторите пароль']); ?>
-                <?= $form->field($model, 'executor', ['options' => ['class' => 'form-group']])->checkbox(['class' => 'control-label checkbox-label']) ?>
+                <?= $form->field(
+                    $model,
+                    'executor',
+                    ['options' => ['class' => 'form-group']]
+                )->checkbox(['class' => 'control-label checkbox-label']) ?>
 
                 <input type="submit" class="button button--blue" value="Создать аккаунт">
             <?php ActiveForm::end(); ?>

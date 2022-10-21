@@ -12,7 +12,7 @@ use Yii;
  * @property int $id
  * @property string $fileSrc
  *
- * @property TaskFiles[] $taskFiles
+ * @property TaskFiles $taskFile
  * @property Tasks $task
  */
 class Files extends \yii\db\ActiveRecord
@@ -48,13 +48,13 @@ class Files extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[TaskFiles]].
+     * Gets query for [[TaskFile]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getTaskFiles()
+    public function getTaskFile()
     {
-        return $this->hasMany(TaskFiles::class, ['fileId' => 'id']);
+        return $this->hasOne(TaskFiles::class, ['fileId' => 'id']);
     }
 
     /**

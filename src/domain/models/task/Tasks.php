@@ -15,9 +15,9 @@ use omarinina\domain\traits\TimeCounter;
  * @property int $id
  * @property string $createAt
  * @property string $name
- * @property string|null $description
- * @property string $expiryDate
- * @property string $budget
+ * @property string $description
+ * @property string|null $expiryDate
+ * @property int $budget
  * @property int $categoryId
  * @property int $cityId
  * @property int $status
@@ -52,11 +52,11 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return [
             [['createAt', 'expiryDate'], 'safe'],
-            [['name', 'expiryDate', 'budget', 'categoryId', 'status', 'clientId'], 'required'],
+            [['name',  'budget', 'categoryId', 'status', 'clientId', 'description'], 'required'],
             [['description'], 'string'],
             [['categoryId', 'status', 'executorId', 'clientId', 'cityId'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['budget'], 'string', 'max' => 128],
+            [['budget'], 'integer', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
             [['executorId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['executorId' => 'id']],
