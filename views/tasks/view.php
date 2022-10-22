@@ -1,12 +1,18 @@
 <?php
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
+/** @var omarinina\domain\models\task\Responds[] $responds */
+/** @var omarinina\infrastructure\models\form\TaskResponseForm $model */
 
 use yii\web\View;
 use yii\helpers\Url;
 use omarinina\domain\models\user\Users;
+use omarinina\infrastructure\models\form\TaskResponseForm;
+use omarinina\infrastructure\models\form\TaskAcceptanceForm;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 
-$this->registerJsFile('js/main.js');
+$this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
 <div class="main-content container">
     <div class="left-column">
@@ -15,9 +21,9 @@ $this->registerJsFile('js/main.js');
             <p class="price price--big"><?= $currentTask->budget; ?> ₽</p>
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
-        <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
-        <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
-        <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
+        <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
+            <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
+        <?php endif; ?>
         <?php if (isset($currentTask->city->name)) : ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
@@ -25,8 +31,9 @@ $this->registerJsFile('js/main.js');
             <p class="map-address">Новый арбат, 23, к. 1</p>
         </div>
         <?php endif; ?>
+        <?php if (isset($responds[0])) : ?>
         <h4 class="head-regular">Отклики на задание</h4>
-        <?php foreach ($currentTask->responds as $respond) : ?>
+            <?php foreach ($responds as $respond) : ?>
         <div class="response-card">
             <img class="customer-photo"
                  src="<?= $respond->executor->avatarSrc ?>"
@@ -61,18 +68,28 @@ $this->registerJsFile('js/main.js');
                 </p>
 
             </div>
+
             <div class="feedback-wrapper">
                 <p class="info-text">
                     <span class="current-time"><?= $respond->countTimeAgoPost($respond->createAt) ?>
                     </span> назад</p>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
             </div>
+                <?php if (!$respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
             <div class="button-popup">
-                <a href="#" class="button button--blue button--small">Принять</a>
-                <a href="#" class="button button--orange button--small">Отказать</a>
+                <a href="<?= Url::toRoute([
+                    'task-actions/accept-respond',
+                    'respondId' => $respond->id
+                ]) ?>" class="button button--blue button--small">Принять</a>
+                <a href="<?= Url::to([
+                    'task-actions/refuse-respond',
+                    'respondId' => $respond->id
+                ]) ?>" class="button button--orange button--small">Отказать</a>
             </div>
+                <?php endif; ?>
         </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
     <div class="right-column">
         <div class="right-card black info-card">
@@ -114,7 +131,23 @@ $this->registerJsFile('js/main.js');
             Вы собираетесь отказаться от выполнения этого задания.<br>
             Это действие плохо скажется на вашем рейтинге и увеличит счетчик проваленных заданий.
         </p>
-        <a class="button button--pop-up button--orange">Отказаться</a>
+        <a href="<?= Url::to(['task-actions/deny-task', 'taskId' => $currentTask->id]) ?>"
+           class="button button--pop-up button--orange">Отказаться</a>
+        <div class="button-container">
+            <button class="button--close" type="button">Закрыть окно</button>
+        </div>
+    </div>
+</section>
+<section class="pop-up pop-up--cancel pop-up--close">
+    <div class="pop-up--wrapper">
+        <h4>Отмена задания</h4>
+        <p class="pop-up-text">
+            <b>Внимание!</b><br>
+            Вы собираетесь отменить ваше задание.<br>
+            Оно пропадёт из поиска и не сможет быть выполненным.
+        </p>
+        <a href="<?= Url::to(['task-actions/cancel-task', 'taskId' => $currentTask->id]) ?>"
+           class="button button--pop-up button--orange">Отменить</a>
         <div class="button-container">
             <button class="button--close" type="button">Закрыть окно</button>
         </div>
@@ -128,20 +161,42 @@ $this->registerJsFile('js/main.js');
             Пожалуйста, оставьте отзыв об исполнителе и отметьте отдельно, если возникли проблемы.
         </p>
         <div class="completion-form pop-up--form regular-form">
-            <form>
-                <div class="form-group">
-                    <label class="control-label" for="completion-comment">Ваш комментарий</label>
-                    <textarea id="completion-comment"></textarea>
-                </div>
-                <p class="completion-head control-label">Оценка работы</p>
-                <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
-                <input type="submit" class="button button--pop-up button--blue" value="Завершить">
-            </form>
+
+            <?php
+            $model = new TaskAcceptanceForm();
+
+            $form = ActiveForm::begin([
+                'id' => 'acceptance-form',
+                'fieldConfig' => [
+                    'template' => "{label}\n{input}\n{error}",
+                    'labelOptions' => ['class' => 'control-label'],
+                    'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+                ],
+                'action' => ['task-actions/accept-task', 'taskId' => $currentTask->id]
+            ]);
+            ?>
+
+            <p>
+                <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
+                    ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
+            </p>
+            <p>
+                <?= $form->field($model, 'score', ['options' => ['class'=> 'completion-head control-label']])
+                    ->textInput(['placeholder' => 'Оцените работу от 1 до 5']); ?>
+            </p>
+
+            <?php
+            echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);
+
+            ActiveForm::end();
+
+            ?>
+            <div class="button-container">
+                <?php
+                echo Html::button('Закрыть', ['class' => 'button--close', 'data-bs-dismiss' => 'modal']);
+                ?>
+            </div>
         </div>
-        <div class="button-container">
-            <button class="button--close" type="button">Закрыть окно</button>
-        </div>
-    </div>
 </section>
 <section class="pop-up pop-up--act_response pop-up--close">
     <div class="pop-up--wrapper">
@@ -151,23 +206,42 @@ $this->registerJsFile('js/main.js');
             Пожалуйста, укажите стоимость работы и добавьте комментарий, если необходимо.
         </p>
         <div class="addition-form pop-up--form regular-form">
-            <form>
-                <div class="form-group">
-                    <label class="control-label" for="addition-comment">Ваш комментарий</label>
-                    <textarea id="addition-comment"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="addition-price">Стоимость</label>
-                    <input id="addition-price" type="text">
-                </div>
-                <input type="submit" class="button button--pop-up button--blue" value="Завершить">
-            </form>
+            <?php
+            $model = new TaskResponseForm();
+
+            $form = ActiveForm::begin([
+                'id' => $model->formName(),
+                'fieldConfig' => [
+                    'template' => "{label}\n{input}\n{error}",
+                    'labelOptions' => ['class' => 'control-label'],
+                    'errorOptions' => ['tag' => 'span', 'class' => 'help-block']
+                ],
+                'action' => ['task-actions/respond-task', 'taskId' => $currentTask->id]
+            ]);
+            ?>
+            <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
+                ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
+            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group', 'placeholder' => '1000']]) ?>
+            <?php
+            echo Html::submitInput(
+                'Завершить',
+                [
+                    'class' => 'button button--pop-up button--blue'
+                ]
+            );
+
+            ActiveForm::end();
+
+            ?>
         </div>
         <div class="button-container">
-            <button class="button--close" type="button">Закрыть окно</button>
+            <?php
+            echo Html::button('Закрыть', ['class' => 'button--close']);
+            ?>
         </div>
     </div>
 </section>
 <div class="overlay"></div>
 
 <?php $this->endBlock(); ?>
+

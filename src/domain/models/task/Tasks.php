@@ -6,8 +6,17 @@ use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
+use omarinina\infrastructure\constants\TaskStatusConstants;
 use Yii;
 use omarinina\domain\traits\TimeCounter;
+use omarinina\domain\actions\AcceptAction;
+use omarinina\domain\actions\CancelAction;
+use omarinina\domain\actions\DenyAction;
+use omarinina\domain\actions\RespondAction;
+use omarinina\domain\actions\AbstractAction;
+use omarinina\domain\exception\task\IdUserException;
+use omarinina\domain\exception\task\CurrentActionException;
+use omarinina\domain\exception\task\AvailableActionsException;
 
 /**
  * This is the model class for table "tasks".
@@ -37,6 +46,8 @@ use omarinina\domain\traits\TimeCounter;
  */
 class Tasks extends \yii\db\ActiveRecord
 {
+    use TimeCounter;
+
     /**
      * {@inheritdoc}
      */
@@ -176,6 +187,96 @@ class Tasks extends \yii\db\ActiveRecord
         return $this->hasOne(Cities::class, ['id' => 'cityId']);
     }
 
-    use TimeCounter;
+    /**
+     * @param string $currentAction
+     * @param int $idUser
+     * @return int|null
+     * @throws AvailableActionsException changes in this task status
+     * @throws CurrentActionException Exception when user tries to choose action
+     * which is unavailable for this task status
+     * @throws IdUserException Exception when user doesn't have rights to add
+     */
+    public function changeStatusByAction(string $currentAction, int $idUser): ?int
+    {
+        if ($this->isValidAction($currentAction, $idUser)) {
+            return $this->getLinkActionToStatus()[$currentAction];
+        }
+        if (!array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+            throw new CurrentActionException();
+        }
+        if ($this->getAvailableActions($idUser)->getInternalName() !== $currentAction) {
+            throw new IdUserException();
+        }
+    }
+
+    /**
+     * @param int $idUser
+     * @return AbstractAction|null
+     */
+    public function getAvailableActions(int $idUser): ?AbstractAction
+    {
+        if (!array_key_exists($this->taskStatus->id, $this->getLinkStatusToAction())) {
+            return null;
+        }
+        $availableAction = array_values(array_filter(
+            $this->getLinkStatusToAction()[$this->taskStatus->id],
+            function (AbstractAction $action) use ($idUser) {
+                return $action->isAvailableForUser($idUser);
+            }
+        ))[0] ?? null;
+        if (!$availableAction) {
+            return null;
+        }
+        return $availableAction;
+    }
+
+    /**
+     * @return array
+     */
+    private function getLinkActionToStatus(): array
+    {
+        return [
+            RespondAction::getInternalName() => TaskStatusConstants::ID_NEW_STATUS,
+            CancelAction::getInternalName() => TaskStatusConstants::ID_CANCELLED_STATUS,
+            AcceptAction::getInternalName() => TaskStatusConstants::ID_DONE_STATUS,
+            DenyAction::getInternalName() => TaskStatusConstants::ID_FAILED_STATUS
+        ];
+    }
+
+    //Also the client has two additional buttons when he receives responds by executors.
+    //Potential this logic can be realised with this class, isn't it?
+
+    /**
+     * @return array
+     */
+    private function getLinkStatusToAction(): array
+    {
+        return [
+            TaskStatusConstants::ID_NEW_STATUS => [
+                new CancelAction($this),
+                new RespondAction($this)
+            ],
+            TaskStatusConstants::ID_IN_WORK_STATUS => [
+                new AcceptAction($this),
+                new DenyAction($this)
+            ]
+        ];
+    }
+
+    /**
+     * @param string $currentAction
+     * @param int $idUser
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws IdUserException
+     */
+    private function isValidAction(string $currentAction, int $idUser): bool
+    {
+        if (array_key_exists($currentAction, $this->getLinkActionToStatus())) {
+            return $this->getAvailableActions($idUser)->getInternalName() === $currentAction;
+        }
+        return false;
+    }
+
 
 }

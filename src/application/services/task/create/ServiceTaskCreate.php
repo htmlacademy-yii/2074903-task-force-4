@@ -30,7 +30,6 @@ class ServiceTaskCreate
                 'yyyy-MM-dd HH:mm:ss'
             );
         }
-        $createdTask->save(false);
 
         if (!$createdTask->save(false)) {
             throw new ServerErrorHttpException(

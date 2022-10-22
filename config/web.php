@@ -10,15 +10,22 @@ $config = [
     'homeUrl' => ['tasks/index'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'e-sPtp-6Yfpfm69iy2J9quvz6mEuOTRW',
         ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => 'redis',
+            'port' => 6379,
+            'database' => 0,
+        ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+//            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\redis\Cache',
         ],
         'user' => [
             'identityClass' => 'omarinina\domain\models\user\Users',
@@ -58,8 +65,20 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
+        'panels' => [
+            'db' => [
+                'class' => 'yii\debug\panels\DbPanel',
+                'defaultOrder' => [
+                    'seq' => SORT_ASC
+                ],
+                'defaultFilter' => [
+                    'type' => 'SELECT'
+                ]
+            ],
+            'profiling' => \yii\debug\panels\ProfilingPanel::class,
+        ],
         // uncomment the following to add your IP if you are not connecting from localhost.
-        // 'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';

@@ -1555,6 +1555,11 @@ form .has-error textarea:hover {
   .pop-up--refusal .button--pop-up {
     margin-top: 10px; }
 
+.pop-up--cancel {
+  display: none; }
+.pop-up--cancel .button--pop-up {
+  margin-top: 10px; }
+
 .pop-up--completion {
   display: none; }
   .pop-up--completion .form-group:last-of-type .control-label {

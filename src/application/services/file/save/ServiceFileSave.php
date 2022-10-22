@@ -19,7 +19,6 @@ class ServiceFileSave
         $name = uniqid('upload') . '.' . $file->getExtension();
         $file->saveAs('@webroot/uploads/' . $name);
         $savedFile->fileSrc = '/uploads/' . $name;
-        $savedFile->save(false);
 
         if (!$savedFile->save(false)) {
             throw new ServerErrorHttpException(
