@@ -33,12 +33,10 @@ use yii\helpers\Html;
                     ['class' => 'form-group', 'prompt' => '-выбрать-']
                 ); ?>
 
-
-            <div class="form-group">
-                <label class="control-label" for="location">Локация</label>
-                <input class="location-icon" id="location" type="text" placeholder="Оставьте это поле пустым">
-                <span class="help-block">Error description is here</span>
-            </div>
+            <?= $form->field($model, 'location', ['options' => ['class' => 'form-group']])
+                ->textInput([
+                    'placeholder' => 'Добавьте ваш адрес в формате: Город, ул. Улица, д. 1',
+                    'class' => 'location-icon']) ?>
 
             <div class="half-wrapper">
                 <?= $form->field($model, 'budget', ['options' => ['class' => 'form-group']])

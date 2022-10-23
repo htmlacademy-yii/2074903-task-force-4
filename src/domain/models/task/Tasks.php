@@ -28,7 +28,9 @@ use omarinina\domain\exception\task\AvailableActionsException;
  * @property string|null $expiryDate
  * @property int $budget
  * @property int $categoryId
- * @property int $cityId
+ * @property string|null $location
+ * @property float|null $lat
+ * @property float|null $lng
  * @property int $status
  * @property int|null $executorId
  * @property int $clientId
@@ -65,8 +67,9 @@ class Tasks extends \yii\db\ActiveRecord
             [['createAt', 'expiryDate'], 'safe'],
             [['name',  'budget', 'categoryId', 'status', 'clientId', 'description'], 'required'],
             [['description'], 'string'],
-            [['categoryId', 'status', 'executorId', 'clientId', 'cityId'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['categoryId', 'status', 'executorId', 'clientId'], 'integer'],
+            [['lat', 'lng'], 'number'],
+            [['name', 'location'], 'string', 'max' => 255],
             [['budget'], 'integer', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
@@ -88,10 +91,12 @@ class Tasks extends \yii\db\ActiveRecord
             'expiryDate' => 'Expiry Date',
             'budget' => 'Budget',
             'categoryId' => 'Category ID',
-            'cityId' => 'City ID',
+            'location' => 'Location',
             'status' => 'Status',
             'executorId' => 'Executor ID',
             'clientId' => 'Client ID',
+            'lat' => 'Latitude',
+            'lng' => 'Longitude'
         ];
     }
 

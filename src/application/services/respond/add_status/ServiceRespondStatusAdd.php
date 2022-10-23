@@ -67,13 +67,7 @@ class ServiceRespondStatusAdd
                 foreach ($responds as $respond) {
                     if (!$respond->status && $respond->id !== $acceptedRespond->id) {
                         $respond->status = RespondStatusConstants::ID_REFUSED_STATUS;
-
-                        if (!$respond->save(false)) {
-                            throw new ServerErrorHttpException(
-                                'Your data has not been recorded, please try again later',
-                                500
-                            );
-                        }
+                        $respond->save(false);
                     }
                 }
             });

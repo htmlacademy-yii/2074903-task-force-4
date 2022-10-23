@@ -18,12 +18,19 @@ class ServiceTaskCreate
      * @throws ServerErrorHttpException
      * @throws InvalidConfigException
      */
-    public static function saveNewTask(array $attributes, int $userId, ?string $formExpiryDate) : ?Tasks
-    {
+    public static function saveNewTask(
+        array $attributes,
+        int $userId,
+        ?string $formExpiryDate,
+        string $coordinates
+    ) : ?Tasks {
         $createdTask = new Tasks();
         $createdTask->attributes = Yii::$app->request->post('CreateTaskForm');
         $createdTask->clientId = Yii::$app->user->identity->id;
         $createdTask->status = TaskStatusConstants::ID_NEW_STATUS;
+        $coordinates = explode(' ', $coordinates);
+        $createdTask->lat = $coordinates[1];
+        $createdTask->lng = $coordinates[0];
         if ($formExpiryDate !== null) {
             $createdTask->expiryDate = Yii::$app->formatter->asDate(
                 $formExpiryDate,

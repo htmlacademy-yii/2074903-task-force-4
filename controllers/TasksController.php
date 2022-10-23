@@ -3,6 +3,7 @@ namespace app\controllers;
 
 use omarinina\application\services\file\save\ServiceFileSave;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
+use omarinina\application\services\location\point_receive\ServiceLocationPointReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
@@ -109,10 +110,15 @@ class TasksController extends SecurityController
                 $createTaskForm->load(Yii::$app->request->post());
 
                 if ($createTaskForm->validate()) {
+                    $fullLocation = $createTaskForm->checkCityInLocation();
+                    if (!$createTaskForm->isLocationExistGeocoder()) {
+                        //показ алерта о том, что адрес заполнен не верно
+                    }
                     $createdTask = ServiceTaskCreate::saveNewTask(
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
-                        $createTaskForm->expiryDate
+                        $createTaskForm->expiryDate,
+                        ServiceLocationPointReceive::receivePointFromYandexGeocoder($fullLocation)
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = ServiceFileSave::saveNewFile($file);

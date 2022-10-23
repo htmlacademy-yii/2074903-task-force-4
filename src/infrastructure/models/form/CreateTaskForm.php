@@ -2,7 +2,9 @@
 
 namespace omarinina\infrastructure\models\form;
 
+use omarinina\application\services\location\point_receive\ServiceLocationPointReceive;
 use omarinina\domain\models\Categories;
+use omarinina\domain\models\Cities;
 use yii\base\Model;
 
 class CreateTaskForm extends Model
@@ -16,8 +18,8 @@ class CreateTaskForm extends Model
     /** @var int */
     public int $categoryId = 0;
 
-    /** @var int|null */
-    public ?int $cityId = null;
+    /** @var null|string */
+    public ?string $location = null;
 
     /** @var string */
     public string $budget = '';
@@ -34,7 +36,7 @@ class CreateTaskForm extends Model
             'name' => 'Мне нужно',
             'description' => 'Подробности задания',
             'categoryId' => 'Категория',
-            'cityId' => 'Локация',
+            'location' => 'Локация',
             'budget' => 'Бюджет',
             'expiryDate' => 'Срок исполнения',
             'files' => 'Файлы'
@@ -51,6 +53,34 @@ class CreateTaskForm extends Model
             [['expiryDate'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
+            [['location'], 'default', 'value' => null],
         ];
+    }
+
+    /**
+     * @return string|void|null
+     */
+    //как назвать функцию, подумать generateFullAddressLocation, тогда должно находиться не здесь
+    public function checkCityInLocation()
+    {
+        if (!$this->hasErrors() && $this->location) {
+            //как передать эту переменную в анонимную функцию
+            $potentialCity = explode(' ', $this->location)[0];
+            $cities = Cities::find()->select('name')->all();
+            $resultCompareCities = array_filter($cities, function ($city) : bool {
+                return strpos($city, explode(' ', $this->location)[0]);
+            });
+            return in_array(true, $resultCompareCities) ?
+                $this->location :
+                \Yii::$app->user->identity->userCity->name . ' ' . $this->location;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocationExistGeocoder() : bool
+    {
+        return ServiceLocationPointReceive::receivePointFromYandexGeocoder($this->checkCityInLocation());
     }
 }
