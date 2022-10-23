@@ -2,10 +2,11 @@
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\models\user\Users;
-use yii\helpers\Url;
+use omarinina\application\services\user\show\ServiceUserShow;
+use omarinina\infrastructure\constants\UserRoleConstants;
 use Yii;
 use app\widgets\ResponseWidget;
+use yii\web\NotFoundHttpException;
 
 class RespondAction extends AbstractAction
 {
@@ -38,11 +39,12 @@ class RespondAction extends AbstractAction
     /**
      * @param int $idUser
      * @return bool
+     * @throws NotFoundHttpException
      */
     public function isAvailableForUser(int $idUser): bool
     {
         if (!$this->task->getResponds()->where(['executorId' => $idUser])->one()) {
-            return Users::findOne($idUser)->userRole->role === 'executor';
+            return ServiceUserShow::getUserExecutorById($idUser)->role === UserRoleConstants::ID_EXECUTOR_ROLE;
         }
         return false;
     }
