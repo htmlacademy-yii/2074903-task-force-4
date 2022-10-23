@@ -27,7 +27,8 @@
         "ramsey/uuid": "^4.5",
         "wapmorgan/morphos": "^3.2",
         "wapmorgan/yii2-inflection": "^1.0",
-        "yiisoft/yii2-redis": "~2.0.0"
+        "yiisoft/yii2-redis": "~2.0.0",
+        "guzzlehttp/guzzle": "^7.5"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
