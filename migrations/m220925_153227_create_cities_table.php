@@ -15,8 +15,8 @@ class m220925_153227_create_cities_table extends Migration
         $this->createTable('{{%cities}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(128)->notNull(),
-            'lat' => $this->decimal(9,7)->notNull(),
-            'lng' => $this->decimal(10,7)->notNull()
+            'lat' => $this->decimal(9, 7)->notNull(),
+            'lng' => $this->decimal(10, 7)->notNull()
         ]);
     }
 
