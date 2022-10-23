@@ -58,21 +58,25 @@ class ServiceRespondStatusAdd
      * @param Responds[] $responds
      * @param Responds|null $acceptedRespond
      * @return void
-     * @throws ServerErrorHttpException
+     * @throws ServerErrorHttpException|\Throwable
      */
     public static function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void
     {
-        foreach ($responds as $respond) {
-            if (!$respond->status && $respond->id !== $acceptedRespond->id) {
-                $respond->status = RespondStatusConstants::ID_REFUSED_STATUS;
+        if (isset($responds[0])) {
+            \Yii::$app->db->transaction(function ($responds, $acceptedRespond = null) {
+                foreach ($responds as $respond) {
+                    if (!$respond->status && $respond->id !== $acceptedRespond->id) {
+                        $respond->status = RespondStatusConstants::ID_REFUSED_STATUS;
 
-                if (!$respond->save(false)) {
-                    throw new ServerErrorHttpException(
-                        'Your data has not been recorded, please try again later',
-                        500
-                    );
+                        if (!$respond->save(false)) {
+                            throw new ServerErrorHttpException(
+                                'Your data has not been recorded, please try again later',
+                                500
+                            );
+                        }
+                    }
                 }
-            }
+            });
         }
     }
 }
