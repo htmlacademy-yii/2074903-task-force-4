@@ -99,6 +99,7 @@ class TasksController extends SecurityController
      * @return string|\yii\web\Response
      * @throws \yii\base\InvalidConfigException
      * @throws \yii\web\ServerErrorHttpException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function actionCreate() : string|Response
     {
@@ -112,7 +113,14 @@ class TasksController extends SecurityController
                 if ($createTaskForm->validate()) {
                     $fullLocation = $createTaskForm->checkCityInLocation();
                     if (!$createTaskForm->isLocationExistGeocoder()) {
-                        //показ алерта о том, что адрес заполнен не верно
+                        Yii::$app->session->setFlash(
+                            'error',
+                            'Координаты вашего адресе не были найдены. Пожалуйста, попробуйте что-нибудь изменить.'
+                        );
+                        return $this->render('create', [
+                            'model' => $createTaskForm,
+                            'categories' => $categories
+                        ]);
                     }
                     $createdTask = ServiceTaskCreate::saveNewTask(
                         Yii::$app->request->post('CreateTaskForm'),

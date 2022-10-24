@@ -3,6 +3,7 @@
 namespace omarinina\domain\actions;
 
 use omarinina\application\services\user\show\ServiceUserShow;
+use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use Yii;
 use app\widgets\ResponseWidget;
@@ -44,7 +45,7 @@ class RespondAction extends AbstractAction
     public function isAvailableForUser(int $idUser): bool
     {
         if (!$this->task->getResponds()->where(['executorId' => $idUser])->one()) {
-            return ServiceUserShow::getUserExecutorById($idUser)->role === UserRoleConstants::ID_EXECUTOR_ROLE;
+            return Users::findOne($idUser)->role === UserRoleConstants::ID_EXECUTOR_ROLE;
         }
         return false;
     }

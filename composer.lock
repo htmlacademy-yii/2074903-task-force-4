@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "486762fc08053e03c40acf94017af21c",
+    "content-hash": "3cf2a01724b9a29c27ea582e286c0432",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -2385,6 +2385,56 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "yandex/geo",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yandex-php/php-yandex-geo.git",
+                "reference": "0660fba08a8cf0380ce118d8259183be3d0b3840"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yandex-php/php-yandex-geo/zipball/0660fba08a8cf0380ce118d8259183be3d0b3840",
+                "reference": "0660fba08a8cf0380ce118d8259183be3d0b3840",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Yandex\\Geo": "source/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "The MIT License (MIT)"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kuznetsov",
+                    "email": "kuznetsov2d@gmail.com",
+                    "homepage": "http://kuznetsov.io"
+                }
+            ],
+            "description": "PHP-library for interactions with geo-coding Yandex.Maps",
+            "keywords": [
+                "api",
+                "geo",
+                "geocode",
+                "geocoder",
+                "maps",
+                "yandex"
+            ],
+            "support": {
+                "issues": "https://github.com/yandex-php/php-yandex-geo/issues",
+                "source": "https://github.com/yandex-php/php-yandex-geo",
+                "wiki": "https://github.com/yandex-php/php-yandex-geo"
+            },
+            "time": "2019-07-16T08:29:17+00:00"
         },
         {
             "name": "yiisoft/yii2",

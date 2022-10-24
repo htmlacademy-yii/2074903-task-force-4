@@ -11,6 +11,9 @@ use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use omarinina\application\services\user\show\ServiceUserShow;
+
+$locationArray = explode(',', $currentTask->location);
 
 $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
@@ -24,11 +27,11 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php endif; ?>
-        <?php if (isset($currentTask->city->name)) : ?>
+        <?php if (isset($currentTask->location)) : ?>
         <div class="task-map">
             <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
-            <p class="map-address town"><?= $currentTask->city->name; ?></p>
-            <p class="map-address">Новый арбат, 23, к. 1</p>
+            <p class="map-address town"><?= $locationArray[0]; ?></p>
+            <p class="map-address"><?= implode(',', array_slice($locationArray, 1)) ?></p>
         </div>
         <?php endif; ?>
         <?php if (isset($responds[0])) : ?>

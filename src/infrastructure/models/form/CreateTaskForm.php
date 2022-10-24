@@ -2,6 +2,7 @@
 
 namespace omarinina\infrastructure\models\form;
 
+use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\location\point_receive\ServiceLocationPointReceive;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Cities;
@@ -66,18 +67,19 @@ class CreateTaskForm extends Model
         if (!$this->hasErrors() && $this->location) {
             //как передать эту переменную в анонимную функцию
             $potentialCity = explode(' ', $this->location)[0];
-            $cities = Cities::find()->select('name')->all();
+            $cities = Cities::find()->select('name')->asArray()->all();
             $resultCompareCities = array_filter($cities, function ($city) : bool {
-                return strpos($city, explode(' ', $this->location)[0]);
+                return strpos($city['name'], explode(' ', $this->location)[0]);
             });
             return in_array(true, $resultCompareCities) ?
                 $this->location :
-                \Yii::$app->user->identity->userCity->name . ' ' . $this->location;
+                \Yii::$app->user->identity->userCity->name . ', ' . $this->location;
         }
     }
 
     /**
      * @return bool
+     * @throws GuzzleException
      */
     public function isLocationExistGeocoder() : bool
     {

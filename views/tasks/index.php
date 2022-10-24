@@ -26,8 +26,8 @@ use yii\helpers\Url;
                 </span> назад</p>
             <p class="task-text"><?= $newTask->description; ?></p>
             <div class="footer-task">
-                <?php if (isset($newTask->city->name)) : ?>
-                <p class="info-text town-text"><?= $newTask->city->name; ?></p>
+                <?php if (isset($newTask->location)) : ?>
+                <p class="info-text town-text"><?= $newTask->location; ?></p>
                 <?php endif; ?>
                 <p class="info-text category-text"><?= $newTask->category->name ?></p>
                 <a href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="button button--black">
