@@ -11,7 +11,6 @@ use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use omarinina\application\services\user\show\ServiceUserShow;
 
 $locationArray = explode(',', $currentTask->location);
 
