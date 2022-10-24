@@ -11,6 +11,8 @@ use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use omarinina\infrastructure\constants\KeysConstants;
+use phpnt\yandexMap\YandexMaps;
 
 $locationArray = explode(',', $currentTask->location);
 
@@ -28,7 +30,53 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
         <?php endif; ?>
         <?php if (isset($currentTask->location)) : ?>
         <div class="task-map">
-            <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
+            <div class="map">
+                <?php
+                $items = [
+                    [
+                        'latitude' => $currentTask->lat,
+                        'longitude' => $currentTask->lng,
+                        'options' => [
+                            'preset' => 'islands#icon',
+                            'iconColor' => '#19a111'
+                        ]
+                    ],
+                ]; ?>
+
+                <?= YandexMaps::widget(
+                    [
+                        'myPlacemarks' => [
+                            [
+                                'latitude' => $currentTask->lat,
+                                'longitude' => $currentTask->lng,
+                                'options' => []
+                            ],
+                        ],
+                        'mapOptions' => [
+                            // центр карты
+                            'center' => [$currentTask->lat, $currentTask->lng],
+                            // показывать в масштабе
+                            'zoom' => 13,
+                            // использовать эл. управления
+                            'controls' => ['zoomControl', 'fullscreenControl', 'searchControl'],
+                            'control' => [
+                                'zoomControl' => [
+                                    // расположение кнопок управлением масштабом
+                                    'top' => 75,
+                                    'left' => 5
+                                ],
+                            ],
+                        ],
+                        // отключить скролл колесиком мыши (по умолчанию true)
+                        'disableScroll' => true,
+                        // длинна карты (по умолчанию 100%)
+                        'windowWidth' => '725px',
+                        // высота карты (по умолчанию 400px)
+                        'windowHeight' => '346px',
+                    ]
+                ); ?>
+
+            </div>
             <p class="map-address town"><?= $locationArray[0]; ?></p>
             <p class="map-address"><?= implode(',', array_slice($locationArray, 1)) ?></p>
         </div>
@@ -246,4 +294,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 <div class="overlay"></div>
 
 <?php $this->endBlock(); ?>
+
+
+
 
