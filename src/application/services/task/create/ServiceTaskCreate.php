@@ -25,12 +25,14 @@ class ServiceTaskCreate
         string $coordinates
     ) : ?Tasks {
         $createdTask = new Tasks();
-        $createdTask->attributes = Yii::$app->request->post('CreateTaskForm');
-        $createdTask->clientId = Yii::$app->user->identity->id;
+        $createdTask->attributes = $attributes;
+        $createdTask->clientId = $userId;
         $createdTask->status = TaskStatusConstants::ID_NEW_STATUS;
-        $coordinates = explode(' ', $coordinates);
-        $createdTask->lat = $coordinates[1];
-        $createdTask->lng = $coordinates[0];
+        if ($coordinates) {
+            $coordinates = explode(' ', $coordinates);
+            $createdTask->lat = $coordinates[1];
+            $createdTask->lng = $coordinates[0];
+        }
         if ($formExpiryDate !== null) {
             $createdTask->expiryDate = Yii::$app->formatter->asDate(
                 $formExpiryDate,

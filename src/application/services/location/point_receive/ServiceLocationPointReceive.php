@@ -9,13 +9,13 @@ use GuzzleHttp\Client;
 class ServiceLocationPointReceive
 {
     /**
-     * @param string|null $fullLocation
+     * @param string|null $location
      * @return void|null|string
      * @throws GuzzleException
      */
-    public static function receivePointFromYandexGeocoder(?string $fullLocation)
+    public static function receivePointFromYandexGeocoder(?string $location)
     {
-        if ($fullLocation) {
+        if ($location) {
             $client = new Client();
             $responseGeocoder = $client->request(
                 'GET',
@@ -25,7 +25,7 @@ class ServiceLocationPointReceive
                     [
                         'apikey' => (new KeysConstants())->getApiGeocoderKey(),
                         'format' => 'json',
-                        'geocode' => $fullLocation,
+                        'geocode' => $location,
                         'results' => 1,
                     ]
                 ]
@@ -49,5 +49,6 @@ class ServiceLocationPointReceive
             }
             return null;
         }
+        return null;
     }
 }

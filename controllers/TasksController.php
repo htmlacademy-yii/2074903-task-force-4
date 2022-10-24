@@ -111,7 +111,6 @@ class TasksController extends SecurityController
                 $createTaskForm->load(Yii::$app->request->post());
 
                 if ($createTaskForm->validate()) {
-                    $fullLocation = $createTaskForm->checkCityInLocation();
                     if (!$createTaskForm->isLocationExistGeocoder()) {
                         Yii::$app->session->setFlash(
                             'error',
@@ -126,7 +125,7 @@ class TasksController extends SecurityController
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
                         $createTaskForm->expiryDate,
-                        ServiceLocationPointReceive::receivePointFromYandexGeocoder($fullLocation)
+                        ServiceLocationPointReceive::receivePointFromYandexGeocoder($createTaskForm->location)
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = ServiceFileSave::saveNewFile($file);

@@ -59,30 +59,11 @@ class CreateTaskForm extends Model
     }
 
     /**
-     * @return string|void|null
-     */
-    //как назвать функцию, подумать generateFullAddressLocation, тогда должно находиться не здесь
-    public function checkCityInLocation()
-    {
-        if (!$this->hasErrors() && $this->location) {
-            //как передать эту переменную в анонимную функцию
-            $potentialCity = explode(' ', $this->location)[0];
-            $cities = Cities::find()->select('name')->asArray()->all();
-            $resultCompareCities = array_filter($cities, function ($city) : bool {
-                return strpos($city['name'], explode(' ', $this->location)[0]);
-            });
-            return in_array(true, $resultCompareCities) ?
-                $this->location :
-                \Yii::$app->user->identity->userCity->name . ', ' . $this->location;
-        }
-    }
-
-    /**
      * @return bool
      * @throws GuzzleException
      */
     public function isLocationExistGeocoder() : bool
     {
-        return ServiceLocationPointReceive::receivePointFromYandexGeocoder($this->checkCityInLocation());
+        return ServiceLocationPointReceive::receivePointFromYandexGeocoder($this->location);
     }
 }
