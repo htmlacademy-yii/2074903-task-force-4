@@ -23,7 +23,6 @@ class TaskActionsController extends SecurityController
     /**
      * @param int $respondId
      * @return Response|string
-     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionAcceptRespond(int $respondId) : Response|string
     {
@@ -46,13 +45,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Respond is not found', 404);
         } catch (ServerErrorHttpException|NotFoundHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $respondId
      * @return Response|string
-     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionRefuseRespond(int $respondId) : Response|string
     {
@@ -69,17 +69,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Respond is not found', 404);
         } catch (ServerErrorHttpException|NotFoundHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws AvailableActionsException
-     * @throws CurrentActionException
-     * @throws IdUserException
-     * @throws ServerErrorHttpException
      */
     public function actionCancelTask(int $taskId) : Response|string
     {
@@ -101,14 +98,14 @@ class TaskActionsController extends SecurityController
             IdUserException|
             ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionRespondTask(int $taskId) : Response|string
     {
@@ -133,6 +130,8 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Task is not found', 404);
         } catch (NotFoundHttpException|ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
