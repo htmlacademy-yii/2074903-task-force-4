@@ -40,7 +40,6 @@ class TasksController extends SecurityController
 
     /**
      * @return string
-     * @throws BadRequestHttpException
      */
     public function actionIndex(): string
     {
@@ -64,13 +63,14 @@ class TasksController extends SecurityController
             ]);
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException
      */
     public function actionView(int $id): string
     {
@@ -93,14 +93,13 @@ class TasksController extends SecurityController
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\ServerErrorHttpException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return string|Response
      */
     public function actionCreate() : string|Response
     {
@@ -143,6 +142,8 @@ class TasksController extends SecurityController
             return $e->getMessage();
         } catch (GuzzleException $e) {
             return 'Your data has not been recorded with location, please try again later';
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }

@@ -139,8 +139,6 @@ class TaskActionsController extends SecurityController
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionDenyTask(int $taskId) : Response|string
     {
@@ -156,17 +154,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Task is not found', 404);
         } catch (NotFoundHttpException|ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws AvailableActionsException
-     * @throws CurrentActionException
-     * @throws IdUserException
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionAcceptTask(int $taskId) : Response|string
     {
@@ -197,6 +192,8 @@ class TaskActionsController extends SecurityController
             IdUserException|
             ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }

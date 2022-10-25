@@ -77,7 +77,6 @@ class SiteController extends Controller
 
     /**
      * @return array|string|Response
-     * @throws NotFoundHttpException
      */
     public function actionAjaxLogin() : array|string|Response
     {
@@ -100,6 +99,8 @@ class SiteController extends Controller
             }
         } catch (NotFoundHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 

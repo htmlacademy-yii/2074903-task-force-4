@@ -9,7 +9,6 @@ class ProfileController extends SecurityController
     /**
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException|\yii\base\InvalidConfigException
      */
     public function actionView(int $id): string
     {
@@ -27,6 +26,8 @@ class ProfileController extends SecurityController
             \Exception|
             \yii\base\InvalidConfigException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }
