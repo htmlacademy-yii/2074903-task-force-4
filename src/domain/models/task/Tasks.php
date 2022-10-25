@@ -28,7 +28,8 @@ use omarinina\domain\exception\task\AvailableActionsException;
  * @property string|null $expiryDate
  * @property int $budget
  * @property int $categoryId
- * @property string|null $location
+ * @property string|null $city
+ * @property string|null $address
  * @property float|null $lat
  * @property float|null $lng
  * @property int $status
@@ -43,7 +44,6 @@ use omarinina\domain\exception\task\AvailableActionsException;
  * @property TaskStatuses $taskStatus
  * @property TaskFiles[] $taskFiles
  * @property Files[] $files
- * @property Cities $city
  *
  */
 class Tasks extends \yii\db\ActiveRecord
@@ -69,7 +69,7 @@ class Tasks extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['categoryId', 'status', 'executorId', 'clientId'], 'integer'],
             [['lat', 'lng'], 'number'],
-            [['name', 'location'], 'string', 'max' => 255],
+            [['name', 'city', 'address'], 'string', 'max' => 255],
             [['budget'], 'integer', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
@@ -180,16 +180,6 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Files::class, ['id' => 'fileId'])
             ->viaTable('taskFiles', ['taskId' => 'id']);
-    }
-
-    /**
-     * Gets query for [[City]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCity()
-    {
-        return $this->hasOne(Cities::class, ['id' => 'cityId']);
     }
 
     /**
