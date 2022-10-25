@@ -120,7 +120,7 @@ class TaskActionsController extends SecurityController
 
                 if (Yii::$app->request->getIsPost()) {
                     $taskResponseForm->load(Yii::$app->request->post());
-                    if ($taskResponseForm->validate()) {
+                    if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
                         ServiceRespondCreate::saveNewRespond($user, $task, $attributes);
