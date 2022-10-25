@@ -1,9 +1,10 @@
 <?php
 namespace app\controllers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\save\ServiceFileSave;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
-use omarinina\application\services\location\point_receive\ServiceLocationPointReceive;
+use omarinina\application\services\location\point_receive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
@@ -125,7 +126,7 @@ class TasksController extends SecurityController
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
                         $createTaskForm->expiryDate,
-                        ServiceLocationPointReceive::receivePointFromYandexGeocoder($createTaskForm->location)
+                        ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = ServiceFileSave::saveNewFile($file);
@@ -140,6 +141,8 @@ class TasksController extends SecurityController
             ]);
         } catch (ServerErrorHttpException|InvalidConfigException $e) {
             return $e->getMessage();
+        } catch (GuzzleException $e) {
+            return 'Your data has not been recorded with location, please try again later';
         }
     }
 }

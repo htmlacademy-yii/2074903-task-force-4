@@ -6,14 +6,14 @@ use GuzzleHttp\Exception\GuzzleException;
 use omarinina\infrastructure\constants\KeysConstants;
 use GuzzleHttp\Client;
 
-class ServiceLocationPointReceive
+class ServiceGeoObjectReceive
 {
     /**
      * @param string|null $location
-     * @return void|null|string
+     * @return object|null
      * @throws GuzzleException
      */
-    public static function receivePointFromYandexGeocoder(?string $location)
+    public static function receiveGeoObjectFromYandexGeocoder(?string $location) : ?object
     {
         if ($location) {
             $client = new Client();
@@ -43,9 +43,7 @@ class ServiceLocationPointReceive
                     ->response
                     ->GeoObjectCollection
                     ->featureMember[0]
-                    ->GeoObject
-                    ->Point
-                    ->pos;
+                    ->GeoObject;
             }
             return null;
         }

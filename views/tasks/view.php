@@ -11,10 +11,7 @@ use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use omarinina\infrastructure\constants\KeysConstants;
 use phpnt\yandexMap\YandexMaps;
-
-$locationArray = explode(',', $currentTask->location);
 
 $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
@@ -22,13 +19,13 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
     <div class="left-column">
         <div class="head-wrapper">
             <h3 class="head-main"><?= $currentTask->name; ?></h3>
-            <p class="price price--big"><?= $currentTask->budget; ?> ₽</p>
+            <p class="price price--big"><?= $currentTask->budget . ' ₽'; ?></p>
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php endif; ?>
-        <?php if (isset($currentTask->location)) : ?>
+        <?php if (isset($currentTask->address)) : ?>
         <div class="task-map">
             <div class="map">
                 <?php
@@ -53,32 +50,25 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                             ],
                         ],
                         'mapOptions' => [
-                            // центр карты
                             'center' => [$currentTask->lat, $currentTask->lng],
-                            // показывать в масштабе
                             'zoom' => 13,
-                            // использовать эл. управления
                             'controls' => ['zoomControl', 'fullscreenControl', 'searchControl'],
                             'control' => [
                                 'zoomControl' => [
-                                    // расположение кнопок управлением масштабом
                                     'top' => 75,
                                     'left' => 5
                                 ],
                             ],
                         ],
-                        // отключить скролл колесиком мыши (по умолчанию true)
                         'disableScroll' => true,
-                        // длинна карты (по умолчанию 100%)
                         'windowWidth' => '725px',
-                        // высота карты (по умолчанию 400px)
                         'windowHeight' => '346px',
                     ]
                 ); ?>
 
             </div>
-            <p class="map-address town"><?= $locationArray[0]; ?></p>
-            <p class="map-address"><?= implode(',', array_slice($locationArray, 1)) ?></p>
+            <p class="map-address town"><?= $currentTask->city ?></p>
+            <p class="map-address"><?= $currentTask->address ?></p>
         </div>
         <?php endif; ?>
         <?php if (isset($responds[0])) : ?>
@@ -294,6 +284,8 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 <div class="overlay"></div>
 
 <?php $this->endBlock(); ?>
+
+
 
 
 

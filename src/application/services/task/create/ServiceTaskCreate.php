@@ -22,14 +22,17 @@ class ServiceTaskCreate
         array $attributes,
         int $userId,
         ?string $formExpiryDate,
-        string $coordinates
+        ?object $GeoObject
     ) : ?Tasks {
         $createdTask = new Tasks();
         $createdTask->attributes = $attributes;
         $createdTask->clientId = $userId;
         $createdTask->status = TaskStatusConstants::ID_NEW_STATUS;
-        if ($coordinates) {
-            $coordinates = explode(' ', $coordinates);
+        if ($GeoObject) {
+            $city = $GeoObject->description;
+            $createdTask->city = explode(',', $city)[0];
+            $createdTask->address = $GeoObject->name;
+            $coordinates = explode(' ', $GeoObject->Point->pos);
             $createdTask->lat = $coordinates[1];
             $createdTask->lng = $coordinates[0];
         }
