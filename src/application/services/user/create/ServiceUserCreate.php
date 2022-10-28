@@ -37,4 +37,9 @@ class ServiceUserCreate
 
         return $createdUser;
     }
+
+    public static function createNewUserByVk()
+    {
+
+    }
 }
