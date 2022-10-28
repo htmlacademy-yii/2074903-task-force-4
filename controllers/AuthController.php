@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use omarinina\application\services\user\add_data\ServiceUserDataAdd;
 use omarinina\application\services\user\auth\ServiceUserAuthVk;
 use omarinina\domain\models\user\Users;
 use yii\base\InvalidConfigException;
@@ -28,7 +29,10 @@ class AuthController extends Controller
         if ($userData) {
             $currentUser = Users::findOne(['vkId' => $userData['id']]);
             if (!$currentUser) {
-                $currentUser = ;
+                $currentUser = Users::findOne(['email' => $userData['email']]);
+                if ($currentUser) {
+                    $currentUser = ServiceUserDataAdd::addUserVkId($currentUser, $userData);
+                }
                 //create new user
             }
             Yii::$app->user->login($currentUser);
