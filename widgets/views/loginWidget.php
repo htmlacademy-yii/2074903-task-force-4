@@ -1,21 +1,14 @@
 <?php
 
-use yii\authclient\clients\VKontakte;
-use yii\authclient\Collection;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap5\Modal;
-use Yii;
 use yii\helpers\Url;
+use omarinina\application\services\user\auth\ServiceUserAuthVk;
 
 /** @var omarinina\infrastructure\models\form\LoginForm $model */
 
-/** @var Collection $collectionClientsOAuth */
-$collectionClientsOAuth = Yii::$app->get('authClientCollection');
-
-/** @var VKontakte $vkClientOAuth */
-$vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
-$urlVkAuth = $vkClientOAuth->buildAuthUrl([
+$urlVkAuth = ServiceUserAuthVk::getVkClientOAuth()->buildAuthUrl([
     'redirect_uri' => Url::to(['auth/authorize-user-via-vk'], 'http'),
     'response_type' => 'code',
     'scope' => 'email, offline'
