@@ -1,10 +1,25 @@
 <?php
 
+use yii\authclient\clients\VKontakte;
+use yii\authclient\Collection;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap5\Modal;
+use Yii;
 
 /** @var omarinina\infrastructure\models\form\LoginForm $model */
+
+/** @var Collection $collectionClientsOAuth */
+$collectionClientsOAuth = Yii::$app->get('authClientCollection');
+
+/** @var VKontakte $vkClientOAuth */
+$vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
+$urlVkAuth = $vkClientOAuth->buildAuthUrl([
+    'redirect_uri' => 'http://127.0.0.1:8000/auth/authorize-user-via-vk',
+    'response_type' => 'code',
+    'scope' => 'email, offline'
+]);
+
 
 Modal::begin([
     'id' => 'enter-form',
@@ -40,12 +55,18 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'password', ['options' => ['class'=> 'enter-form-email input input-middle']])
     ->passwordInput(['placeholder' => 'введите ваш пароль']); ?>
 </p>
+<div class="right-column">
+    <?php
+    echo Html::submitButton('Войти', ['class' => 'button']); ?>
+</div>
+<br>
+<div class="left-column">
+    <?php
+    echo Html::a('Вход через вконтакте', $urlVkAuth, ['class'=>'button', 'target' => '_blank']);?>
+</div>
 
-<?php
-echo Html::submitButton('Войти', ['class' => 'button']);
-
-ActiveForm::end();
+<?php ActiveForm::end();
 
 echo Html::button('Закрыть', ['class' => 'form-modal-close', 'data-bs-dismiss' => 'modal']);
-?>
-<?php Modal::end(); ?>
+
+Modal::end(); ?>
