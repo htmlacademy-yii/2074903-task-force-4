@@ -6,6 +6,7 @@ use yii\authclient\clients\VKontakte;
 use yii\authclient\Collection;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\web\HttpException;
 
 class ServiceUserAuthVk
 {
@@ -22,5 +23,22 @@ class ServiceUserAuthVk
         $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
 
         return $vkClientOAuth;
+    }
+
+    /**
+     * @param string $code
+     * @return VKontakte
+     * @throws InvalidConfigException
+     * @throws HttpException
+     */
+    public static function applyAccessTokenForVk(string $code) : VKontakte
+    {
+        $vkClient = static::getVkClientOAuth();
+        $token = $vkClient->fetchAccessToken($code);
+        $requestOAuth = $vkClient->createRequest();
+
+        $vkClient->applyAccessTokenToRequest($requestOAuth, $token);
+
+        return $vkClient;
     }
 }
