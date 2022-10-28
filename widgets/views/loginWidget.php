@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap5\Modal;
 use Yii;
+use yii\helpers\Url;
 
 /** @var omarinina\infrastructure\models\form\LoginForm $model */
 
@@ -15,7 +16,7 @@ $collectionClientsOAuth = Yii::$app->get('authClientCollection');
 /** @var VKontakte $vkClientOAuth */
 $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
 $urlVkAuth = $vkClientOAuth->buildAuthUrl([
-    'redirect_uri' => 'http://127.0.0.1:8000/auth/authorize-user-via-vk',
+    'redirect_uri' => Url::to(['auth/authorize-user-via-vk'], 'http'),
     'response_type' => 'code',
     'scope' => 'email, offline'
 ]);
