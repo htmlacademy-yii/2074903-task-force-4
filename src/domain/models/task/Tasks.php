@@ -339,4 +339,17 @@ class Tasks extends \yii\db\ActiveRecord
         }
         return true;
     }
+
+    /**
+     * @param Responds $respond
+     * @return bool
+     */
+    public function addExecutorId(Responds $respond) : bool
+    {
+        $this->executorId = $respond->executorId;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 }
