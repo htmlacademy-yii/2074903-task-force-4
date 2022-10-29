@@ -36,6 +36,7 @@ class RegistrationController extends Controller
     }
 
     /**
+     * @param array|null $userData
      * @return string|Response
      */
     public function actionIndex(?array $userData = null): string|Response
