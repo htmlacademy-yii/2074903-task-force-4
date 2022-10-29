@@ -23,7 +23,7 @@ class ServiceGeoObjectReceive
                 [
                     'query' =>
                     [
-                        'apikey' => (new KeysConstants())->getApiGeocoderKey(),
+                        'apikey' => KeysConstants::API_GEOCODER_KEY,
                         'format' => 'json',
                         'geocode' => $location,
                         'results' => 1,

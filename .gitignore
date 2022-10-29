@@ -40,4 +40,3 @@ config/db.php
 
 docker/data
 
-src/infrastructure/constants/KeysConstants.php
