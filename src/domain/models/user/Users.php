@@ -86,6 +86,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
+            'vkId' => 'VKontakte ID',
             'createAt' => 'Create At',
             'email' => 'Email',
             'name' => 'Name',

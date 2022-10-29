@@ -2,10 +2,20 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
+use omarinina\domain\models\Cities;
 
 /** @var yii\web\View $this */
 /** @var omarinina\infrastructure\models\form\RegistrationForm $model */
 /** @var omarinina\domain\models\Cities $cities */
+/** @var array $userData */
+
+if (array_key_exists('city', $userData)) {
+    $idCity = Cities::findOne(['name' => $userData['city']['title']])->id;
+    if ($idCity) {
+        $selectedCity = ($idCity => ['selected' => true]);
+    }
+}
+$selectedCity = ('prompt' => '-выбрать-');
 
 ?>
 <div class="container container--registration">
@@ -21,16 +31,27 @@ use yii\helpers\ArrayHelper;
             ])
 ?>
                 <h3 class="head-main head-task">Регистрация нового пользователя</h3>
-                <?= $form->field($model, 'name', ['options' => ['class' => 'form-group']])
+                <?= $form->field($model, 'name', ['options' => [
+                    'class' => 'form-group',
+                    'value' => array_key_exists('first_name', $userData) && array_key_exists('last_name', $userData) ?
+                        $userData['first_name'] . $userData['last_name'] :
+                        null
+                    ]])
                     ->textInput(['placeholder' => 'Иван Иванов']); ?>
 
                 <div class="half-wrapper">
-                    <?= $form->field($model, 'email', ['options' => ['class' => ' form-group']])
+                    <?= $form->field($model, 'email', ['options' => [
+                        'class' => ' form-group',
+                        'value' => array_key_exists('email', $userData) ? $userData['email'] : null
+                        ]])
                         ->textInput(['placeholder' => 'something@google.com']); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
                         ->dropDownList(
                             ArrayHelper::map($cities, 'id', 'name'),
-                            ['class' => 'form-group', 'prompt' => '-выбрать-']
+                            [
+                                'class' => 'form-group',
+                                $selectedCity
+                            ]
                         ); ?>
                 </div>
                 <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group']])

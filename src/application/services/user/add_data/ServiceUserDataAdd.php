@@ -10,10 +10,10 @@ class ServiceUserDataAdd
     /**
      * @param Users $user
      * @param array $attributes
-     * @return Users
+     * @return void
      * @throws ServerErrorHttpException
      */
-    public static function addUserVkId(Users $user, array $attributes) : Users
+    public static function addUserVkId(Users $user, array $attributes) : void
     {
         $user->vkId = $attributes['id'];
 
@@ -23,7 +23,5 @@ class ServiceUserDataAdd
                 500
             );
         }
-
-        return $user;
     }
 }
