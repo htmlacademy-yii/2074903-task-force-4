@@ -12,10 +12,12 @@ use omarinina\domain\models\Cities;
 if (array_key_exists('city', $userData)) {
     $idCity = Cities::findOne(['name' => $userData['city']['title']])->id;
     if ($idCity) {
-        $selectedCity = ($idCity => ['selected' => true]);
+        $selectedCity = $idCity;
+        $value = "['selected' => true]";
     }
 }
-$selectedCity = ('prompt' => '-выбрать-');
+$selectedCity = 'prompt';
+$value = '-выбрать-';
 
 ?>
 <div class="container container--registration">
@@ -50,7 +52,7 @@ $selectedCity = ('prompt' => '-выбрать-');
                             ArrayHelper::map($cities, 'id', 'name'),
                             [
                                 'class' => 'form-group',
-                                $selectedCity
+                                $selectedCity => $value
                             ]
                         ); ?>
                 </div>
