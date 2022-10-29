@@ -3,6 +3,7 @@
 namespace omarinina\domain\models\task;
 
 use omarinina\domain\models\user\Users;
+use omarinina\infrastructure\constants\RespondStatusConstants;
 use Yii;
 use omarinina\domain\traits\TimeCounter;
 
@@ -94,4 +95,28 @@ class Responds extends \yii\db\ActiveRecord
     }
 
     use TimeCounter;
+
+    /**
+     * @return bool
+     */
+    public function addAcceptedStatus() : bool
+    {
+        $this->status = RespondStatusConstants::ID_ACCEPTED_STATUS;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function addRefusedStatus() : bool
+    {
+        $this->status = RespondStatusConstants::ID_REFUSED_STATUS;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 }

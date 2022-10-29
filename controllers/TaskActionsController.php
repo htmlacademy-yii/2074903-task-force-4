@@ -34,6 +34,7 @@ class TaskActionsController extends SecurityController
                 $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
 
                 if (ServiceRespondStatusAdd::addAcceptStatus($respond, $userId)->status) {
+                    ServiceTaskStatusChange::changeStatusToInWork($task);
                     ServiceRespondStatusAdd::addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond

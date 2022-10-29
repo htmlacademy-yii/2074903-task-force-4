@@ -26,19 +26,4 @@ class m221025_132742_divide_task_location_to_city_and_address extends Migration
         $this->dropColumn('tasks', 'city');
         $this->addColumn('tasks', 'location', $this->string(255));
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m221025_132742_divide_task_location_to_city_and_address cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

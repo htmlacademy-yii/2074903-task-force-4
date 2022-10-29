@@ -47,6 +47,9 @@ DIRECTORY STRUCTURE
       migrations/         contains migrations to create current tables for DB
       runtime/            contains files generated during runtime
       src/                contains classes (domain, infrustacture, application)
+        application/      contains classes for services
+        domain/           contains models of main entities and helpers (traits, task actions)
+        infrastructure/   contains helped models (forms) and constants
       tests/              contains various tests for the basic application (just unit)
       vendor/             contains dependent 3rd-party packages
       views/              contains view files for the Web application

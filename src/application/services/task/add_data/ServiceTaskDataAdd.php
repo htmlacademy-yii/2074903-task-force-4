@@ -19,16 +19,14 @@ class ServiceTaskDataAdd
     {
         $task = $respond->task;
         if ($userId === $task->clientId && $task->status === TaskStatusConstants::ID_NEW_STATUS) {
-            $task->executorId = $respond->executorId;
+            if (!$task->addExecutorId($respond)) {
+                throw new ServerErrorHttpException(
+                    'Your data has not been recorded, please try again later',
+                    500
+                );
+            }
+            return $task;
         }
-
-        if (!$task->save(false)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
-        }
-
-        return $task;
+        return null;
     }
 }

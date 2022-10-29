@@ -192,7 +192,7 @@ class Tasks extends \yii\db\ActiveRecord
      * which is unavailable for this task status
      * @throws IdUserException Exception when user doesn't have rights to add
      */
-    public function changeStatusByAction(string $currentAction, int $idUser): ?int
+    private function changeStatusByAction(string $currentAction, int $idUser): ?int
     {
         if ($this->isValidAction($currentAction, $idUser)) {
             return $this->getLinkActionToStatus()[$currentAction];
@@ -239,9 +239,6 @@ class Tasks extends \yii\db\ActiveRecord
         ];
     }
 
-    //Also the client has two additional buttons when he receives responds by executors.
-    //Potential this logic can be realised with this class, isn't it?
-
     /**
      * @return array
      */
@@ -274,5 +271,85 @@ class Tasks extends \yii\db\ActiveRecord
         return false;
     }
 
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addCancelledStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            CancelAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addFailedStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            DenyAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addDoneStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            AcceptAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function addInWorkStatus() : bool
+    {
+        $this->status = TaskStatusConstants::ID_IN_WORK_STATUS;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param Responds $respond
+     * @return bool
+     */
+    public function addExecutorId(Responds $respond) : bool
+    {
+        $this->executorId = $respond->executorId;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 }
