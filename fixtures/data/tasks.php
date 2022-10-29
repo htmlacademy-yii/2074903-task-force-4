@@ -62,7 +62,7 @@ return [
         'expiryDate' => '2022-11-26 08:09:36',
         'budget' => 8320,
         'categoryId' => 3,
-        'city' => null,,
+        'city' => null,
         'status' => 3,
         'executorId' => 3,
         'clientId' => 10,
