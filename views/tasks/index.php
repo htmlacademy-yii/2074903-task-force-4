@@ -2,43 +2,44 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 use app\widgets\TaskWidget;
+use yii\widgets\LinkPager;
 
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\task\Tasks[] $newTasks */
 /** @var omarinina\domain\models\Categories[] $categories */
 /** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
+/** @var \yii\data\Pagination $pagination */
 
 ?>
 
 <div class="main-content container">
     <div class="left-column">
         <h3 class="head-main head-task">Новые задания</h3>
+        <?php if (!$newTasks) : ?>
+        <p>Свободных заданий пока нет.</p>
+        <?php endif; ?>
         <?php foreach ($newTasks as $newTask) : ?>
             <?= TaskWidget::widget(['task' => $newTask]) ?>
         <?php endforeach; ?>
 
         <div class="pagination-wrapper">
-            <ul class="pagination-list">
-                <li class="pagination-item mark">
-                    <a href="#" class="link link--page"></a>
-                </li>
-                <li class="pagination-item">
-                    <a href="#" class="link link--page">1</a>
-                </li>
-                <li class="pagination-item pagination-item--active">
-                    <a href="#" class="link link--page">2</a>
-                </li>
-                <li class="pagination-item">
-                    <a href="#" class="link link--page">3</a>
-                </li>
-                <li class="pagination-item mark">
-                    <a href="#" class="link link--page"></a>
-                </li>
-            </ul>
+                <?= LinkPager::widget([
+                    'pagination' => $pagination,
+                    'options' => ['class' => 'pagination-list'],
+                    'activePageCssClass' => 'pagination-item pagination-item--active',
+                    'linkContainerOptions' => ['class' => 'pagination-item'],
+                    'maxButtonCount' => 3,
+                    'linkOptions' => ['class' => 'link link--page'],
+                    'prevPageCssClass' => 'mark',
+                    'nextPageCssClass' => 'mark',
+                    'prevPageLabel' => '',
+                    'nextPageLabel' => '',
+                    'hideOnSinglePage' => true,
+                ]) ?>
         </div>
     </div>
+
     <div class="right-column">
         <div class="right-card black">
             <div class="search-form">

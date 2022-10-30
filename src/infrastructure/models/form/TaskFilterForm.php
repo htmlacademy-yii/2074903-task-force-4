@@ -9,15 +9,15 @@ use yii\db\ActiveQuery;
 
 class TaskFilterForm extends Model
 {
-    const PERIOD_1_HOUR = '1';
-    const PERIOD_12_HOURS = '12';
-    const PERIOD_24_HOURS = '24';
-    const PERIOD_ALL = 'all';
+    public const PERIOD_1_HOUR = '1';
+    public const PERIOD_12_HOURS = '12';
+    public const PERIOD_24_HOURS = '24';
+    public const PERIOD_ALL = 'all';
 
-    const NAME_PERIOD_1 = '1 час';
-    const NAME_PERIOD_12 = '12 часов';
-    const NAME_PERIOD_24 = '24 часа';
-    const NAME_PERIOD_ALL = 'За всё время';
+    public const NAME_PERIOD_1 = '1 час';
+    public const NAME_PERIOD_12 = '12 часов';
+    public const NAME_PERIOD_24 = '24 часа';
+    public const NAME_PERIOD_ALL = 'За всё время';
 
     /** @var array */
     public array $categories = [];
@@ -76,7 +76,7 @@ class TaskFilterForm extends Model
             $tasks->andWhere(['in', 'categoryId', $this->categories]);
         }
         if ($this->remote) {
-            $tasks->andWhere(['cityId' => null]);
+            $tasks->andWhere(['city' => null]);
         }
         if (in_array($this->period, array_keys($this->getPeriods()))) {
             switch ($this->period) {

@@ -20,6 +20,8 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
+use yii\data\Pagination;
+use omarinina\infrastructure\constants\ViewConstants;
 
 class TasksController extends SecurityController
 {
@@ -51,15 +53,25 @@ class TasksController extends SecurityController
             if ($taskFilterForm->validate()) {
                 $newTasks = $taskFilterForm
                     ->filter(TaskStatuses::findOne(['taskStatus' => TaskStatusConstants::NEW_STATUS])
-                    ->getNewTasks())->all();
+                    ->getNewTasks());
+                $pagination = new Pagination([
+                    'totalCount' => $newTasks->count(),
+                    'pageSize' => ViewConstants::PAGE_COUNTER,
+                    'forcePageParam' => false,
+                    'pageSizeParam' => false
+                ]);
+                $newTasksWithPagination = $newTasks->offset($pagination->offset)
+                        ->limit($pagination->limit)
+                        ->all();
             } else {
                 throw new BadRequestHttpException('Bad request', 400);
             }
 
             return $this->render('index', [
-                'newTasks' => $newTasks,
+                'newTasks' => $newTasksWithPagination,
                 'categories' => $categories,
                 'model' => $taskFilterForm,
+                'pagination' => $pagination
             ]);
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
