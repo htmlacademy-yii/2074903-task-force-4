@@ -37,7 +37,7 @@ use app\widgets\Alert;
             <?php echo Menu::widget([
                 'items' => [
                     ['label' => 'Новое', 'url' => ['tasks/index']],
-                    ['label' => 'Мои задания', 'url' => ['']],
+                    ['label' => 'Мои задания', 'url' => ['tasks/mine']],
                     ['label' => 'Создать задание', 'url' => ['tasks/create']],
                     ['label' => 'Настройки', 'url' => ['']]
                 ],

@@ -161,6 +161,13 @@ class TasksController extends SecurityController
 
     public function actionMine()
     {
-        return $this->render('mine');
+        $currentUser = Yii::$app->user->identity;
+        $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
+            $currentUser->clientTasks :
+            $currentUser->executorTasks;
+
+        return $this->render('mine', [
+            'tasks' => $allTasks
+            ]);
     }
 }
