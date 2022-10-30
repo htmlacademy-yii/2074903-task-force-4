@@ -15,9 +15,8 @@ class ServiceUserDataAdd
      */
     public static function addUserVkId(Users $user, array $attributes) : void
     {
-        $user->vkId = $attributes['id'];
-
-        if (!$user->save(false)) {
+        $vkId = $attributes['id'];
+        if (!$user->addVkId($vkId)) {
             throw new ServerErrorHttpException(
                 'Your data has not been recorded, please try again later',
                 500

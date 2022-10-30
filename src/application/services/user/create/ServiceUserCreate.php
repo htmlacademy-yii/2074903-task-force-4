@@ -16,9 +16,10 @@ class ServiceUserCreate
     /**
      * @param RegistrationForm $form
      * @param array $attributes
+     * @param array|null $userData
      * @return Users|null
-     * @throws ServerErrorHttpException
      * @throws Exception
+     * @throws ServerErrorHttpException
      */
     public static function createNewUser(RegistrationForm $form, array $attributes, ?array $userData) : ?Users
     {
@@ -32,39 +33,6 @@ class ServiceUserCreate
         $createdUser->role =  ($form->executor === true) ?
             UserRoleConstants::ID_EXECUTOR_ROLE :
             UserRoleConstants::ID_CLIENT_ROLE;
-
-        if (!$createdUser->save(false)) {
-            throw new ServerErrorHttpException(
-                'Your data has not been recorded, please try again later',
-                500
-            );
-        }
-
-        return $createdUser;
-    }
-
-    /**
-     * @param array $userDataFromVk
-     * @param RegistrationCityRoleForm|RegistrationRoleForm $form
-     * @return Users
-     * @throws Exception
-     */
-    public static function createNewUserByVk(
-        array $userDataFromVk,
-        RegistrationForm $form
-    ) : Users {
-        $createdUser = new Users();
-        $form instanceof RegistrationCityRoleForm ?
-            $createdUser->city = $form->city :
-            $createdUser->city = $userDataFromVk['city']['title'];
-        $createdUser->role =  ($form->executor === true) ?
-            UserRoleConstants::ID_EXECUTOR_ROLE :
-            UserRoleConstants::ID_CLIENT_ROLE;
-        $createdUser->vkId = $userDataFromVk['id'];
-        $createdUser->name = $userDataFromVk['first_name'] . $userDataFromVk['last_name'];
-        $createdUser->email = mb_strtolower($userDataFromVk['email']);
-        $userPassword = Yii::$app->security->generateRandomString(6);
-        $createdUser->password = Yii::$app->getSecurity()->generatePasswordHash($userPassword);
 
         if (!$createdUser->save(false)) {
             throw new ServerErrorHttpException(

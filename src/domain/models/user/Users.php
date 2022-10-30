@@ -360,4 +360,14 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         rsort($allRating);
         return array_search($currentExecutorRating, $allRating) + 1;
     }
+
+    public function addVkId(int $vkId)
+    {
+        $this->vkId = $vkId;
+
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 }
