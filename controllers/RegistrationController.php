@@ -2,8 +2,10 @@
 namespace app\controllers;
 
 use omarinina\application\services\user\create\ServiceUserCreate;
+use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
+use omarinina\infrastructure\models\form\RegistrationRoleForm;
 use Yii;
 use yii\base\Exception;
 use yii\web\Controller;
@@ -34,9 +36,10 @@ class RegistrationController extends Controller
     }
 
     /**
+     * @param array|null $userData
      * @return string|Response
      */
-    public function actionIndex(): string|Response
+    public function actionIndex(?array $userData = null): string|Response
     {
         try {
             $registrationForm = new RegistrationForm();
@@ -46,17 +49,22 @@ class RegistrationController extends Controller
                 $registrationForm->load(Yii::$app->request->post());
 
                 if ($registrationForm->validate()) {
-                    ServiceUserCreate::createNewUser(
+                    $newUser = ServiceUserCreate::createNewUser(
                         $registrationForm,
-                        Yii::$app->request->post('RegistrationForm')
+                        Yii::$app->request->post('RegistrationForm'),
+                        $userData
                     );
+                    if ($userData) {
+                        return $this->redirect(['auth/login', 'userId' => $newUser->id]);
+                    }
                     return $this->redirect(['site/index']);
                 }
             }
 
             return $this->render('index', [
                 'model' => $registrationForm,
-                'cities' => $cities
+                'cities' => $cities,
+                'userData' => $userData
             ]);
         } catch (ServerErrorHttpException|\yii\base\Exception $e) {
             return $e->getMessage();

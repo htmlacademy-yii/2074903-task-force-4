@@ -3,8 +3,17 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\bootstrap5\Modal;
+use yii\helpers\Url;
+use omarinina\application\services\user\auth\ServiceUserAuthVk;
 
 /** @var omarinina\infrastructure\models\form\LoginForm $model */
+
+$urlVkAuth = ServiceUserAuthVk::getVkClientOAuth()->buildAuthUrl([
+    'redirect_uri' => Url::to(['auth/authorize-user-via-vk'], 'http'),
+    'response_type' => 'code',
+    'scope' => 'email, offline'
+]);
+
 
 Modal::begin([
     'id' => 'enter-form',
@@ -40,12 +49,18 @@ $form = ActiveForm::begin([
 <?= $form->field($model, 'password', ['options' => ['class'=> 'enter-form-email input input-middle']])
     ->passwordInput(['placeholder' => 'введите ваш пароль']); ?>
 </p>
+<div class="right-column">
+    <?php
+    echo Html::submitButton('Войти', ['class' => 'button']); ?>
+</div>
+<br>
+<div class="left-column">
+    <?php
+    echo Html::a('Вход через вконтакте', $urlVkAuth, ['class'=>'button']);?>
+</div>
 
-<?php
-echo Html::submitButton('Войти', ['class' => 'button']);
-
-ActiveForm::end();
+<?php ActiveForm::end();
 
 echo Html::button('Закрыть', ['class' => 'form-modal-close', 'data-bs-dismiss' => 'modal']);
-?>
-<?php Modal::end(); ?>
+
+Modal::end(); ?>

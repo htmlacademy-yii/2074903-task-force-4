@@ -17,6 +17,7 @@ use yii\web\IdentityInterface;
  * This is the model class for table "users".
  *
  * @property int $id
+ * @property int $vkId
  * @property string $createAt
  * @property string $email
  * @property string $name
@@ -67,12 +68,12 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         return [
             [['createAt', 'birthDate'], 'safe'],
             [['email', 'name', 'password', 'role', 'city'], 'required'],
-            [['role', 'city'], 'integer'],
+            [['role', 'city', 'vkId'], 'integer'],
             [['bio', 'avatarSrc'], 'string'],
             [['email'], 'string', 'max' => 128],
             [['name', 'password'], 'string', 'max' => 255],
             [['phone', 'telegram'], 'string', 'max' => 30],
-            [['email'], 'unique'],
+            [['email', 'vkId'], 'unique'],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['city' => 'id']],
             [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
         ];
@@ -85,6 +86,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
+            'vkId' => 'VKontakte ID',
             'createAt' => 'Create At',
             'email' => 'Email',
             'name' => 'Name',
@@ -357,5 +359,15 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         $currentExecutorRating = $this->getExecutorRatingPlace($this);
         rsort($allRating);
         return array_search($currentExecutorRating, $allRating) + 1;
+    }
+
+    public function addVkId(int $vkId)
+    {
+        $this->vkId = $vkId;
+
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
     }
 }

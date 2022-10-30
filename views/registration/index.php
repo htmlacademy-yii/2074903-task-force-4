@@ -2,10 +2,28 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
+use omarinina\domain\models\Cities;
 
 /** @var yii\web\View $this */
 /** @var omarinina\infrastructure\models\form\RegistrationForm $model */
 /** @var omarinina\domain\models\Cities $cities */
+/** @var array $userData */
+
+if ($userData && array_key_exists('city', $userData)) {
+    $idCity = Cities::findOne(['name' => $userData['city']['title']])->id;
+    if ($idCity) {
+        $selectedCity = $idCity;
+        $valueCity = ['selected' => 'selected'];
+        $promt = null;
+        $check = null;
+    }
+} else {
+    $selectedCity = null;
+    $valueCity = null;
+    $promt = 'prompt';
+    $check = '-выбрать-';
+}
+
 
 ?>
 <div class="container container--registration">
@@ -21,16 +39,32 @@ use yii\helpers\ArrayHelper;
             ])
 ?>
                 <h3 class="head-main head-task">Регистрация нового пользователя</h3>
-                <?= $form->field($model, 'name', ['options' => ['class' => 'form-group']])
-                    ->textInput(['placeholder' => 'Иван Иванов']); ?>
+                <?= $form->field($model, 'name', ['options' => [
+                    'class' => 'form-group',
+                    ]])
+                    ->textInput(['placeholder' => 'Иван Иванов',
+                        'value' => $userData && array_key_exists('first_name', $userData) && array_key_exists('last_name', $userData) ?
+                            $userData['first_name'] . ' ' . $userData['last_name'] :
+                            null
+                    ]); ?>
 
                 <div class="half-wrapper">
-                    <?= $form->field($model, 'email', ['options' => ['class' => ' form-group']])
-                        ->textInput(['placeholder' => 'something@google.com']); ?>
+                    <?= $form->field($model, 'email', ['options' => [
+                        'class' => ' form-group',
+                        ]])
+                        ->textInput(['placeholder' => 'something@google.com',
+                            'value' => $userData && array_key_exists('email', $userData) ? $userData['email'] : null
+                        ]); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
                         ->dropDownList(
                             ArrayHelper::map($cities, 'id', 'name'),
-                            ['class' => 'form-group', 'prompt' => '-выбрать-']
+                            [
+                                'class' => 'form-group',
+                                'options' => [
+                                $selectedCity => $valueCity
+                                    ],
+                                $promt => $check
+                            ]
                         ); ?>
                 </div>
                 <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group']])

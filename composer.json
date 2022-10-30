@@ -30,7 +30,8 @@
         "yiisoft/yii2-redis": "~2.0.0",
         "guzzlehttp/guzzle": "^7.5",
         "yandex/geo": "^1.2",
-        "phpnt/yandex-map": "^0.0.3"
+        "phpnt/yandex-map": "^0.0.3",
+        "yiisoft/yii2-authclient": "^2.2"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

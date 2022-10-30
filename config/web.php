@@ -1,5 +1,7 @@
 <?php
 
+use omarinina\infrastructure\constants\KeysConstants;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -26,6 +28,16 @@ $config = [
         'cache' => [
 //            'class' => 'yii\caching\FileCache',
             'class' => 'yii\redis\Cache',
+        ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'vkontakte' => [
+                    'class' => 'yii\authclient\clients\VKontakte',
+                    'clientId' => '51458800',
+                    'clientSecret' => KeysConstants::VK_CLIENT_KEY,
+                ],
+            ],
         ],
         'user' => [
             'identityClass' => 'omarinina\domain\models\user\Users',
