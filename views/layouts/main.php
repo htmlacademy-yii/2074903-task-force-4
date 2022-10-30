@@ -8,6 +8,7 @@ $user = Yii::$app->user->identity;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\widgets\Menu;
+use app\widgets\Alert;
 
 \app\assets\BasicAsset::register($this);
 ?>
@@ -76,6 +77,8 @@ use yii\widgets\Menu;
     <?php endif; ?>
     </div>
 </header>
+
+<?= Alert::widget() ?>
 
 <main>
     <div class="main-container">

@@ -2,7 +2,10 @@
 
 namespace omarinina\infrastructure\models\form;
 
+use GuzzleHttp\Exception\GuzzleException;
+use omarinina\application\services\location\point_receive\ServiceGeoObjectReceive;
 use omarinina\domain\models\Categories;
+use omarinina\domain\models\Cities;
 use yii\base\Model;
 
 class CreateTaskForm extends Model
@@ -16,8 +19,8 @@ class CreateTaskForm extends Model
     /** @var int */
     public int $categoryId = 0;
 
-    /** @var int|null */
-    public ?int $cityId = null;
+    /** @var null|string */
+    public ?string $location = null;
 
     /** @var string */
     public string $budget = '';
@@ -34,7 +37,7 @@ class CreateTaskForm extends Model
             'name' => 'Мне нужно',
             'description' => 'Подробности задания',
             'categoryId' => 'Категория',
-            'cityId' => 'Локация',
+            'location' => 'Локация',
             'budget' => 'Бюджет',
             'expiryDate' => 'Срок исполнения',
             'files' => 'Файлы'
@@ -51,6 +54,16 @@ class CreateTaskForm extends Model
             [['expiryDate'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
+            [['location'], 'default', 'value' => null],
         ];
+    }
+
+    /**
+     * @return bool
+     * @throws GuzzleException
+     */
+    public function isLocationExistGeocoder() : bool
+    {
+        return (bool)ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($this->location);
     }
 }

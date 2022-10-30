@@ -23,7 +23,6 @@ class TaskActionsController extends SecurityController
     /**
      * @param int $respondId
      * @return Response|string
-     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionAcceptRespond(int $respondId) : Response|string
     {
@@ -35,6 +34,7 @@ class TaskActionsController extends SecurityController
                 $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
 
                 if (ServiceRespondStatusAdd::addAcceptStatus($respond, $userId)->status) {
+                    ServiceTaskStatusChange::changeStatusToInWork($task);
                     ServiceRespondStatusAdd::addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond
@@ -46,13 +46,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Respond is not found', 404);
         } catch (ServerErrorHttpException|NotFoundHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $respondId
      * @return Response|string
-     * @throws ServerErrorHttpException|NotFoundHttpException
      */
     public function actionRefuseRespond(int $respondId) : Response|string
     {
@@ -69,17 +70,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Respond is not found', 404);
         } catch (ServerErrorHttpException|NotFoundHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws AvailableActionsException
-     * @throws CurrentActionException
-     * @throws IdUserException
-     * @throws ServerErrorHttpException
      */
     public function actionCancelTask(int $taskId) : Response|string
     {
@@ -101,14 +99,14 @@ class TaskActionsController extends SecurityController
             IdUserException|
             ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionRespondTask(int $taskId) : Response|string
     {
@@ -120,7 +118,7 @@ class TaskActionsController extends SecurityController
 
                 if (Yii::$app->request->getIsPost()) {
                     $taskResponseForm->load(Yii::$app->request->post());
-                    if ($taskResponseForm->validate()) {
+                    if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
                         ServiceRespondCreate::saveNewRespond($user, $task, $attributes);
@@ -133,14 +131,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Task is not found', 404);
         } catch (NotFoundHttpException|ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionDenyTask(int $taskId) : Response|string
     {
@@ -156,17 +154,14 @@ class TaskActionsController extends SecurityController
             throw new NotFoundHttpException('Task is not found', 404);
         } catch (NotFoundHttpException|ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $taskId
      * @return Response|string
-     * @throws AvailableActionsException
-     * @throws CurrentActionException
-     * @throws IdUserException
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
      */
     public function actionAcceptTask(int $taskId) : Response|string
     {
@@ -197,6 +192,8 @@ class TaskActionsController extends SecurityController
             IdUserException|
             ServerErrorHttpException $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }

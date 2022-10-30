@@ -11,6 +11,7 @@ use omarinina\infrastructure\models\form\TaskResponseForm;
 use omarinina\infrastructure\models\form\TaskAcceptanceForm;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use phpnt\yandexMap\YandexMaps;
 
 $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
@@ -18,17 +19,56 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
     <div class="left-column">
         <div class="head-wrapper">
             <h3 class="head-main"><?= $currentTask->name; ?></h3>
-            <p class="price price--big"><?= $currentTask->budget; ?> ₽</p>
+            <p class="price price--big"><?= $currentTask->budget . ' ₽'; ?></p>
         </div>
         <p class="task-description"><?= $currentTask->description; ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php endif; ?>
-        <?php if (isset($currentTask->city->name)) : ?>
+        <?php if (isset($currentTask->address)) : ?>
         <div class="task-map">
-            <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
-            <p class="map-address town"><?= $currentTask->city->name; ?></p>
-            <p class="map-address">Новый арбат, 23, к. 1</p>
+            <div class="map">
+                <?php
+                $items = [
+                    [
+                        'latitude' => $currentTask->lat,
+                        'longitude' => $currentTask->lng,
+                        'options' => [
+                            'preset' => 'islands#icon',
+                            'iconColor' => '#19a111'
+                        ]
+                    ],
+                ]; ?>
+
+                <?= YandexMaps::widget(
+                    [
+                        'myPlacemarks' => [
+                            [
+                                'latitude' => $currentTask->lat,
+                                'longitude' => $currentTask->lng,
+                                'options' => []
+                            ],
+                        ],
+                        'mapOptions' => [
+                            'center' => [$currentTask->lat, $currentTask->lng],
+                            'zoom' => 13,
+                            'controls' => ['zoomControl', 'fullscreenControl', 'searchControl'],
+                            'control' => [
+                                'zoomControl' => [
+                                    'top' => 75,
+                                    'left' => 5
+                                ],
+                            ],
+                        ],
+                        'disableScroll' => true,
+                        'windowWidth' => '725px',
+                        'windowHeight' => '346px',
+                    ]
+                ); ?>
+
+            </div>
+            <p class="map-address town"><?= $currentTask->city ?></p>
+            <p class="map-address"><?= $currentTask->address ?></p>
         </div>
         <?php endif; ?>
         <?php if (isset($responds[0])) : ?>
@@ -244,4 +284,9 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 <div class="overlay"></div>
 
 <?php $this->endBlock(); ?>
+
+
+
+
+
 

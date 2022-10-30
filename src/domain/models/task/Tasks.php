@@ -28,7 +28,10 @@ use omarinina\domain\exception\task\AvailableActionsException;
  * @property string|null $expiryDate
  * @property int $budget
  * @property int $categoryId
- * @property int $cityId
+ * @property string|null $city
+ * @property string|null $address
+ * @property float|null $lat
+ * @property float|null $lng
  * @property int $status
  * @property int|null $executorId
  * @property int $clientId
@@ -41,7 +44,6 @@ use omarinina\domain\exception\task\AvailableActionsException;
  * @property TaskStatuses $taskStatus
  * @property TaskFiles[] $taskFiles
  * @property Files[] $files
- * @property Cities $city
  *
  */
 class Tasks extends \yii\db\ActiveRecord
@@ -65,8 +67,9 @@ class Tasks extends \yii\db\ActiveRecord
             [['createAt', 'expiryDate'], 'safe'],
             [['name',  'budget', 'categoryId', 'status', 'clientId', 'description'], 'required'],
             [['description'], 'string'],
-            [['categoryId', 'status', 'executorId', 'clientId', 'cityId'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['categoryId', 'status', 'executorId', 'clientId'], 'integer'],
+            [['lat', 'lng'], 'number'],
+            [['name', 'city', 'address'], 'string', 'max' => 255],
             [['budget'], 'integer', 'max' => 128],
             [['categoryId'], 'exist', 'skipOnError' => true, 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['clientId'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['clientId' => 'id']],
@@ -88,10 +91,13 @@ class Tasks extends \yii\db\ActiveRecord
             'expiryDate' => 'Expiry Date',
             'budget' => 'Budget',
             'categoryId' => 'Category ID',
-            'cityId' => 'City ID',
+            'city' => 'City',
+            'address' => 'Address',
             'status' => 'Status',
             'executorId' => 'Executor ID',
             'clientId' => 'Client ID',
+            'lat' => 'Latitude',
+            'lng' => 'Longitude'
         ];
     }
 
@@ -178,16 +184,6 @@ class Tasks extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[City]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCity()
-    {
-        return $this->hasOne(Cities::class, ['id' => 'cityId']);
-    }
-
-    /**
      * @param string $currentAction
      * @param int $idUser
      * @return int|null
@@ -196,7 +192,7 @@ class Tasks extends \yii\db\ActiveRecord
      * which is unavailable for this task status
      * @throws IdUserException Exception when user doesn't have rights to add
      */
-    public function changeStatusByAction(string $currentAction, int $idUser): ?int
+    private function changeStatusByAction(string $currentAction, int $idUser): ?int
     {
         if ($this->isValidAction($currentAction, $idUser)) {
             return $this->getLinkActionToStatus()[$currentAction];
@@ -243,9 +239,6 @@ class Tasks extends \yii\db\ActiveRecord
         ];
     }
 
-    //Also the client has two additional buttons when he receives responds by executors.
-    //Potential this logic can be realised with this class, isn't it?
-
     /**
      * @return array
      */
@@ -278,5 +271,85 @@ class Tasks extends \yii\db\ActiveRecord
         return false;
     }
 
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addCancelledStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            CancelAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addFailedStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            DenyAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param int $userId
+     * @return bool
+     * @throws AvailableActionsException
+     * @throws CurrentActionException
+     * @throws IdUserException
+     */
+    public function addDoneStatus(int $userId) : bool
+    {
+        $this->status = $this->changeStatusByAction(
+            AcceptAction::getInternalName(),
+            $userId
+        );
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function addInWorkStatus() : bool
+    {
+        $this->status = TaskStatusConstants::ID_IN_WORK_STATUS;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param Responds $respond
+     * @return bool
+     */
+    public function addExecutorId(Responds $respond) : bool
+    {
+        $this->executorId = $respond->executorId;
+        if (!$this->save(false)) {
+            return false;
+        }
+        return true;
+    }
 }

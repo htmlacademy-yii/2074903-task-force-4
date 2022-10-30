@@ -35,7 +35,6 @@ class RegistrationController extends Controller
 
     /**
      * @return string|Response
-     * @throws Exception
      */
     public function actionIndex(): string|Response
     {
@@ -61,6 +60,8 @@ class RegistrationController extends Controller
             ]);
         } catch (ServerErrorHttpException|\yii\base\Exception $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }

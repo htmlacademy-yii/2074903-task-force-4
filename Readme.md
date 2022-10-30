@@ -10,6 +10,7 @@
 <img src="https://img.shields.io/badge/mysql-latest-orange">
 <img src="https://img.shields.io/badge/yii2-~2.0.45-green">
 <img src="https://img.shields.io/badge/phpunit-~9.5.0-blue">
+<img src="https://img.shields.io/badge/redis-5-red">
 </p>
 <br>
 
@@ -46,6 +47,9 @@ DIRECTORY STRUCTURE
       migrations/         contains migrations to create current tables for DB
       runtime/            contains files generated during runtime
       src/                contains classes (domain, infrustacture, application)
+        application/      contains classes for services
+        domain/           contains models of main entities and helpers (traits, task actions)
+        infrastructure/   contains helped models (forms) and constants
       tests/              contains various tests for the basic application (just unit)
       vendor/             contains dependent 3rd-party packages
       views/              contains view files for the Web application
@@ -62,6 +66,7 @@ We work on this project with docker-compose.
 **Images**:
 * yiisoftware/yii2-php:8.1-apache
 * mysql:latest
+* redis:5
 
 You can then access the application through the following URL:
 

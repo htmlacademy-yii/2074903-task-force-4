@@ -1,8 +1,10 @@
 <?php
 namespace app\controllers;
 
+use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\save\ServiceFileSave;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
+use omarinina\application\services\location\point_receive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
@@ -38,7 +40,6 @@ class TasksController extends SecurityController
 
     /**
      * @return string
-     * @throws BadRequestHttpException
      */
     public function actionIndex(): string
     {
@@ -62,13 +63,14 @@ class TasksController extends SecurityController
             ]);
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
      * @param int $id
      * @return string
-     * @throws NotFoundHttpException
      */
     public function actionView(int $id): string
     {
@@ -91,13 +93,13 @@ class TasksController extends SecurityController
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
     /**
-     * @return string|\yii\web\Response
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\web\ServerErrorHttpException
+     * @return string|Response
      */
     public function actionCreate() : string|Response
     {
@@ -109,10 +111,21 @@ class TasksController extends SecurityController
                 $createTaskForm->load(Yii::$app->request->post());
 
                 if ($createTaskForm->validate()) {
+                    if (!$createTaskForm->isLocationExistGeocoder()) {
+                        Yii::$app->session->setFlash(
+                            'error',
+                            'Координаты вашего адресе не были найдены. Пожалуйста, попробуйте что-нибудь изменить.'
+                        );
+                        return $this->render('create', [
+                            'model' => $createTaskForm,
+                            'categories' => $categories
+                        ]);
+                    }
                     $createdTask = ServiceTaskCreate::saveNewTask(
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
-                        $createTaskForm->expiryDate
+                        $createTaskForm->expiryDate,
+                        ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = ServiceFileSave::saveNewFile($file);
@@ -127,6 +140,10 @@ class TasksController extends SecurityController
             ]);
         } catch (ServerErrorHttpException|InvalidConfigException $e) {
             return $e->getMessage();
+        } catch (GuzzleException $e) {
+            return 'Your data has not been recorded with location, please try again later';
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }
