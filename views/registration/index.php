@@ -9,15 +9,21 @@ use omarinina\domain\models\Cities;
 /** @var omarinina\domain\models\Cities $cities */
 /** @var array $userData */
 
-if (array_key_exists('city', $userData)) {
+if ($userData && array_key_exists('city', $userData)) {
     $idCity = Cities::findOne(['name' => $userData['city']['title']])->id;
     if ($idCity) {
         $selectedCity = $idCity;
-        $value = "['selected' => true]";
+        $valueCity = ['selected' => 'selected'];
+        $promt = null;
+        $check = null;
     }
+} else {
+    $selectedCity = null;
+    $valueCity = null;
+    $promt = 'prompt';
+    $check = '-выбрать-';
 }
-$selectedCity = 'prompt';
-$value = '-выбрать-';
+
 
 ?>
 <div class="container container--registration">
@@ -35,24 +41,29 @@ $value = '-выбрать-';
                 <h3 class="head-main head-task">Регистрация нового пользователя</h3>
                 <?= $form->field($model, 'name', ['options' => [
                     'class' => 'form-group',
-                    'value' => array_key_exists('first_name', $userData) && array_key_exists('last_name', $userData) ?
-                        $userData['first_name'] . $userData['last_name'] :
-                        null
                     ]])
-                    ->textInput(['placeholder' => 'Иван Иванов']); ?>
+                    ->textInput(['placeholder' => 'Иван Иванов',
+                        'value' => $userData && array_key_exists('first_name', $userData) && array_key_exists('last_name', $userData) ?
+                            $userData['first_name'] . ' ' . $userData['last_name'] :
+                            null
+                    ]); ?>
 
                 <div class="half-wrapper">
                     <?= $form->field($model, 'email', ['options' => [
                         'class' => ' form-group',
-                        'value' => array_key_exists('email', $userData) ? $userData['email'] : null
                         ]])
-                        ->textInput(['placeholder' => 'something@google.com']); ?>
+                        ->textInput(['placeholder' => 'something@google.com',
+                            'value' => $userData && array_key_exists('email', $userData) ? $userData['email'] : null
+                        ]); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
                         ->dropDownList(
                             ArrayHelper::map($cities, 'id', 'name'),
                             [
                                 'class' => 'form-group',
-                                $selectedCity => $value
+                                'options' => [
+                                $selectedCity => $valueCity
+                                    ],
+                                $promt => $check
                             ]
                         ); ?>
                 </div>

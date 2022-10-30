@@ -51,10 +51,11 @@ class RegistrationController extends Controller
                 if ($registrationForm->validate()) {
                     $newUser = ServiceUserCreate::createNewUser(
                         $registrationForm,
-                        Yii::$app->request->post('RegistrationForm')
+                        Yii::$app->request->post('RegistrationForm'),
+                        $userData
                     );
                     if ($userData) {
-                        return $this->redirect(['auth/login', 'user' => $newUser]);
+                        return $this->redirect(['auth/login', 'userId' => $newUser->id]);
                     }
                     return $this->redirect(['site/index']);
                 }

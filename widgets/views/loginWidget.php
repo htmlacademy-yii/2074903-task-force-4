@@ -56,7 +56,7 @@ $form = ActiveForm::begin([
 <br>
 <div class="left-column">
     <?php
-    echo Html::a('Вход через вконтакте', $urlVkAuth, ['class'=>'button', 'target' => '_blank']);?>
+    echo Html::a('Вход через вконтакте', $urlVkAuth, ['class'=>'button']);?>
 </div>
 
 <?php ActiveForm::end();

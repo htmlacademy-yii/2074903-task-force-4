@@ -41,6 +41,8 @@ class AuthController extends Controller
                     if ($currentUser) {
                         ServiceUserDataAdd::addUserVkId($currentUser, $userData);
                     }
+                }
+                if (!$currentUser) {
                     return $this->redirect([
                         'registration/index',
                         'userData' => $userData
@@ -56,12 +58,13 @@ class AuthController extends Controller
     }
 
     /**
-     * @param Users $user
+     * @param int $userId
      * @return Response
      */
-    public function actionLogin(Users $user) : Response
+    public function actionLogin(int $userId) : Response
     {
-        Yii::$app->user->login($user);
+        $newUser = Users::findOne($userId);
+        Yii::$app->user->login($newUser);
         return $this->redirect(['site/index']);
     }
 }

@@ -20,10 +20,13 @@ class ServiceUserCreate
      * @throws ServerErrorHttpException
      * @throws Exception
      */
-    public static function createNewUser(RegistrationForm $form, array $attributes) : ?Users
+    public static function createNewUser(RegistrationForm $form, array $attributes, ?array $userData) : ?Users
     {
         $createdUser = new Users();
         $createdUser->attributes = $attributes;
+        if ($userData) {
+            $createdUser->vkId = $userData['id'];
+        }
         $createdUser->email = mb_strtolower($form->email);
         $createdUser->password = Yii::$app->getSecurity()->generatePasswordHash($form->password);
         $createdUser->role =  ($form->executor === true) ?
