@@ -3,6 +3,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use app\widgets\TaskWidget;
 
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\task\Tasks[] $newTasks */
@@ -15,25 +16,7 @@ use yii\helpers\Url;
     <div class="left-column">
         <h3 class="head-main head-task">Новые задания</h3>
         <?php foreach ($newTasks as $newTask) : ?>
-        <div class="task-card">
-            <div class="header-task">
-                <a  href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="link link--block link--big">
-                    <?= $newTask->name; ?></a>
-                <p class="price price--task"><?= $newTask->budget; ?> ₽</p>
-            </div>
-            <p class="info-text"><span class="current-time">
-                    <?= $newTask->countTimeAgoPost($newTask->createAt) ?>
-                </span> назад</p>
-            <p class="task-text"><?= $newTask->description; ?></p>
-            <div class="footer-task">
-                <?php if (isset($newTask->location)) : ?>
-                <p class="info-text town-text"><?= $newTask->location; ?></p>
-                <?php endif; ?>
-                <p class="info-text category-text"><?= $newTask->category->name ?></p>
-                <a href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="button button--black">
-                    Смотреть Задание</a>
-            </div>
-        </div>
+            <?= TaskWidget::widget(['task' => $newTask]) ?>
         <?php endforeach; ?>
 
         <div class="pagination-wrapper">

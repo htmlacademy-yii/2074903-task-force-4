@@ -146,4 +146,9 @@ class TasksController extends SecurityController
             return 'Something wrong. Sorry, please, try again later';
         }
     }
+
+    public function actionMine()
+    {
+        return $this->render('mine');
+    }
 }
