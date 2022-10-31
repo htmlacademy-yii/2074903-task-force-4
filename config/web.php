@@ -34,7 +34,7 @@ $config = [
             'clients' => [
                 'vkontakte' => [
                     'class' => 'yii\authclient\clients\VKontakte',
-                    'clientId' => '51458800',
+                    'clientId' => KeysConstants::VK_CLIENT_ID,
                     'clientSecret' => KeysConstants::VK_CLIENT_KEY,
                 ],
             ],
