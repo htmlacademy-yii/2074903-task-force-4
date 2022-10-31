@@ -8,6 +8,8 @@ use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
 use omarinina\infrastructure\models\form\RegistrationRoleForm;
+use yii\authclient\clients\VKontakte;
+use yii\authclient\Collection;
 use yii\base\InvalidConfigException;
 use yii\web\Controller;
 use Yii;
@@ -30,8 +32,13 @@ class AuthController extends Controller
             return $this->goHome();
         }
 
+        /** @var Collection $collectionClientsOAuth */
+        $collectionClientsOAuth = Yii::$app->get('authClientCollection');
+        /** @var VKontakte $vkClientOAuth */
+        $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
+
         $codeVk = Yii::$app->request->get('code');
-        $userData = ServiceUserAuthVk::applyAccessTokenForVk($codeVk)->getUserAttributes();
+        $userData = ServiceUserAuthVk::applyAccessTokenForVk($codeVk, $vkClientOAuth)->getUserAttributes();
 
         if ($userData) {
             $currentUser = Users::findOne(['vkId' => $userData['id']]);
