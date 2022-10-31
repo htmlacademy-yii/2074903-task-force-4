@@ -284,10 +284,7 @@ class Tasks extends \yii\db\ActiveRecord
             CancelAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -303,10 +300,7 @@ class Tasks extends \yii\db\ActiveRecord
             DenyAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -322,10 +316,7 @@ class Tasks extends \yii\db\ActiveRecord
             AcceptAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -334,10 +325,7 @@ class Tasks extends \yii\db\ActiveRecord
     public function addInWorkStatus() : bool
     {
         $this->status = TaskStatusConstants::ID_IN_WORK_STATUS;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -347,9 +335,6 @@ class Tasks extends \yii\db\ActiveRecord
     public function addExecutorId(Responds $respond) : bool
     {
         $this->executorId = $respond->executorId;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 }

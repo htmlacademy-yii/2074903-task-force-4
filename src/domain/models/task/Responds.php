@@ -102,10 +102,7 @@ class Responds extends \yii\db\ActiveRecord
     public function addAcceptedStatus() : bool
     {
         $this->status = RespondStatusConstants::ID_ACCEPTED_STATUS;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -114,9 +111,6 @@ class Responds extends \yii\db\ActiveRecord
     public function addRefusedStatus() : bool
     {
         $this->status = RespondStatusConstants::ID_REFUSED_STATUS;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 }
