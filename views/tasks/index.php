@@ -4,6 +4,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\widgets\TaskWidget;
 use yii\widgets\LinkPager;
+use omarinina\infrastructure\constants\ViewConstants;
 
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\task\Tasks[] $newTasks */
@@ -29,7 +30,7 @@ use yii\widgets\LinkPager;
                     'options' => ['class' => 'pagination-list'],
                     'activePageCssClass' => 'pagination-item pagination-item--active',
                     'linkContainerOptions' => ['class' => 'pagination-item'],
-                    'maxButtonCount' => 3,
+                    'maxButtonCount' => ViewConstants::BUTTON_COUNT_PAGINATION,
                     'linkOptions' => ['class' => 'link link--page'],
                     'prevPageCssClass' => 'mark',
                     'nextPageCssClass' => 'mark',
