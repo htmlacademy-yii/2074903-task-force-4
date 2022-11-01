@@ -1,4 +1,5 @@
 <?php
+
 /* @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
 /** @var omarinina\domain\models\task\Responds[] $responds */

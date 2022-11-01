@@ -30,4 +30,14 @@ class ProfileController extends SecurityController
             return 'Something wrong. Sorry, please, try again later';
         }
     }
+
+    public function actionEdit()
+    {
+        return $this->render('edit');
+    }
+
+    public function actionSecurity()
+    {
+        return $this->render('security');
+    }
 }
