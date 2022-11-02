@@ -373,4 +373,15 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         $this->vkId = $vkId;
         return $this->save(false);
     }
+
+    /**
+     * @param string $newPassword
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    public function updatePassword(string $newPassword) : bool
+    {
+        $this->password = Yii::$app->getSecurity()->generatePasswordHash($newPassword);
+        return $this->save(false);
+    }
 }
