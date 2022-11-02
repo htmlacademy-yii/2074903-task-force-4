@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\application\services\task\add_data;
+namespace omarinina\application\services\task\addData;
 
 use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Tasks;

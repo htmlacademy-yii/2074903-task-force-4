@@ -23,8 +23,7 @@ class m220926_015341_create_executorCategories_table extends Migration
             'executorCategories',
             'categoryId',
             'categories',
-            'id',
-            'CASCADE'
+            'id'
         );
 
         $this->addForeignKey(
@@ -32,8 +31,7 @@ class m220926_015341_create_executorCategories_table extends Migration
             'executorCategories',
             'executorId',
             'users',
-            'id',
-            'CASCADE'
+            'id'
         );
     }
 

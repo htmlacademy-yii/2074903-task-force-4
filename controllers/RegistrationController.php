@@ -2,12 +2,9 @@
 namespace app\controllers;
 
 use omarinina\application\services\user\create\ServiceUserCreate;
-use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
-use omarinina\infrastructure\models\form\RegistrationRoleForm;
 use Yii;
-use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\AccessControl;

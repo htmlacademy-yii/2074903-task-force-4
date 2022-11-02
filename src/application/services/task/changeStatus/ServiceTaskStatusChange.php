@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\application\services\task\change_status;
+namespace omarinina\application\services\task\changeStatus;
 
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;

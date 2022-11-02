@@ -1,11 +1,11 @@
 <?php
 namespace app\controllers;
 
-use omarinina\application\services\respond\add_status\ServiceRespondStatusAdd;
+use omarinina\application\services\respond\addStatus\ServiceRespondStatusAdd;
 use omarinina\application\services\respond\create\ServiceRespondCreate;
 use omarinina\application\services\review\create\ServiceReviewCreate;
-use omarinina\application\services\task\add_data\ServiceTaskDataAdd;
-use omarinina\application\services\task\change_status\ServiceTaskStatusChange;
+use omarinina\application\services\task\addData\ServiceTaskDataAdd;
+use omarinina\application\services\task\changeStatus\ServiceTaskStatusChange;
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\IdUserException;

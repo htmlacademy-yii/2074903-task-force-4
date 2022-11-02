@@ -9,6 +9,7 @@ use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use omarinina\infrastructure\constants\UserRoleConstants;
+use omarinina\infrastructure\models\form\EditProfileForm;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\web\IdentityInterface;
@@ -383,5 +384,45 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $this->password = Yii::$app->getSecurity()->generatePasswordHash($newPassword);
         return $this->save(false);
+    }
+
+    /**
+     * @param EditProfileForm $form
+     * @param string|null $avatarSrc
+     * @return bool
+     * @throws InvalidConfigException
+     */
+    public function updateProfile(EditProfileForm $form, ?string $avatarSrc = null) : bool
+    {
+        $this->name = $form->name;
+        $this->email = $form->email;
+        $this->phone = $form->phone;
+        $this->telegram = $form->telegram;
+        $this->bio = $form->bio;
+        $this->hidden = $form->hidden;
+        if ($avatarSrc) {
+            $this->avatarSrc = $avatarSrc;
+        }
+        if ($form->birthDate !== null) {
+            $this->birthDate = Yii::$app->formatter->asDate(
+                $form->birthDate,
+                'yyyy-MM-dd'
+            );
+        }
+        return $this->save(false);
+    }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     */
+    public function deleteAllExecutorCategories() : void
+    {
+        $existedExecutorCategories = ExecutorCategories::find()->where(['executorId' => $this->id])->all();
+        Yii::$app->db->transaction(function () use ($existedExecutorCategories) {
+            foreach ($existedExecutorCategories as $existedCategory) {
+                $existedCategory->delete();
+            }
+        });
     }
 }

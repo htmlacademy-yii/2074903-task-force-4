@@ -2,12 +2,9 @@
 
 namespace app\controllers;
 
-use omarinina\application\services\user\add_data\ServiceUserDataAdd;
+use omarinina\application\services\user\addData\ServiceUserDataAdd;
 use omarinina\application\services\user\auth\ServiceUserAuthVk;
-use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
-use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
-use omarinina\infrastructure\models\form\RegistrationRoleForm;
 use yii\authclient\clients\VKontakte;
 use yii\authclient\Collection;
 use yii\base\InvalidConfigException;

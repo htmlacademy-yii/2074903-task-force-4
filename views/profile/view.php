@@ -6,6 +6,13 @@ use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
 use Yii;
 use omarinina\infrastructure\constants\UserRoleConstants;
+use DateTime;
+use omarinina\domain\models\task\Tasks;
+
+if ($currentUser->birthDate) {
+    $date = date_create($currentUser->birthDate);
+    $interval = $date->diff(new DateTime('now'));
+}
 
 ?>
 <div class="main-content container">
@@ -64,10 +71,7 @@ use omarinina\infrastructure\constants\UserRoleConstants;
                 <p class="bio-info"><span class="country-info">Россия</span>,
                     <span class="town-info"><?= $currentUser->userCity->name ?></span>
                     <?php if ($currentUser->birthDate) : ?>
-                        <span class="age-info">, <?= \morphos\Russian\pluralize(
-                            round(Yii::$app->formatter->asTimestamp($currentUser->birthDate) / (365 * 24 * 60 * 60)),
-                            'год'
-                            ) ?></span>
+                        <span class="age-info">, <?= \morphos\Russian\pluralize($interval->y, 'год') ?></span>
                     <?php endif; ?>
                 </p>
             </div>
@@ -124,7 +128,8 @@ use omarinina\infrastructure\constants\UserRoleConstants;
             </dl>
         </div>
         <?php endif; ?>
-        <?php if (!$currentUser->hidden) : ?>
+        <?php if (!$currentUser->hidden &&
+            !Tasks::find()->where(['clientId' => $currentUser])->andWhere(['executorId' => Yii::$app->user->id])) : ?>
         <div class="right-card white">
             <h4 class="head-card">Контакты</h4>
             <ul class="enumeration-list">

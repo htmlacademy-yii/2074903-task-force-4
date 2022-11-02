@@ -11,7 +11,7 @@ use Yii;
 class EditProfileForm extends Model
 {
     /** @var UploadedFile|null */
-    public ?UploadedFile $avatar = null;
+    public $avatar = null;
 
     /** @var string */
     public string $name = '';
@@ -44,14 +44,13 @@ class EditProfileForm extends Model
             [['name'], 'string'],
             [['email'], 'email'],
             [['email'], 'validateEmail'],
-            [['avatar'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'maxSize' => 5 * 1024 * 1024],
-            [['birthDate'], 'default', 'value' => null],
-            [['birthDate'], 'date'],
+            [['avatar'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'maxSize' => 5 * 1024 * 1024],
+            [['avatar', 'birthDate', 'phone', 'telegram', 'bio', 'hidden', 'categories'], 'default', 'value' => null],
             [['phone'], 'match', 'pattern' => '/^[\d]{11}/i'],
             [['telegram'], 'string', 'max' => 64],
             [['bio'], 'string', 'max' => 2000],
-            ['categories', 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['category' => 'id']],
-            ['hidden', 'boolean']
+            ['categories', 'validateCategories'],
+            ['hidden', 'boolean'],
         ];
     }
     public function attributeLabels(): array
@@ -76,6 +75,17 @@ class EditProfileForm extends Model
 
             if (Users::findOne(['email' => $this->email]) && $user->email !== $this->email) {
                 $this->addError($attribute, 'На данный email уже зарегистрирован пользователь');
+            }
+        }
+    }
+
+    public function validateCategories($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            foreach ($this->categories as $categoryId) {
+                if (!Categories::findOne($categoryId)) {
+                    $this->addError($attribute, 'Такой категории не существует');
+                }
             }
         }
     }

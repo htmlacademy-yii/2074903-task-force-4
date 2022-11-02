@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\application\services\location\point_receive;
+namespace omarinina\application\services\location\pointReceive;
 
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\infrastructure\constants\KeysConstants;

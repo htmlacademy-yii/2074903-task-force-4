@@ -1,9 +1,11 @@
 <?php
 
-namespace omarinina\application\services\user\add_data;
+namespace omarinina\application\services\user\addData;
 
 use omarinina\domain\models\user\Users;
+use omarinina\infrastructure\models\form\EditProfileForm;
 use omarinina\infrastructure\models\form\SecurityProfileForm;
+use yii\base\InvalidConfigException;
 use yii\web\ServerErrorHttpException;
 
 class ServiceUserDataAdd
@@ -25,9 +27,22 @@ class ServiceUserDataAdd
         }
     }
 
-    public static function updateUserProfile()
+    /**
+     * @param Users $user
+     * @param EditProfileForm $form
+     * @param string|null $avatarSrc
+     * @return void
+     * @throws InvalidConfigException
+     * @throws ServerErrorHttpException
+     */
+    public static function updateUserProfile(Users $user, EditProfileForm $form, ?string $avatarSrc = null) : void
     {
-
+        if (!$user->updateProfile($form, $avatarSrc)) {
+            throw new ServerErrorHttpException(
+                'Your data has not been recorded, please try again later',
+                500
+            );
+        }
     }
 
     /**

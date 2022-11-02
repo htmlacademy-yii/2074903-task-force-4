@@ -1,10 +1,11 @@
 <?php
 
-namespace omarinina\application\services\respond\add_status;
+namespace omarinina\application\services\respond\addStatus;
 
 use omarinina\domain\models\task\Responds;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\web\ServerErrorHttpException;
+use Yii;
 
 class ServiceRespondStatusAdd
 {
@@ -58,7 +59,7 @@ class ServiceRespondStatusAdd
     public static function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void
     {
         if (isset($responds[0])) {
-            \Yii::$app->db->transaction(function ($responds, $acceptedRespond = null) {
+            Yii::$app->db->transaction(function ($responds) use ($acceptedRespond) {
                 foreach ($responds as $respond) {
                     if (!$respond->status && $respond->id !== $acceptedRespond->id) {
                         /** @var Responds $respond */

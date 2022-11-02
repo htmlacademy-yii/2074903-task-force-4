@@ -4,7 +4,7 @@ namespace app\controllers;
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\save\ServiceFileSave;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
-use omarinina\application\services\location\point_receive\ServiceGeoObjectReceive;
+use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
 use omarinina\infrastructure\constants\UserRoleConstants;
