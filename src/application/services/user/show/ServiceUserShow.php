@@ -16,9 +16,7 @@ class ServiceUserShow
      */
     public static function getUserExecutorById($id) : Users
     {
-        $currentUser = Yii::$app->db->cache(function () use ($id) {
-            return Users::findOne($id);
-        });
+        $currentUser = Users::findOne($id);
         if (!$currentUser || $currentUser->userRole->role !== UserRoleConstants::EXECUTOR_ROLE) {
             throw new NotFoundHttpException('User is not found', 404);
         }
