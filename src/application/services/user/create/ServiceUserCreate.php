@@ -4,6 +4,7 @@ namespace omarinina\application\services\user\create;
 
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
+use omarinina\infrastructure\constants\ViewConstants;
 use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\infrastructure\models\form\RegistrationRoleForm;
@@ -28,6 +29,7 @@ class ServiceUserCreate
         if ($userData) {
             $createdUser->vkId = $userData['id'];
         }
+        $createdUser->avatarSrc = ViewConstants::DEFAULT_AVATARS[array_rand(ViewConstants::DEFAULT_AVATARS, 1)];
         $createdUser->email = mb_strtolower($form->email);
         $createdUser->password = Yii::$app->getSecurity()->generatePasswordHash($form->password);
         $createdUser->role =  ($form->executor === true) ?
