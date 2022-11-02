@@ -4,6 +4,7 @@ namespace app\controllers;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;
 use omarinina\infrastructure\models\form\EditProfileForm;
+use omarinina\infrastructure\models\form\SecurityProfileForm;
 use yii\web\NotFoundHttpException;
 use Yii;
 
@@ -48,6 +49,11 @@ class ProfileController extends SecurityController
 
     public function actionSecurity()
     {
-        return $this->render('security');
+        $securityForm = new SecurityProfileForm();
+        $user = Yii::$app->user->identity;
+        return $this->render('security', [
+            'model' => $securityForm,
+            'user' => $user
+        ]);
     }
 }

@@ -34,9 +34,6 @@ class EditProfileForm extends Model
     /** @var array|null */
     public ?array $categories = null;
 
-    /** @var bool */
-    public bool $hidden = false;
-
     public function rules(): array
     {
         return [
@@ -51,7 +48,6 @@ class EditProfileForm extends Model
             [['telegram'], 'string', 'max' => 64],
             [['bio'], 'string', 'max' => 2000],
             ['categories', 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['category' => 'id']],
-            ['hidden', 'boolean']
         ];
     }
     public function attributeLabels(): array
@@ -65,7 +61,6 @@ class EditProfileForm extends Model
             'telegram' => 'Telegram',
             'bio' => 'Информация о себе',
             'categories' => '',
-            'hidden' => 'показывать мои контакты только заказчикам, по заданиям которых работаю'
         ];
     }
 
