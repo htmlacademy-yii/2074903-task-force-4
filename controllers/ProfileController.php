@@ -50,10 +50,8 @@ class ProfileController extends SecurityController
     public function actionSecurity()
     {
         $securityForm = new SecurityProfileForm();
-        $user = Yii::$app->user->identity;
         return $this->render('security', [
             'model' => $securityForm,
-            'user' => $user
         ]);
     }
 }

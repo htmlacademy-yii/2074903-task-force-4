@@ -22,6 +22,12 @@ $model->categories = array_map(
     $user->executorCategories
 );
 
+if ($user->hidden) {
+    $checked = 'checked';
+} else {
+    $checked = null;
+}
+
 $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 ?>
 
@@ -94,6 +100,12 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                 ArrayHelper::map($categories, 'id', 'name'),
                 ['class' => 'form-group checkbox-profile control-label', 'unselect' => null]
             ) ?>
+
+            <?= $form->field(
+                $model,
+                'hidden',
+                ['options' => ['class' => 'form-group']]
+            )->checkbox(['class' => 'control-label checkbox-label', 'checked' => $checked]) ?>
         <?php endif; ?>
 
         <input type="submit" class="button button--blue" value="Сохранить">

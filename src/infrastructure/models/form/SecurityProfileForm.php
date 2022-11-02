@@ -17,9 +17,6 @@ class SecurityProfileForm extends Model
     /** @var string */
     public string $repeatedPassword = '';
 
-    /** @var bool */
-    public bool $hidden = false;
-
     public function rules(): array
     {
         return [
@@ -27,7 +24,6 @@ class SecurityProfileForm extends Model
             ['currentPassword', 'validateCurrentPassword'],
             ['newPassword', 'string', 'min' => 8],
             ['repeatedPassword', 'compare', 'compareAttribute' => 'newPassword'],
-            ['hidden', 'boolean']
         ];
     }
     public function attributeLabels(): array
@@ -36,7 +32,6 @@ class SecurityProfileForm extends Model
             'currentPassword' => 'Ваш текущий пароль',
             'newPassword' => 'Новый пароль',
             'repeatedPassword' => 'Повтор пароля',
-            'hidden' => 'показывать мои контакты только заказчикам, по заданиям которых работаю'
         ];
     }
 
