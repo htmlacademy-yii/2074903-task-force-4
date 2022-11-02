@@ -60,7 +60,7 @@ class ServiceTaskStatusChange
      */
     public static function changeStatusToDone(Tasks $task, int $userId): bool
     {
-        if (!$task->addDoneStatus()) {
+        if (!$task->addDoneStatus($userId)) {
             throw new ServerErrorHttpException(
                 'Your data has not been recorded, please try again later',
                 500
