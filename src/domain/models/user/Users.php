@@ -29,6 +29,7 @@ use yii\web\IdentityInterface;
  * @property string|null $phone
  * @property string|null $telegram
  * @property string|null $bio
+ * @property bool|null $hidden
  *
  * @property Cities $userCity
  * @property Categories[] $executorCategories
@@ -72,8 +73,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['bio', 'avatarSrc'], 'string'],
             [['email'], 'string', 'max' => 128],
             [['name', 'password'], 'string', 'max' => 255],
-            [['phone', 'telegram'], 'string', 'max' => 30],
+            [['phone'], 'string', 'max' => 30],
+            [['telegram'], 'string', 'max' => 64],
             [['email', 'vkId'], 'unique'],
+            [['hidden'], 'boolean'],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['city' => 'id']],
             [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
         ];

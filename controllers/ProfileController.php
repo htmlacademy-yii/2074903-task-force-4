@@ -2,7 +2,10 @@
 namespace app\controllers;
 
 use omarinina\application\services\user\show\ServiceUserShow;
+use omarinina\domain\models\Categories;
+use omarinina\infrastructure\models\form\EditProfileForm;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 class ProfileController extends SecurityController
 {
@@ -33,7 +36,14 @@ class ProfileController extends SecurityController
 
     public function actionEdit()
     {
-        return $this->render('edit');
+        $editForm = new EditProfileForm();
+        $user = Yii::$app->user->identity;
+        $categories = Categories::find()->all();
+        return $this->render('edit', [
+            'model' => $editForm,
+            'user' => $user,
+            'categories' => $categories
+        ]);
     }
 
     public function actionSecurity()

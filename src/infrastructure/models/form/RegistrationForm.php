@@ -23,7 +23,7 @@ class RegistrationForm extends Model
     /** @var string */
     public string $repeatedPassword = '';
 
-    /** @var boolean */
+    /** @var bool */
     public bool $executor = false;
 
     public function rules(): array
