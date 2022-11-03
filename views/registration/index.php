@@ -67,16 +67,24 @@ if ($userData && array_key_exists('city', $userData)) {
                             ]
                         ); ?>
                 </div>
+            <?php if (!$userData) : ?>
                 <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'пароль']); ?>
                 <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'повторите пароль']); ?>
-                <?= $form->field(
-                    $model,
-                    'executor',
-                    ['options' => ['class' => 'form-group']]
-                )->checkbox(['class' => 'control-label checkbox-label']) ?>
-
+            <?php else : ?>
+                <?php
+                $password = Yii::$app->security->generateRandomString(8);
+                $model->password = $password;
+                $model->repeatedPassword = $password;
+                var_dump($model);
+                ?>
+            <?php endif; ?>
+            <?= $form->field(
+                $model,
+                'executor',
+                ['options' => ['class' => 'form-group']]
+            )->checkbox(['class' => 'control-label checkbox-label']) ?>
                 <input type="submit" class="button button--blue" value="Создать аккаунт">
             <?php ActiveForm::end(); ?>
         </div>
