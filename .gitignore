@@ -35,8 +35,5 @@ tests/_support/_generated
 #vagrant folder
 /.vagrant
 
-#data of connection to DB
-config/db.php
-
 docker/data
 
