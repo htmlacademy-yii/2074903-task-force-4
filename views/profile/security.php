@@ -2,7 +2,6 @@
 /** @var $this View */
 /** @var SecurityProfileForm $model */
 
-use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\models\form\SecurityProfileForm;
 use yii\web\View;
 use app\widgets\ProfileNavigationWidget;

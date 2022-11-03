@@ -75,10 +75,17 @@ if ($userData && array_key_exists('city', $userData)) {
             <?php else : ?>
                 <?php
                 $password = Yii::$app->security->generateRandomString(8);
-                $model->password = $password;
-                $model->repeatedPassword = $password;
-                var_dump($model);
                 ?>
+                <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group', 'style' => 'display:none']])
+                    ->passwordInput([
+                        'placeholder' => 'пароль',
+                        'value' => $password
+                    ]); ?>
+                <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group', 'style' => 'display:none']])
+                    ->passwordInput([
+                        'placeholder' => 'повторите пароль',
+                        'value' => $password
+                    ]); ?>
             <?php endif; ?>
             <?= $form->field(
                 $model,

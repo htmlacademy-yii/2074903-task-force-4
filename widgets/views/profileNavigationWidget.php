@@ -4,6 +4,7 @@ use app\widgets\assets\ProfileNavigationWidgetAsset;
 use yii\widgets\Menu;
 
 ProfileNavigationWidgetAsset::register($this);
+$user = Yii::$app->user->identity;
 
 ?>
 
@@ -19,8 +20,8 @@ echo Menu::widget([
             'url' => ['profile/edit'],
         ],
         [
-            'label' => 'Безопасность',
-            'url' => ['profile/security'],
+            'label' => $user->vkId ? null : 'Безопасность',
+            'url' => $user->vkId ? null : ['profile/security'],
         ],
     ],
     'options' => [

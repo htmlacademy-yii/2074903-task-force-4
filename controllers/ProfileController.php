@@ -76,8 +76,8 @@ class ProfileController extends SecurityController
             ]);
         } catch (ServerErrorHttpException|InvalidConfigException $e) {
             return $e->getMessage();
-//        } catch (\Throwable $e) {
-//            return 'Something wrong. Sorry, please, try again later';
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 
@@ -89,6 +89,10 @@ class ProfileController extends SecurityController
         try {
             $securityForm = new SecurityProfileForm();
             $user = Yii::$app->user->identity;
+
+            if ($user->vkId) {
+                return $this->redirect(['edit']);
+            }
 
             if (Yii::$app->request->getIsPost()) {
                 $securityForm->load(Yii::$app->request->post());
