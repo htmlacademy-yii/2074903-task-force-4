@@ -224,9 +224,14 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                     ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
             </p>
             <p>
-                <?= $form->field($model, 'score', ['options' => ['class'=> 'completion-head control-label']])
-                    ->textInput(['placeholder' => 'Оцените работу от 1 до 5']); ?>
+                <?= $form->field($model, 'score', ['options' => [
+                    'class'=> 'completion-head control-label',
+                    'style' => 'display: none']])
+                    ->textInput(['id' => 'acceptance-form-rate',
+                    ]); ?>
             </p>
+            <p class="completion-head control-label">Оценка работы</p>
+            <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
 
             <?php
             echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);

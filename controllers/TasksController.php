@@ -106,8 +106,8 @@ class TasksController extends SecurityController
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
-        } catch (\Throwable $e) {
-            return 'Something wrong. Sorry, please, try again later';
+//        } catch (\Throwable $e) {
+//            return 'Something wrong. Sorry, please, try again later';
         }
     }
 

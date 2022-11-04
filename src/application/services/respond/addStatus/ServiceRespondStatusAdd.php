@@ -25,7 +25,6 @@ class ServiceRespondStatusAdd
                     500
                 );
             }
-
             return $respond;
         }
         return null;
@@ -59,10 +58,9 @@ class ServiceRespondStatusAdd
     public static function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void
     {
         if (isset($responds[0])) {
-            Yii::$app->db->transaction(function ($responds) use ($acceptedRespond) {
+            Yii::$app->db->transaction(function () use ($responds, $acceptedRespond) {
                 foreach ($responds as $respond) {
                     if (!$respond->status && $respond->id !== $acceptedRespond->id) {
-                        /** @var Responds $respond */
                         $respond->addRefusedStatus();
                     }
                 }
