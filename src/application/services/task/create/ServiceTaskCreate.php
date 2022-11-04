@@ -2,9 +2,11 @@
 
 namespace omarinina\application\services\task\create;
 
+use omarinina\domain\models\Cities;
 use omarinina\domain\models\task\Tasks;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 
@@ -14,9 +16,11 @@ class ServiceTaskCreate
      * @param array $attributes
      * @param int $userId
      * @param string|null $formExpiryDate
+     * @param object|null $GeoObject
      * @return Tasks|null
-     * @throws ServerErrorHttpException
      * @throws InvalidConfigException
+     * @throws NotFoundHttpException
+     * @throws ServerErrorHttpException
      */
     public static function saveNewTask(
         array $attributes,
@@ -29,8 +33,11 @@ class ServiceTaskCreate
         $createdTask->clientId = $userId;
         $createdTask->status = TaskStatusConstants::ID_NEW_STATUS;
         if ($GeoObject) {
-            $city = $GeoObject->description;
-            $createdTask->city = explode(',', $city)[0];
+            $city = explode(',', $GeoObject->description)[0];
+            if (!Cities::findOne(['name' => $city])) {
+                throw new NotFoundHttpException('This city is not founded', 404);
+            }
+            $createdTask->city = $city;
             $createdTask->address = $GeoObject->name;
             $coordinates = explode(' ', $GeoObject->Point->pos);
             $createdTask->lat = $coordinates[1];

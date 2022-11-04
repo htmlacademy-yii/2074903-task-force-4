@@ -127,7 +127,7 @@ class TasksController extends SecurityController
                     if (!$createTaskForm->isLocationExistGeocoder()) {
                         Yii::$app->session->setFlash(
                             'error',
-                            'Координаты вашего адресе не были найдены. Пожалуйста, попробуйте что-нибудь изменить.'
+                            'Координаты вашего адреса не были найдены. Пожалуйста, попробуйте что-нибудь изменить.'
                         );
                         return $this->render('create', [
                             'model' => $createTaskForm,
@@ -151,10 +151,10 @@ class TasksController extends SecurityController
                 'model' => $createTaskForm,
                 'categories' => $categories
             ]);
-        } catch (ServerErrorHttpException|InvalidConfigException $e) {
+        } catch (ServerErrorHttpException|InvalidConfigException|NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (GuzzleException $e) {
-            return 'Your data has not been recorded with location, please try again later';
+            return 'Your data has not been recorded with location, please, try again later';
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
         }

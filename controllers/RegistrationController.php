@@ -65,8 +65,8 @@ class RegistrationController extends Controller
             ]);
         } catch (ServerErrorHttpException|\yii\base\Exception $e) {
             return $e->getMessage();
-//        } catch (\Throwable $e) {
-//            return 'Something wrong. Sorry, please, try again later';
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 }
