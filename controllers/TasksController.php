@@ -7,6 +7,7 @@ use omarinina\application\services\file\save\ServiceFileTaskRelations;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
+use omarinina\domain\models\Files;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\base\InvalidConfigException;
@@ -165,7 +166,12 @@ class TasksController extends SecurityController
         }
     }
 
-    public function actionMine(?int $status = null)
+    /**
+     * @param int|null $status
+     * @return string
+     * @throws \Throwable
+     */
+    public function actionMine(?int $status = null) : string
     {
         $currentUser = Yii::$app->user->identity;
         $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?

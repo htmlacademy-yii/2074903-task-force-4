@@ -148,19 +148,30 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                 <dd><?= $currentTask->taskStatus->name ?></dd>
             </dl>
         </div>
+        <?php if ($currentTask->files) : ?>
         <div class="right-card white file-card">
             <h4 class="head-card">Файлы задания</h4>
             <ul class="enumeration-list">
+                <?php foreach ($currentTask->files as $file) : ?>
                 <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">my_picture.jpg</a>
-                    <p class="file-size">356 Кб</p>
+                    <a href="<?= Url::to(['file/download', 'fileId' => $file->id]) ?>"
+                       class="link link--block link--clip">
+                        <?= str_replace(
+                            '/uploads/',
+                            '',
+                            $file->fileSrc
+                        ) ?>
+                    </a>
+                    <p class="file-size">
+                        <?php echo Yii::$app->formatter->asShortSize(
+                            filesize(Yii::getAlias('@webroot').$file->fileSrc)
+                        ) ?>
+                    </p>
                 </li>
-                <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">information.docx</a>
-                    <p class="file-size">12 Кб</p>
-                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -231,7 +242,9 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                     ]); ?>
             </p>
             <p class="completion-head control-label">Оценка работы</p>
-            <div class="stars-rating big active-stars"><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span></div>
+            <div class="stars-rating big active-stars">
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
 
             <?php
             echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);
