@@ -60,7 +60,13 @@ class CreateTaskForm extends Model
         ];
     }
 
-    public function validateExpiryDate($attribute, $params)
+    /**
+     * @param $attribute
+     * @param $params
+     * @return void
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function validateExpiryDate($attribute, $params) : void
     {
         if (!$this->hasErrors()) {
             if (Yii::$app->formatter->asDatetime($this->expiryDate, 'php:Y-m-d') <

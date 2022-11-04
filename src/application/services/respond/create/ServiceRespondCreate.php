@@ -12,14 +12,16 @@ class ServiceRespondCreate
     /**
      * @param Users $user
      * @param Tasks $task
-     * @param array $attributes
+     * @param array|null $attributes
      * @return void
      * @throws ServerErrorHttpException
      */
-    public static function saveNewRespond(Users $user, Tasks $task, array $attributes): void
+    public static function saveNewRespond(Users $user, Tasks $task, ?array $attributes = null): void
     {
         $newRespond = new Responds();
-        $newRespond->attributes = $attributes;
+        if ($attributes) {
+            $newRespond->attributes = $attributes;
+        }
         $newRespond->taskId = $task->id;
         $newRespond->executorId = $user->id;
         if (!$newRespond->save(false)) {

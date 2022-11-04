@@ -114,7 +114,9 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                 <p class="info-text">
                     <span class="current-time"><?= $respond->countTimeAgoPost($respond->createAt) ?>
                     </span> назад</p>
+                <?php if ($respond->price) : ?>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
+                <?php endif; ?>
             </div>
                 <?php if (!$respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
             <div class="button-popup">
@@ -262,7 +264,8 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             ?>
             <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
                 ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
-            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group', 'placeholder' => '1000']]) ?>
+            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group']])
+                ->textInput(['placeholder' => '1000']) ?>
             <?php
             echo Html::submitInput(
                 'Завершить',
