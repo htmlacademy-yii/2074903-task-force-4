@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var yii\web\View $this */
 /** @var string $content */
 /** @var omarinina\domain\models\user\Users $user */

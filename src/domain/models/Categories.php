@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\domain\models;
 
 use omarinina\domain\models\user\ExecutorCategories;

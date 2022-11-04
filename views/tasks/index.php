@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\widgets\TaskWidget;

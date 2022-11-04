@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\application\services\task\filter;
 
 use omarinina\domain\models\task\Tasks;

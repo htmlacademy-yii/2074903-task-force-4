@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\application\services\task\create;
 
 use omarinina\domain\models\Cities;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use yii\authclient\clients\VKontakte;
 use yii\authclient\Collection;
 use yii\helpers\Html;

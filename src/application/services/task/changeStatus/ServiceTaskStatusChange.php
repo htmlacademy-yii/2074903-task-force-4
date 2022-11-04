@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\application\services\task\changeStatus;
 
 use omarinina\domain\exception\task\AvailableActionsException;

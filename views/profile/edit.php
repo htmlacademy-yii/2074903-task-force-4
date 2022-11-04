@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var $this View */
 /** @var EditProfileForm $model */
 /** @var Users $user */

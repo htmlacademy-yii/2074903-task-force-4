@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use omarinina\domain\models\task\Tasks;
 
 $tasks = Tasks::find()->select('id')
@@ -11,6 +13,6 @@ $tasks = Tasks::find()->select('id')
  */
 return [
     'taskId' => $faker->unique()->randomElement($tasks)['id'],
-    'score' => $faker->numberBetween(1,5),
+    'score' => $faker->numberBetween(1, 5),
     'comment' => $faker->text()
 ];

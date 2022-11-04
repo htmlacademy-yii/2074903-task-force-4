@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use omarinina\domain\models\user\Roles;
 use omarinina\domain\models\Cities;
 

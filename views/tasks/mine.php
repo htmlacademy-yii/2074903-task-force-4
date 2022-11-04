@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use app\widgets\TaskWidget;
 use yii\widgets\Menu;
 use omarinina\infrastructure\constants\UserRoleConstants;

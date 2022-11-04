@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\infrastructure\models\form;
 
 use omarinina\infrastructure\constants\TaskStatusConstants;

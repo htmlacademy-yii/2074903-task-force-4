@@ -1,6 +1,8 @@
 <?php
 
-/* @var $this View */
+declare(strict_types=1);
+
+/** @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
 /** @var omarinina\domain\models\task\Responds[] $responds */
 /** @var omarinina\infrastructure\models\form\TaskResponseForm $model */

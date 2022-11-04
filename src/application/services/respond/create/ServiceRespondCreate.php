@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\application\services\respond\create;
 
 use omarinina\domain\models\task\Responds;

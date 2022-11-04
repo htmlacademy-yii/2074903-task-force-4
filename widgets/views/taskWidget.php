@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use app\widgets\assets\TaskWidgetAsset;
 use omarinina\domain\models\task\Tasks;
 use yii\helpers\Url;

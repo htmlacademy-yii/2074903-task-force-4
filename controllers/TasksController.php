@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace app\controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
@@ -7,7 +10,6 @@ use omarinina\application\services\file\save\ServiceFileTaskRelations;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
-use omarinina\domain\models\Files;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\base\InvalidConfigException;

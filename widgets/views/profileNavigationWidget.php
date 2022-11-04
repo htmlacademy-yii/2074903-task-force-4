@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use app\widgets\assets\ProfileNavigationWidgetAsset;
 use yii\widgets\Menu;
 
