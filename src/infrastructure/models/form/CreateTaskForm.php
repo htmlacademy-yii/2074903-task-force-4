@@ -6,6 +6,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\domain\models\Categories;
 use yii\base\Model;
+use Yii;
+use DateTime;
 
 class CreateTaskForm extends Model
 {
@@ -51,10 +53,21 @@ class CreateTaskForm extends Model
             [['description'], 'string', 'min' => 30, 'max' => 2000],
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['expiryDate'], 'default', 'value' => null],
+            [['expiryDate'], 'validateExpiryDate'],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
             [['location'], 'default', 'value' => null],
         ];
+    }
+
+    public function validateExpiryDate($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            if (Yii::$app->formatter->asDatetime($this->expiryDate, 'php:Y-m-d') <
+                Yii::$app->formatter->asDatetime(new DateTime('now'), 'php:Y-m-d')) {
+                $this->addError($attribute, 'Дата исполнения не может быть раньше сегодняшнего дня');
+            }
+        }
     }
 
     /**
