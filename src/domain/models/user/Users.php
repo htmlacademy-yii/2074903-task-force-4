@@ -401,6 +401,9 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         $this->bio = $form->bio;
         $this->hidden = $form->hidden;
         if ($avatarSrc) {
+            if ($this->avatarSrc) {
+                unlink(Yii::$app->basePath . '/web/' . $this->avatarSrc);
+            }
             $this->avatarSrc = $avatarSrc;
         }
         if ($form->birthDate !== null) {

@@ -2,8 +2,6 @@
 
 namespace omarinina\application\services\file\parse;
 
-use omarinina\domain\models\Files;
-use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
 class ServiceFileParse
@@ -16,9 +14,9 @@ class ServiceFileParse
     {
         if ($avatar) {
             $name = uniqid('upload') . '.' . $avatar->getExtension();
-            $avatar->saveAs('@webroot/uploads/' . $name);
+            $avatar->saveAs('@webroot/uploads/avatars/' . $name);
 
-            return '/uploads/' . $name;
+            return '/uploads/avatars/' . $name;
         }
         return null;
     }
