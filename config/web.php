@@ -1,6 +1,7 @@
 <?php
 
 use omarinina\infrastructure\constants\KeysConstants;
+use GuzzleHttp\Client;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -39,6 +40,11 @@ $config = [
                 ],
             ],
         ],
+        'yandexGeoClient' => function () {
+            return new Client([
+                'base_uri' => 'https://geocode-maps.yandex.ru/1.x',
+            ]);
+        },
         'user' => [
             'identityClass' => 'omarinina\domain\models\user\Users',
             'enableAutoLogin' => true,

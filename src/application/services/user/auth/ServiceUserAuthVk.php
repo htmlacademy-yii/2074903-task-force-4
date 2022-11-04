@@ -15,7 +15,6 @@ class ServiceUserAuthVk
      * @param VKontakte $vkClient
      * @return VKontakte
      * @throws HttpException
-     * @throws InvalidConfigException
      */
     public static function applyAccessTokenForVk(string $code, VKontakte $vkClient) : VKontakte
     {

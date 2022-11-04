@@ -5,6 +5,8 @@ namespace omarinina\application\services\location\pointReceive;
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\infrastructure\constants\KeysConstants;
 use GuzzleHttp\Client;
+use Yii;
+use yii\base\InvalidConfigException;
 
 class ServiceGeoObjectReceive
 {
@@ -12,14 +14,16 @@ class ServiceGeoObjectReceive
      * @param string|null $location
      * @return object|null
      * @throws GuzzleException
+     * @throws InvalidConfigException
      */
     public static function receiveGeoObjectFromYandexGeocoder(?string $location) : ?object
     {
         if ($location) {
-            $client = new Client();
+            /** @var Client $client */
+            $client = Yii::$app->get('yandexGeoClient');
             $responseGeocoder = $client->request(
                 'GET',
-                'https://geocode-maps.yandex.ru/1.x',
+                '',
                 [
                     'query' =>
                     [
