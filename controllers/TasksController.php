@@ -42,13 +42,18 @@ class TasksController extends SecurityController
     }
 
     /**
+     * @param int|null $category
      * @return string
      */
-    public function actionIndex(): string
+    public function actionIndex(?int $category = null): string
     {
         try {
             $categories = Categories::find()->all();
             $taskFilterForm = new TaskFilterForm();
+
+            if ($category) {
+                $taskFilterForm->categories[] = $category;
+            }
 
             $taskFilterForm->load(Yii::$app->request->post());
             if ($taskFilterForm->validate()) {
@@ -106,8 +111,8 @@ class TasksController extends SecurityController
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
-//        } catch (\Throwable $e) {
-//            return 'Something wrong. Sorry, please, try again later';
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
     }
 

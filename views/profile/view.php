@@ -55,13 +55,12 @@ if ($currentUser->birthDate) {
                     <?php if ($currentUser->executorCategories) : ?>
                         <?php foreach ($currentUser->executorCategories as $category) : ?>
                             <li class="special-item">
-                                <a href="#" class="link link--regular"><?= $category->name ?></a>
+                                <a href="<?= Url::to(['tasks/index', 'category' => $category->id]) ?>"
+                                   class="link link--regular"><?= $category->name ?></a>
                             </li>
                         <?php endforeach; ?>
                     <?php else : ?>
-                        <li class="special-item">
-                            <a href="#" class="link link--regular">Категории не выбраны</a>
-                        </li>
+                        <p>Категории не выбраны</p>
                     <?php endif; ?>
                 </ul>
             </div>
