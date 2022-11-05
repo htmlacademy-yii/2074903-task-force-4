@@ -7,9 +7,7 @@ declare(strict_types=1);
 
 use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
-use Yii;
 use omarinina\infrastructure\constants\UserRoleConstants;
-use DateTime;
 use omarinina\domain\models\task\Tasks;
 
 if ($currentUser->birthDate) {
@@ -31,11 +29,11 @@ if ($currentUser->birthDate) {
                     <div class="stars-rating big">
                         <?= str_repeat(
                             '<span class="fill-star">&nbsp;</span>',
-                            round($currentUser->getExecutorRating())
+                            (int)round($currentUser->getExecutorRating())
                         ) ?>
                         <?= str_repeat(
                             '<span>&nbsp;</span>',
-                            Users::MAX_RATING - round($currentUser->getExecutorRating())
+                            Users::MAX_RATING - (int)round($currentUser->getExecutorRating())
                         ) ?>
                     </div>
                     <span class="current-rate"><?= $currentUser->getExecutorRating() ?></span>
@@ -97,10 +95,10 @@ if ($currentUser->birthDate) {
                 <div class="stars-rating small">
                     <?= str_repeat(
                         '<span class="fill-star">&nbsp;</span>',
-                        round($executorReview->score)
+                        (int)round($executorReview->score)
                     ) ?><?= str_repeat(
                         '<span>&nbsp;</span>',
-                        Users::MAX_RATING - round($executorReview->score)
+                        Users::MAX_RATING - (int)round($executorReview->score)
                     ) ?>
                 </div>
                 <p class="info-text">

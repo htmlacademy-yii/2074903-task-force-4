@@ -37,7 +37,8 @@ class ServiceGeoObjectReceive
                 ]
             );
 
-            $payloadGeocoder = json_decode($responseGeocoder->getBody());
+            $jsonGeocoder = $responseGeocoder->getBody();
+            $payloadGeocoder = json_decode((string)$jsonGeocoder);
 
             if ($payloadGeocoder
                     ->response

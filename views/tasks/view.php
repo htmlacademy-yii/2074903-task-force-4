@@ -89,13 +89,13 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                     <div class="stars-rating small">
                         <?= str_repeat(
                             '<span class="fill-star">&nbsp;</span>',
-                            round(
+                            (int)round(
                                 Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
                         <?= str_repeat(
                             '<span>&nbsp;</span>',
-                            Users::MAX_RATING - round(
+                            Users::MAX_RATING - (int)round(
                                 Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
