@@ -2,30 +2,29 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\respond\create;
+namespace omarinina\application\services\respond;
 
+use omarinina\application\services\respond\interfaces\RespondCreateInterface;
 use omarinina\domain\models\task\Responds;
-use omarinina\domain\models\task\Tasks;
-use omarinina\domain\models\user\Users;
 use yii\web\ServerErrorHttpException;
 
-class ServiceRespondCreate
+class RespondCreateService implements RespondCreateInterface
 {
     /**
-     * @param Users $user
-     * @param Tasks $task
+     * @param int $userId
+     * @param int $taskId
      * @param array|null $attributes
      * @return void
      * @throws ServerErrorHttpException
      */
-    public static function saveNewRespond(Users $user, Tasks $task, ?array $attributes = null): void
+    public function saveNewRespond(int $userId, int $taskId, ?array $attributes = null): void
     {
         $newRespond = new Responds();
         if ($attributes) {
             $newRespond->attributes = $attributes;
         }
-        $newRespond->taskId = $task->id;
-        $newRespond->executorId = $user->id;
+        $newRespond->taskId = $taskId;
+        $newRespond->executorId = $userId;
         if (!$newRespond->save(false)) {
             throw new ServerErrorHttpException(
                 'Your data has not been recorded, please try again later',

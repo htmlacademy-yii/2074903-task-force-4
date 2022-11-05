@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\respond\addStatus\ServiceRespondStatusAdd;
-use omarinina\application\services\respond\create\ServiceRespondCreate;
+use omarinina\application\services\respond\interfaces\RespondCreateInterface;
 use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
-use omarinina\application\services\respond\RespondStatusAddService;
 use omarinina\application\services\review\create\ServiceReviewCreate;
 use omarinina\application\services\task\addData\ServiceTaskDataAdd;
 use omarinina\application\services\task\changeStatus\ServiceTaskStatusChange;
@@ -25,11 +23,21 @@ use yii\web\ServerErrorHttpException;
 
 class TaskActionsController extends SecurityController
 {
-    protected RespondStatusAddInterface $respondStatusAdd;
+    /** @var RespondStatusAddInterface */
+    private RespondStatusAddInterface $respondStatusAdd;
 
-    public function __construct($id, $module, RespondStatusAddInterface $respondStatusAdd, $config = [])
-    {
+    /** @var RespondCreateInterface */
+    private RespondCreateInterface $respondCreate;
+
+    public function __construct(
+        $id,
+        $module,
+        RespondStatusAddInterface $respondStatusAdd,
+        RespondCreateInterface $respondCreate,
+        $config = []
+    ) {
         $this->respondStatusAdd = $respondStatusAdd;
+        $this->respondCreate = $respondCreate;
         parent::__construct($id, $module, $config);
     }
 
@@ -135,7 +143,7 @@ class TaskActionsController extends SecurityController
                     if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
-                        ServiceRespondCreate::saveNewRespond($user, $task, $attributes);
+                        $this->respondCreate->saveNewRespond($user->id, $task->id, $attributes);
 
                         return $this->redirect(['tasks/view', 'id' => $taskId]);
                     }
