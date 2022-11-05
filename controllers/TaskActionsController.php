@@ -6,6 +6,7 @@ namespace app\controllers;
 
 use omarinina\application\services\respond\interfaces\RespondCreateInterface;
 use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
+use omarinina\application\services\respond\dto\NewRespondDto;
 use omarinina\application\services\review\create\ServiceReviewCreate;
 use omarinina\application\services\task\addData\ServiceTaskDataAdd;
 use omarinina\application\services\task\changeStatus\ServiceTaskStatusChange;
@@ -143,7 +144,7 @@ class TaskActionsController extends SecurityController
                     if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
-                        $this->respondCreate->saveNewRespond($user->id, $task->id, $attributes);
+                        $this->respondCreate->saveNewRespond(new NewRespondDto($user->id, $task->id, $attributes));
 
                         return $this->redirect(['tasks/view', 'id' => $taskId]);
                     }
