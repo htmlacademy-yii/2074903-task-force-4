@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use yii\data\Pagination;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use app\widgets\TaskWidget;
@@ -12,7 +13,7 @@ use omarinina\infrastructure\constants\ViewConstants;
 /** @var omarinina\domain\models\task\Tasks[] $newTasks */
 /** @var omarinina\domain\models\Categories[] $categories */
 /** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
-/** @var \yii\data\Pagination $pagination */
+/** @var Pagination $pagination */
 
 ?>
 

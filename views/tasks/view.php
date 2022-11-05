@@ -21,10 +21,10 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 <div class="main-content container">
     <div class="left-column">
         <div class="head-wrapper">
-            <h3 class="head-main"><?= $currentTask->name; ?></h3>
+            <h3 class="head-main"><?= Html::encode($currentTask->name); ?></h3>
             <p class="price price--big"><?= $currentTask->budget . ' ₽'; ?></p>
         </div>
-        <p class="task-description"><?= $currentTask->description; ?></p>
+        <p class="task-description"><?= Html::encode($currentTask->description); ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php endif; ?>
@@ -84,7 +84,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             <div class="feedback-wrapper">
                 <a href="<?= Url::to(['profile/view', 'id' => $respond->executor->id]) ?>"
                    class="link link--block link--big">
-                    <?= $respond->executor->name ?></a>
+                    <?= Html::encode($respond->executor->name) ?></a>
                 <div class="response-wrapper">
                     <div class="stars-rating small">
                         <?= str_repeat(
@@ -107,7 +107,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                         ) ?></p>
                 </div>
                 <p class="response-message">
-                    <?= $respond->comment ?>
+                    <?= Html::encode($respond->comment) ?>
                 </p>
 
             </div>

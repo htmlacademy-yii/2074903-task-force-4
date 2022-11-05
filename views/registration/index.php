@@ -55,7 +55,9 @@ if ($userData && array_key_exists('city', $userData)) {
                         'class' => ' form-group',
                         ]])
                         ->textInput(['placeholder' => 'something@google.com',
-                            'value' => $userData && array_key_exists('email', $userData) ? $userData['email'] : null
+                            'value' => $userData && array_key_exists('email', $userData) ?
+                                $userData['email'] :
+                                null
                         ]); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
                         ->dropDownList(
@@ -75,9 +77,7 @@ if ($userData && array_key_exists('city', $userData)) {
                 <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'повторите пароль']); ?>
             <?php else : ?>
-                <?php
-                $password = Yii::$app->security->generateRandomString(8);
-                ?>
+                <?php $password = Yii::$app->security->generateRandomString(8); ?>
                 <?= $form->field(
                     $model,
                     'password',

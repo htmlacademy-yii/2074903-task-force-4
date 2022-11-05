@@ -9,6 +9,7 @@ use omarinina\domain\models\user\Users;
 use yii\helpers\Url;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\domain\models\task\Tasks;
+use yii\helpers\Html;
 
 if ($currentUser->birthDate) {
     $date = date_create($currentUser->birthDate);
@@ -18,7 +19,7 @@ if ($currentUser->birthDate) {
 ?>
 <div class="main-content container">
     <div class="left-column">
-        <h3 class="head-main"><?= $currentUser->name ?></h3>
+        <h3 class="head-main"><?= Html::encode($currentUser->name) ?></h3>
         <div class="user-card">
             <div class="photo-rate">
                 <img class="card-photo"
@@ -42,7 +43,7 @@ if ($currentUser->birthDate) {
             </div>
             <p class="user-description">
                 <?php if ($currentUser->bio) : ?>
-                    <?= $currentUser->bio ?>
+                    <?= Html::encode($currentUser->bio) ?>
                 <?php else : ?>
                     Здесь пока ничего нет
                 <?php endif; ?>
@@ -84,11 +85,11 @@ if ($currentUser->birthDate) {
                  src="<?= $executorReview->client->avatarSrc ?>"
                  width="120" height="127" alt="Фото заказчиков">
             <div class="feedback-wrapper">
-                <p class="feedback"><?= $executorReview->comment ?></p>
+                <p class="feedback"><?= Html::encode($executorReview->comment) ?></p>
                 <p class="task">
                     Задание «
                     <a href="<?= Url::to(['tasks/view', 'id' => $executorReview->taskId]) ?>" class="link link--small">
-                        <?= $executorReview->task->name ?></a>»
+                        <?= Html::encode($executorReview->task->name) ?></a>»
                     <?= $executorReview->task->taskStatus->name ?></p>
             </div>
             <div class="feedback-wrapper">
@@ -128,24 +129,33 @@ if ($currentUser->birthDate) {
             </dl>
         </div>
         <?php endif; ?>
-        <?php if (!$currentUser->hidden &&
-            !Tasks::find()->where(['clientId' => $currentUser])->andWhere(['executorId' => Yii::$app->user->id])) : ?>
+        <?php if (!$currentUser->hidden ||
+            Tasks::find()->where(['clientId' => $currentUser->id])->andWhere(['executorId' => Yii::$app->user->id])) : ?>
         <div class="right-card white">
             <h4 class="head-card">Контакты</h4>
             <ul class="enumeration-list">
                 <?php if ($currentUser->phone) : ?>
                 <li class="enumeration-item">
-                    <a href="#" class="link link--block link--phone"><?= $currentUser->phone ?></a>
+                    <a
+                        href="tel:<?= $currentUser->phone ?>"
+                        class="link link--block link--phone"><?= $currentUser->phone ?>
+                    </a>
                 </li>
                 <?php endif; ?>
                 <?php if ($currentUser->email) : ?>
                 <li class="enumeration-item">
-                    <a href="#" class="link link--block link--email"><?= $currentUser->email ?></a>
+                    <a
+                        href="mailto:<?= $currentUser->email ?>"
+                        class="link link--block link--email"><?= Html::encode($currentUser->email) ?>
+                    </a>
                 </li>
                 <?php endif; ?>
                 <?php if ($currentUser->telegram) : ?>
                 <li class="enumeration-item">
-                    <a href="#" class="link link--block link--tg"><?= $currentUser->telegram ?></a>
+                    <a
+                        href="https://t.me/<?= substr($currentUser->telegram, 1) ?>"
+                        class="link link--block link--tg"><?= Html::encode($currentUser->telegram) ?>
+                    </a>
                 </li>
                 <?php endif; ?>
             </ul>

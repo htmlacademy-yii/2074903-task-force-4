@@ -26,7 +26,8 @@ use omarinina\infrastructure\constants\TaskStatusConstants;
                                 TaskStatusConstants::CLIENT_TASK_FILTERS[0]['url'],
                                 'status' => TaskStatusConstants::CLIENT_TASK_FILTERS[0]['status']
                             ],
-                            'active' => Yii::$app->request->url === '/tasks/mine' || Yii::$app->request->url === '/tasks/mine?status=1'
+                            'active' => Yii::$app->request->url === '/tasks/mine' ||
+                                Yii::$app->request->url === '/tasks/mine?status=1'
                         ],
                         [
                             'label' => TaskStatusConstants::CLIENT_TASK_FILTERS[1]['name'],
@@ -61,7 +62,8 @@ use omarinina\infrastructure\constants\TaskStatusConstants;
                                 TaskStatusConstants::EXECUTOR_TASK_FILTERS[0]['url'],
                                 'status' => TaskStatusConstants::EXECUTOR_TASK_FILTERS[0]['status']
                             ],
-                            'active' => Yii::$app->request->url === '/tasks/mine' || Yii::$app->request->url === '/tasks/mine?status=3'
+                            'active' => Yii::$app->request->url === '/tasks/mine' ||
+                                Yii::$app->request->url === '/tasks/mine?status=3'
                         ],
                         [
                             'label' => TaskStatusConstants::EXECUTOR_TASK_FILTERS[1]['name'],

@@ -7,7 +7,7 @@ namespace omarinina\application\services\file\save;
 use omarinina\domain\models\task\TaskFiles;
 use yii\web\ServerErrorHttpException;
 
-class  ServiceFileTaskRelations
+class ServiceFileTaskRelations
 {
     /**
      * @param int $taskId
@@ -30,5 +30,4 @@ class  ServiceFileTaskRelations
 
         return $taskFile;
     }
-
 }

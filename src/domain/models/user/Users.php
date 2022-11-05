@@ -398,7 +398,11 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     {
         $this->name = $form->name;
         $this->email = $form->email;
-        $this->phone = $form->phone;
+        if ($form->phone) {
+            $correctPhone = (int)substr($form->phone, 0, 1) === 7 ?
+                '+' . $form->phone : '+7' . (int)substr($form->phone, 1, 10);
+                $this->phone = $correctPhone;
+        }
         $this->telegram = $form->telegram;
         $this->bio = $form->bio;
         $this->hidden = $form->hidden;

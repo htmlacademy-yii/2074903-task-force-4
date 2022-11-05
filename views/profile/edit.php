@@ -16,6 +16,7 @@ use omarinina\domain\models\user\Users;
 use yii\helpers\ArrayHelper;
 use yii\widgets\MaskedInput;
 use omarinina\infrastructure\constants\UserRoleConstants;
+use yii\helpers\Html;
 
 $model->categories = array_map(
     function ($executorCategories) {
@@ -64,14 +65,14 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
         <?= $form->field($model, 'name', ['options' => ['class' => 'form-group',]])
             ->textInput([
                 'placeholder' => 'Иван Иванов',
-                'value' => $user->name
+                'value' => Html::encode($user->name)
             ]); ?>
 
         <div class="half-wrapper">
             <?= $form->field($model, 'email', ['options' => ['class' => ' form-group']])
                 ->textInput([
                     'placeholder' => 'something@google.com',
-                    'value' => $user->email
+                    'value' => Html::encode($user->email)
                 ]); ?>
             <?= $form->field($model, 'birthDate', ['options' => ['class' => 'form-group']])
                 ->input('date', ['value' => $user->birthDate]); ?>
@@ -86,14 +87,14 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             <?= $form->field($model, 'telegram', ['options' => ['class' => ' form-group']])
                 ->textInput([
                     'placeholder' => '@example',
-                    'value' => $user->telegram
+                    'value' => Html::encode($user->telegram)
                 ]); ?>
         </div>
 
         <?= $form->field($model, 'bio', ['options' => ['class' => 'form-group']])
             ->textarea([
                 'placeholder' => 'Напишите о себе подробнее',
-                'value' => $user->bio
+                'value' => Html::encode($user->bio)
             ]); ?>
 
         <?php if ($user->role === UserRoleConstants::ID_EXECUTOR_ROLE) : ?>

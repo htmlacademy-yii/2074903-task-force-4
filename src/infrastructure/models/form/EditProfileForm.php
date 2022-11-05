@@ -50,6 +50,7 @@ class EditProfileForm extends Model
             [['avatar', 'birthDate', 'phone', 'telegram', 'bio', 'hidden', 'categories'], 'default', 'value' => null],
             [['phone'], 'match', 'pattern' => '/^[\d]{11}/i'],
             [['telegram'], 'string', 'max' => 64],
+            [['telegram'], 'match', 'pattern' => '/^@\w*$/i', 'message' => 'Телеграм должен начинаться со знака @'],
             [['bio'], 'string', 'max' => 2000],
             ['categories', 'validateCategories'],
             ['hidden', 'boolean'],
