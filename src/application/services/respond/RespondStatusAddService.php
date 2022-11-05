@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\respond\addStatus;
+namespace omarinina\application\services\respond;
 
+use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
 use omarinina\domain\models\task\Responds;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use yii\web\ServerErrorHttpException;
 use Yii;
 
-class ServiceRespondStatusAdd
+class RespondStatusAddService implements RespondStatusAddInterface
 {
     /**
      * @param Responds $respond
@@ -17,7 +18,7 @@ class ServiceRespondStatusAdd
      * @return Responds|null
      * @throws ServerErrorHttpException
      */
-    public static function addAcceptStatus(Responds $respond, int $userId) : ?Responds
+    public function addAcceptStatus(Responds $respond, int $userId) : ?Responds
     {
         $task = $respond->task;
         if ($userId === $task->clientId && $task->status === TaskStatusConstants::ID_NEW_STATUS) {
@@ -38,7 +39,7 @@ class ServiceRespondStatusAdd
      * @return void
      * @throws ServerErrorHttpException
      */
-    public static function addRefuseStatus(Responds $respond, int $userId) : void
+    public function addRefuseStatus(Responds $respond, int $userId) : void
     {
         $task = $respond->task;
         if ($userId === $task->clientId && $task->status === TaskStatusConstants::ID_NEW_STATUS) {
@@ -57,7 +58,7 @@ class ServiceRespondStatusAdd
      * @return void
      * @throws ServerErrorHttpException|\Throwable
      */
-    public static function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void
+    public function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void
     {
         if (isset($responds[0])) {
             Yii::$app->db->transaction(function () use ($responds, $acceptedRespond) {

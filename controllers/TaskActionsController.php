@@ -6,6 +6,8 @@ namespace app\controllers;
 
 use omarinina\application\services\respond\addStatus\ServiceRespondStatusAdd;
 use omarinina\application\services\respond\create\ServiceRespondCreate;
+use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
+use omarinina\application\services\respond\RespondStatusAddService;
 use omarinina\application\services\review\create\ServiceReviewCreate;
 use omarinina\application\services\task\addData\ServiceTaskDataAdd;
 use omarinina\application\services\task\changeStatus\ServiceTaskStatusChange;
@@ -23,6 +25,15 @@ use yii\web\ServerErrorHttpException;
 
 class TaskActionsController extends SecurityController
 {
+    protected RespondStatusAddInterface $respondStatusAdd;
+
+    public function __construct($id, $module, RespondStatusAddInterface $respondStatusAdd, $config = [])
+    {
+        $this->respondStatusAdd = $respondStatusAdd;
+        parent::__construct($id, $module, $config);
+    }
+
+
     /**
      * @param int $respondId
      * @return Response|string
@@ -36,9 +47,9 @@ class TaskActionsController extends SecurityController
 
                 $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
 
-                if (ServiceRespondStatusAdd::addAcceptStatus($respond, $userId)->status) {
+                if ($this->respondStatusAdd->addAcceptStatus($respond, $userId)->status) {
                     ServiceTaskStatusChange::changeStatusToInWork($task);
-                    ServiceRespondStatusAdd::addRestRespondsRefuseStatus(
+                    $this->respondStatusAdd->addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond
                     );
@@ -66,7 +77,7 @@ class TaskActionsController extends SecurityController
                 $task = $respond->task;
                 $userId = \Yii::$app->user->id;
 
-                ServiceRespondStatusAdd::addRefuseStatus($respond, $userId);
+                $this->respondStatusAdd->addRefuseStatus($respond, $userId);
 
                 return $this->redirect(['tasks/view', 'id' => $task->id]);
             }
@@ -90,7 +101,7 @@ class TaskActionsController extends SecurityController
                 $userId = Yii::$app->user->id;
 
                 if (ServiceTaskStatusChange::changeStatusToCancelled($task, $userId)) {
-                    ServiceRespondStatusAdd::addRestRespondsRefuseStatus($task->responds);
+                    $this->respondStatusAdd->addRestRespondsRefuseStatus($task->responds);
                 }
 
                 return $this->redirect(['tasks/view', 'id' => $task->id]);

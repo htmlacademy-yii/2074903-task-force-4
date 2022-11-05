@@ -9,7 +9,10 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'omarinina\infrastructure\modules\Bootstrap'
+    ],
     'homeUrl' => ['tasks/index'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
