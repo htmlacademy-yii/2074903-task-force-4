@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace omarinina\application\services\file\parse;
 
+use Yii;
 use yii\web\UploadedFile;
+use omarinina\infrastructure\constants\HelperConstants;
 
 class ServiceFileParse
 {
@@ -16,9 +18,21 @@ class ServiceFileParse
     {
         if ($avatar) {
             $name = uniqid('upload') . '.' . $avatar->getExtension();
-            $avatar->saveAs('@webroot/uploads/avatars/' . $name);
+            $avatar->saveAs('@webroot' . HelperConstants::PART_PATH_AVATAR . $name);
 
-            return '/uploads/avatars/' . $name;
+            return HelperConstants::PART_PATH_AVATAR . $name;
+        }
+        return null;
+    }
+
+    public static function parseAvatarVkFile(?string $urlAvatarVk = null) : ?string
+    {
+        if ($urlAvatarVk) {
+            $url = $urlAvatarVk;
+            $fileName = HelperConstants::PART_PATH_AVATAR . uniqid('upload') . '.' . 'jpg';
+            $path = Yii::getAlias('@webroot') . $fileName;
+            file_put_contents($path, file_get_contents($url));
+            return $fileName;
         }
         return null;
     }
