@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace omarinina\domain\actions;
 
-use omarinina\application\services\user\show\ServiceUserShow;
+use omarinina\application\services\user\show\UserShowService;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use Yii;

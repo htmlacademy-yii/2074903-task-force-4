@@ -44,3 +44,8 @@ Yii::$container->set(
     \omarinina\application\services\user\interfaces\UserCategoriesUpdateInterface::class,
     \omarinina\application\services\user\UserCategoriesUpdateService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\user\interfaces\UserShowInterface::class,
+    \omarinina\application\services\user\UserShowService::class
+);

@@ -6,7 +6,7 @@ namespace app\controllers;
 
 use omarinina\application\services\file\interfaces\FileParseInterface;
 use omarinina\application\services\user\interfaces\UserCategoriesUpdateInterface;
-use omarinina\application\services\user\show\ServiceUserShow;
+use omarinina\application\services\user\interfaces\UserShowInterface;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\models\form\EditProfileForm;
@@ -26,15 +26,20 @@ class ProfileController extends SecurityController
     /** @var UserCategoriesUpdateInterface */
     private UserCategoriesUpdateInterface $userCategoriesUpdate;
 
+    /** @var UserShowInterface */
+    private UserShowInterface $userShow;
+
     public function __construct(
         $id,
         $module,
         FileParseInterface $fileParse,
         UserCategoriesUpdateInterface $userCategoriesUpdate,
+        UserShowInterface $userShow,
         $config = []
     ) {
         $this->fileParse = $fileParse;
         $this->userCategoriesUpdate = $userCategoriesUpdate;
+        $this->userShow = $userShow;
         parent::__construct($id, $module, $config);
     }
 
@@ -49,7 +54,7 @@ class ProfileController extends SecurityController
                 $currentUser = Yii::$app->user->id;
                 $userProfile = ($currentUser === $id) ?
                     Users::findOne($id) :
-                    ServiceUserShow::getUserExecutorById($id);
+                    $this->userShow->getUserExecutorById($id);
             } else {
                 throw new NotFoundHttpException('User is not found', 404);
             }
