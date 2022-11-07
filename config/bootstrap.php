@@ -49,3 +49,8 @@ Yii::$container->set(
     \omarinina\application\services\user\interfaces\UserShowInterface::class,
     \omarinina\application\services\user\UserShowService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\user\interfaces\UserCreateInterface::class,
+    \omarinina\application\services\user\UserCreateService::class
+);

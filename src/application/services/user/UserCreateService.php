@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\user\create;
+namespace omarinina\application\services\user;
 
+use omarinina\application\services\user\dto\NewUserDto;
+use omarinina\application\services\user\interfaces\UserCreateInterface;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\ViewConstants;
@@ -14,33 +16,26 @@ use yii\base\Exception;
 use yii\web\ServerErrorHttpException;
 use Yii;
 
-class ServiceUserCreate
+class UserCreateService implements UserCreateInterface
 {
     /**
-     * @param RegistrationForm $form
-     * @param array $attributes
-     * @param array|null $userData
-     * @param string|null $avatarVk
+     * @param NewUserDto $dto
      * @return Users|null
      * @throws Exception
      * @throws ServerErrorHttpException
      */
-    public static function createNewUser(
-        RegistrationForm $form,
-        array $attributes,
-        ?array $userData = null,
-        ?string $avatarVk = null
-    ) : ?Users {
+    public function createNewUser(NewUserDto $dto) : ?Users
+    {
         $createdUser = new Users();
-        $createdUser->attributes = $attributes;
-        if ($userData) {
-            $createdUser->vkId = $userData['id'];
+        $createdUser->attributes = $dto->attributes;
+        if ($dto->userData) {
+            $createdUser->vkId = $dto->userData['id'];
         }
-        $createdUser->avatarSrc = $avatarVk ??
+        $createdUser->avatarSrc = $dto->avatarVk ??
             ViewConstants::DEFAULT_AVATARS[array_rand(ViewConstants::DEFAULT_AVATARS, 1)];
-        $createdUser->email = mb_strtolower($form->email);
-        $createdUser->password = Yii::$app->getSecurity()->generatePasswordHash($form->password);
-        $createdUser->role =  ($form->executor === true) ?
+        $createdUser->email = mb_strtolower($dto->form->email);
+        $createdUser->password = Yii::$app->getSecurity()->generatePasswordHash($dto->form->password);
+        $createdUser->role =  ($dto->form->executor === true) ?
             UserRoleConstants::ID_EXECUTOR_ROLE :
             UserRoleConstants::ID_CLIENT_ROLE;
 

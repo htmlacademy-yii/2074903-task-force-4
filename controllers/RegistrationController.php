@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use omarinina\application\services\file\interfaces\FileParseInterface;
-use omarinina\application\services\user\create\ServiceUserCreate;
+use omarinina\application\services\user\dto\NewUserDto;
+use omarinina\application\services\user\interfaces\UserCreateInterface;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
 use Yii;
@@ -19,13 +20,18 @@ class RegistrationController extends Controller
     /** @var FileParseInterface */
     private FileParseInterface $fileParse;
 
+    /** @var UserCreateInterface */
+    private UserCreateInterface $userCreate;
+
     public function __construct(
         $id,
         $module,
         FileParseInterface $fileParse,
+        UserCreateInterface $userCreate,
         $config = []
     ) {
         $this->fileParse = $fileParse;
+        $this->userCreate = $userCreate;
         parent::__construct($id, $module, $config);
     }
 
@@ -63,15 +69,15 @@ class RegistrationController extends Controller
                 $registrationForm->load(Yii::$app->request->post());
 
                 if ($registrationForm->validate()) {
-                    $avatarVk = array_key_exists('photo', $userData) ?
+                    $avatarVk = !$userData ? null : (array_key_exists('photo', $userData) ?
                         $this->fileParse->parseAvatarVkFile($userData['photo']) :
-                        null;
-                    $newUser = ServiceUserCreate::createNewUser(
+                        null);
+                    $newUser = $this->userCreate->createNewUser(new NewUserDto(
                         $registrationForm,
                         Yii::$app->request->post('RegistrationForm'),
                         $userData,
                         $avatarVk
-                    );
+                    ));
                     if ($userData) {
                         return $this->redirect(['auth/login', 'userId' => $newUser->id]);
                     }
