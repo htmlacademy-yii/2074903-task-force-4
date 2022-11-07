@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\task\create;
+namespace omarinina\application\services\task;
 
+use omarinina\application\services\task\dto\NewTaskDto;
+use omarinina\application\services\task\interfaces\TaskCreateInterface;
 use omarinina\domain\models\Cities;
 use omarinina\domain\models\task\Tasks;
 use Yii;
@@ -12,42 +14,35 @@ use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 
-class ServiceTaskCreate
+class TaskCreateService implements TaskCreateInterface
 {
     /**
-     * @param array $attributes
-     * @param int $userId
-     * @param string|null $formExpiryDate
-     * @param object|null $GeoObject
+     * @param NewTaskDto $dto
      * @return Tasks|null
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
      * @throws ServerErrorHttpException
      */
-    public static function saveNewTask(
-        array $attributes,
-        int $userId,
-        ?string $formExpiryDate,
-        ?object $GeoObject
-    ) : ?Tasks {
+    public function createNewTask(NewTaskDto $dto) : ?Tasks
+    {
         $createdTask = new Tasks();
-        $createdTask->attributes = $attributes;
-        $createdTask->clientId = $userId;
+        $createdTask->attributes = $dto->attributes;
+        $createdTask->clientId = $dto->userId;
         $createdTask->status = TaskStatusConstants::ID_NEW_STATUS;
-        if ($GeoObject) {
-            $city = explode(',', $GeoObject->description)[0];
+        if ($dto->geoObject) {
+            $city = explode(',', $dto->geoObject->description)[0];
             if (!Cities::findOne(['name' => $city])) {
                 throw new NotFoundHttpException('This city is not founded', 404);
             }
             $createdTask->city = $city;
-            $createdTask->address = $GeoObject->name;
-            $coordinates = explode(' ', $GeoObject->Point->pos);
+            $createdTask->address = $dto->geoObject->name;
+            $coordinates = explode(' ', $dto->geoObject->Point->pos);
             $createdTask->lat = $coordinates[1];
             $createdTask->lng = $coordinates[0];
         }
-        if ($formExpiryDate !== null) {
+        if ($dto->formExpiryDate !== null) {
             $createdTask->expiryDate = Yii::$app->formatter->asDate(
-                $formExpiryDate,
+                $dto->formExpiryDate,
                 'yyyy-MM-dd HH:mm:ss'
             );
         }

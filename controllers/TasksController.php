@@ -8,8 +8,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
-use omarinina\application\services\task\create\ServiceTaskCreate;
+use omarinina\application\services\task\dto\NewTaskDto;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
+use omarinina\application\services\task\interfaces\TaskCreateInterface;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use Throwable;
@@ -36,15 +37,20 @@ class TasksController extends SecurityController
     /** @var FileTaskRelationsInterface  */
     private FileTaskRelationsInterface $fileTaskRelations;
 
+    /** @var TaskCreateInterface  */
+    private TaskCreateInterface $taskCreate;
+
     public function __construct(
         $id,
         $module,
         FileSaveInterface $fileSave,
         FileTaskRelationsInterface $fileTaskRelations,
+        TaskCreateInterface $taskCreate,
         $config = []
     ) {
         $this->fileSave = $fileSave;
         $this->fileTaskRelations = $fileTaskRelations;
+        $this->taskCreate = $taskCreate;
         parent::__construct($id, $module, $config);
     }
 
@@ -161,12 +167,12 @@ class TasksController extends SecurityController
                             'categories' => $categories
                         ]);
                     }
-                    $createdTask = ServiceTaskCreate::saveNewTask(
+                    $createdTask = $this->taskCreate->createNewTask(new NewTaskDto(
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
                         $createTaskForm->expiryDate,
                         ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
-                    );
+                    ));
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = $this->fileSave->saveNewFile($file);
                         $this->fileTaskRelations->saveRelationsFileTask($createdTask->id, $savedFile->id);

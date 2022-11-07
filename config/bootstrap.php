@@ -29,3 +29,8 @@ Yii::$container->set(
     \omarinina\application\services\review\interfaces\ReviewCreateInterface::class,
     \omarinina\application\services\review\ReviewCreateService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\task\interfaces\TaskCreateInterface::class,
+    \omarinina\application\services\task\TaskCreateService::class
+);
