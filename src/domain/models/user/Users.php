@@ -9,6 +9,7 @@ use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
+use omarinina\domain\valueObjects\Phone;
 use omarinina\infrastructure\constants\ReviewConstants;
 use omarinina\infrastructure\constants\TaskConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
@@ -404,9 +405,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         $this->name = $form->name;
         $this->email = $form->email;
         if ($form->phone) {
-            $correctPhone = (int)substr($form->phone, 0, 1) === 7 ?
-                '+' . $form->phone : '+7' . (int)substr($form->phone, 1, 10);
-                $this->phone = $correctPhone;
+            $this->phone = (new Phone($form->phone))->getPhone();
         }
         $this->telegram = $form->telegram;
         $this->bio = $form->bio;
