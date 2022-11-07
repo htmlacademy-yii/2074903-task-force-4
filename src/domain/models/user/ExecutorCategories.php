@@ -71,4 +71,14 @@ class ExecutorCategories extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::class, ['id' => 'executorId']);
     }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteExecutorCategory(): void
+    {
+        $this->delete();
+    }
 }

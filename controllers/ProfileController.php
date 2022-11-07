@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use omarinina\application\services\file\parse\ServiceFileParse;
-use omarinina\application\services\user\addData\ServiceUserCategoriesAdd;
+use omarinina\application\services\user\addData\ServiceUserCategoriesUpdate;
 use omarinina\application\services\user\addData\ServiceUserDataAdd;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;
@@ -67,7 +67,7 @@ class ProfileController extends SecurityController
                     $avatar = UploadedFile::getInstance($editForm, 'avatar');
                     $avatarSrc = ServiceFileParse::parseAvatarFile($avatar);
                     ServiceUserDataAdd::updateUserProfile($user, $editForm, $avatarSrc);
-                    ServiceUserCategoriesAdd::saveExecutorCategories($user, $editForm->categories);
+                    ServiceUserCategoriesUpdate::updateExecutorCategories($user, $editForm->categories);
                     return $this->redirect(['view', 'id' => $user->id]);
                 }
             }
