@@ -7,6 +7,7 @@ namespace omarinina\infrastructure\models\form;
 use omarinina\domain\models\user\Users;
 use yii\base\Model;
 use Yii;
+use yii\web\NotFoundHttpException;
 
 class SecurityProfileForm extends Model
 {
@@ -37,12 +38,22 @@ class SecurityProfileForm extends Model
         ];
     }
 
+    /**
+     * @param $attribute
+     * @param $params
+     * @return void
+     * @throws NotFoundHttpException
+     */
     public function validateCurrentPassword($attribute, $params)
     {
         if (!$this->hasErrors()) {
             $user = Yii::$app->user->identity;
 
-            if (!$user || !Yii::$app->security->validatePassword($this->currentPassword, $user->password)) {
+            if (!$user) {
+                throw new NotFoundHttpException('User is not found', 404);
+            }
+
+            if (!Yii::$app->security->validatePassword($this->currentPassword, $user->password)) {
                 $this->addError($attribute, 'Неправильный пароль');
             }
         }
