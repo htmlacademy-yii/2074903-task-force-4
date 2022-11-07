@@ -9,11 +9,14 @@ use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
+use omarinina\infrastructure\constants\ReviewConstants;
+use omarinina\infrastructure\constants\TaskConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\models\form\EditProfileForm;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\caching\TagDependency;
 use yii\web\IdentityInterface;
 
 /**
@@ -156,7 +159,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorReviews()
     {
-        return $this->hasMany(Reviews::class, ['executorId' => 'id'])->cache();
+        return $this->hasMany(Reviews::class, ['executorId' => 'id'])
+            ->cache(true, new TagDependency(['tags' => ReviewConstants::CACHE_TAG]));
     }
 
     /**
@@ -186,7 +190,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorTasks()
     {
-        return $this->hasMany(Tasks::class, ['executorId' => 'id'])->cache();
+        return $this->hasMany(Tasks::class, ['executorId' => 'id'])
+            ->cache(true, new TagDependency(['tags' => TaskConstants::CACHE_EXECUTOR_TAG]));
     }
 
     public static function findIdentity($id)

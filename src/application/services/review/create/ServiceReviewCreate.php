@@ -6,6 +6,10 @@ namespace omarinina\application\services\review\create;
 
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
+use omarinina\infrastructure\constants\ReviewConstants;
+use omarinina\infrastructure\constants\TaskConstants;
+use Yii;
+use yii\caching\TagDependency;
 use yii\web\ServerErrorHttpException;
 
 class ServiceReviewCreate
@@ -29,6 +33,9 @@ class ServiceReviewCreate
                 500
             );
         }
+        TagDependency::invalidate(Yii::$app->cache, ReviewConstants::CACHE_TAG);
+        TagDependency::invalidate(Yii::$app->cache, TaskConstants::CACHE_EXECUTOR_TAG);
+
         return $newReview;
     }
 }
