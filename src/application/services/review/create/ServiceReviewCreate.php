@@ -16,7 +16,7 @@ class ServiceReviewCreate
      * @return Reviews|null
      * @throws ServerErrorHttpException
      */
-    public static function saveNewReview(Tasks $task, array $attributes) : ?Reviews
+    public static function createNewReview(Tasks $task, array $attributes) : ?Reviews
     {
         $newReview = new Reviews();
         $newReview->attributes = $attributes;

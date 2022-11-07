@@ -54,9 +54,8 @@ class TaskActionsController extends SecurityController
                 $respond = Responds::findOne($respondId);
                 $userId = \Yii::$app->user->id;
 
-                $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
-
                 if ($this->respondStatusAdd->addAcceptStatus($respond, $userId)->status) {
+                    $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
                     ServiceTaskStatusChange::changeStatusToInWork($task);
                     $this->respondStatusAdd->addRestRespondsRefuseStatus(
                         $task->responds,
@@ -109,7 +108,7 @@ class TaskActionsController extends SecurityController
                 $task = Tasks::findOne($taskId);
                 $userId = Yii::$app->user->id;
 
-                if (ServiceTaskStatusChange::changeStatusToCancelled($task, $userId)) {
+                if ($task->addCancelledStatus($userId)) {
                     $this->respondStatusAdd->addRestRespondsRefuseStatus($task->responds);
                 }
 
@@ -200,7 +199,7 @@ class TaskActionsController extends SecurityController
                         if ($taskAcceptanceForm->validate()) {
                             $attributes = Yii::$app->request->post('TaskAcceptanceForm');
 
-                            ServiceReviewCreate::saveNewReview($task, $attributes);
+                            ServiceReviewCreate::createNewReview($task, $attributes);
 
                             return $this->redirect(['tasks/view', 'id' => $taskId]);
                         }
