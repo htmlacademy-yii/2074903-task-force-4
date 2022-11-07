@@ -9,8 +9,9 @@ use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\dto\NewTaskDto;
-use omarinina\application\services\task\filter\ServiceTaskFilter;
+use omarinina\application\services\task\filter\TaskFilterService;
 use omarinina\application\services\task\interfaces\TaskCreateInterface;
+use omarinina\application\services\task\interfaces\TaskFilterInterface;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use Throwable;
@@ -40,17 +41,22 @@ class TasksController extends SecurityController
     /** @var TaskCreateInterface  */
     private TaskCreateInterface $taskCreate;
 
+    /** @var TaskFilterInterface */
+    private TaskFilterInterface $taskFilter;
+
     public function __construct(
         $id,
         $module,
         FileSaveInterface $fileSave,
         FileTaskRelationsInterface $fileTaskRelations,
         TaskCreateInterface $taskCreate,
+        TaskFilterInterface $taskFilter,
         $config = []
     ) {
         $this->fileSave = $fileSave;
         $this->fileTaskRelations = $fileTaskRelations;
         $this->taskCreate = $taskCreate;
+        $this->taskFilter = $taskFilter;
         parent::__construct($id, $module, $config);
     }
 
@@ -203,8 +209,8 @@ class TasksController extends SecurityController
         try {
             $currentUser = Yii::$app->user->identity;
             $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
-                ServiceTaskFilter::filterClientTasksByStatus($currentUser->id, $status) :
-                ServiceTaskFilter::filterExecutorTasksByStatus($currentUser->id, $status);
+                $this->taskFilter->filterClientTasksByStatus($currentUser->id, $status) :
+                $this->taskFilter->filterExecutorTasksByStatus($currentUser->id, $status);
             $title = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
                 ViewConstants::CLIENT_TASK_FILTER_TITLES[$status] :
                 ViewConstants::EXECUTOR_TASK_FILTER_TITLES[$status];

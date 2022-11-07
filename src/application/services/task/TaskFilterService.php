@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\task\filter;
+namespace omarinina\application\services\task;
 
+use omarinina\application\services\task\interfaces\TaskFilterInterface;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use Yii;
 use yii\db\Query;
 
-class ServiceTaskFilter
+class TaskFilterService implements TaskFilterInterface
 {
     /**
      * @param int $clientId
@@ -17,7 +18,7 @@ class ServiceTaskFilter
      * @return Tasks[]
      * @throws \Throwable
      */
-    public static function filterClientTasksByStatus(int $clientId, ?int $status = null) : array
+    public function filterClientTasksByStatus(int $clientId, ?int $status = null) : array
     {
         return Tasks::find()
             ->where(['clientId' => $clientId])
@@ -31,7 +32,7 @@ class ServiceTaskFilter
      * @return Tasks[]
      * @throws \Throwable
      */
-    public static function filterExecutorTasksByStatus(int $executorId, ?int $status = null) : array
+    public function filterExecutorTasksByStatus(int $executorId, ?int $status = null) : array
     {
         $allExecutorTasks = Tasks::find()->where(['executorId' => $executorId]);
         if ($status === TaskStatusConstants::ID_OVERDUE_STATUS) {

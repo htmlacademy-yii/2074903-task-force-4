@@ -34,3 +34,8 @@ Yii::$container->set(
     \omarinina\application\services\task\interfaces\TaskCreateInterface::class,
     \omarinina\application\services\task\TaskCreateService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\task\interfaces\TaskFilterInterface::class,
+    \omarinina\application\services\task\TaskFilterService::class
+);
