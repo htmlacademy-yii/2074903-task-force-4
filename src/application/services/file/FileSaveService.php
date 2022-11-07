@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\file\save;
+namespace omarinina\application\services\file;
 
+use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\domain\models\Files;
 use omarinina\infrastructure\constants\HelperConstants;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
-class ServiceFileSave
+class FileSaveService implements FileSaveInterface
 {
     /**
      * @param UploadedFile $file
      * @return Files|null
      * @throws ServerErrorHttpException
      */
-    public static function saveNewFile(UploadedFile $file) : ?Files
+    public function saveNewFile(UploadedFile $file) : ?Files
     {
         $savedFile = new Files();
         $name = uniqid('upload') . '.' . $file->getExtension();

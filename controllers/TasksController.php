@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
-use omarinina\application\services\file\save\ServiceFileSave;
+use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\application\services\file\save\ServiceFileTaskRelations;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
+use Throwable;
 use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use omarinina\domain\models\task\TaskStatuses;
@@ -29,6 +30,19 @@ use omarinina\infrastructure\constants\ViewConstants;
 
 class TasksController extends SecurityController
 {
+    /** @var FileSaveInterface */
+    private FileSaveInterface $fileSave;
+
+    public function __construct(
+        $id,
+        $module,
+        FileSaveInterface $fileSave,
+        $config = []
+    ) {
+        $this->fileSave = $fileSave;
+        parent::__construct($id, $module, $config);
+    }
+
     public function behaviors()
     {
         $rules = parent::behaviors();
@@ -84,7 +98,7 @@ class TasksController extends SecurityController
             ]);
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -114,7 +128,7 @@ class TasksController extends SecurityController
             ]);
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -132,7 +146,7 @@ class TasksController extends SecurityController
                 $createTaskForm->load(Yii::$app->request->post());
 
                 if ($createTaskForm->validate()) {
-                    if (!$createTaskForm->isLocationExistGeocoder()) {
+                    if (!$createTaskForm->isLocationExistGeocoder() && $createTaskForm->location) {
                         Yii::$app->session->setFlash(
                             'error',
                             'Координаты вашего адреса не были найдены. Пожалуйста, попробуйте что-нибудь изменить.'
@@ -149,7 +163,7 @@ class TasksController extends SecurityController
                         ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
-                        $savedFile = ServiceFileSave::saveNewFile($file);
+                        $savedFile = $this->fileSave->saveNewFile($file);
                         ServiceFileTaskRelations::saveRelationsFileTask($createdTask->id, $savedFile->id);
                     }
                     return $this->redirect(['view', 'id' => $createdTask->id]);
@@ -163,7 +177,7 @@ class TasksController extends SecurityController
             return $e->getMessage();
         } catch (GuzzleException $e) {
             return 'Your data has not been recorded with location, please, try again later';
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -171,21 +185,25 @@ class TasksController extends SecurityController
     /**
      * @param int|null $status
      * @return string
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionMine(?int $status = null) : string
     {
-        $currentUser = Yii::$app->user->identity;
-        $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
-            ServiceTaskFilter::filterClientTasksByStatus($currentUser->id, $status) :
-            ServiceTaskFilter::filterExecutorTasksByStatus($currentUser->id, $status);
-        $title = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
-            ViewConstants::CLIENT_TASK_FILTER_TITLES[$status] :
-            ViewConstants::EXECUTOR_TASK_FILTER_TITLES[$status];
+        try {
+            $currentUser = Yii::$app->user->identity;
+            $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
+                ServiceTaskFilter::filterClientTasksByStatus($currentUser->id, $status) :
+                ServiceTaskFilter::filterExecutorTasksByStatus($currentUser->id, $status);
+            $title = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
+                ViewConstants::CLIENT_TASK_FILTER_TITLES[$status] :
+                ViewConstants::EXECUTOR_TASK_FILTER_TITLES[$status];
 
-        return $this->render('mine', [
-            'title' => $title,
-            'tasks' => $allTasks,
+            return $this->render('mine', [
+                'title' => $title,
+                'tasks' => $allTasks,
             ]);
+        } catch (Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
+        }
     }
 }

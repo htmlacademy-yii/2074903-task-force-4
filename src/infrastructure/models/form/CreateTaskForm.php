@@ -7,6 +7,7 @@ namespace omarinina\infrastructure\models\form;
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\domain\models\Categories;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use Yii;
 use DateTime;
@@ -81,6 +82,7 @@ class CreateTaskForm extends Model
     /**
      * @return bool
      * @throws GuzzleException
+     * @throws InvalidConfigException
      */
     public function isLocationExistGeocoder() : bool
     {

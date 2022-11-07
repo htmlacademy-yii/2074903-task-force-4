@@ -14,3 +14,8 @@ Yii::$container->set(
     \omarinina\application\services\file\interfaces\FileParseInterface::class,
     \omarinina\application\services\file\FileParseService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\file\interfaces\FileSaveInterface::class,
+    \omarinina\application\services\file\FileSaveService::class
+);
