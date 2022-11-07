@@ -59,3 +59,8 @@ Yii::$container->set(
     \omarinina\application\services\user\interfaces\UserAuthVkInterface::class,
     \omarinina\application\services\user\UserAuthVkVkService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\location\interfaces\GeoObjectReceiveInterface::class,
+    \omarinina\application\services\location\GeoObjectReceiveService::class
+);

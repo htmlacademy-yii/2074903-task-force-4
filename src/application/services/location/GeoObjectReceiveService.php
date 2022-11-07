@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\location\pointReceive;
+namespace omarinina\application\services\location;
 
 use GuzzleHttp\Exception\GuzzleException;
+use omarinina\application\services\location\interfaces\GeoObjectReceiveInterface;
 use omarinina\infrastructure\constants\KeysConstants;
 use GuzzleHttp\Client;
 use Yii;
 use yii\base\InvalidConfigException;
 
-class ServiceGeoObjectReceive
+class GeoObjectReceiveService implements GeoObjectReceiveInterface
 {
     /**
      * @param string|null $location
@@ -18,7 +19,7 @@ class ServiceGeoObjectReceive
      * @throws GuzzleException
      * @throws InvalidConfigException
      */
-    public static function receiveGeoObjectFromYandexGeocoder(?string $location) : ?object
+    public function receiveGeoObjectFromYandexGeocoder(?string $location) : ?object
     {
         if ($location) {
             /** @var Client $client */

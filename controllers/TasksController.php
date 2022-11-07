@@ -7,9 +7,9 @@ namespace app\controllers;
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
-use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
+use omarinina\application\services\location\interfaces\GeoObjectReceiveInterface;
+use omarinina\application\services\location\pointReceive\GeoObjectReceiveService;
 use omarinina\application\services\task\dto\NewTaskDto;
-use omarinina\application\services\task\filter\TaskFilterService;
 use omarinina\application\services\task\interfaces\TaskCreateInterface;
 use omarinina\application\services\task\interfaces\TaskFilterInterface;
 use omarinina\infrastructure\constants\UserRoleConstants;
@@ -44,6 +44,9 @@ class TasksController extends SecurityController
     /** @var TaskFilterInterface */
     private TaskFilterInterface $taskFilter;
 
+    /** @var GeoObjectReceiveInterface */
+    private GeoObjectReceiveInterface $geoObjectReceive;
+
     public function __construct(
         $id,
         $module,
@@ -51,12 +54,14 @@ class TasksController extends SecurityController
         FileTaskRelationsInterface $fileTaskRelations,
         TaskCreateInterface $taskCreate,
         TaskFilterInterface $taskFilter,
+        GeoObjectReceiveInterface $geoObjectReceive,
         $config = []
     ) {
         $this->fileSave = $fileSave;
         $this->fileTaskRelations = $fileTaskRelations;
         $this->taskCreate = $taskCreate;
         $this->taskFilter = $taskFilter;
+        $this->geoObjectReceive = $geoObjectReceive;
         parent::__construct($id, $module, $config);
     }
 
@@ -177,7 +182,7 @@ class TasksController extends SecurityController
                         Yii::$app->request->post('CreateTaskForm'),
                         Yii::$app->user->id,
                         $createTaskForm->expiryDate,
-                        ServiceGeoObjectReceive::receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
+                        $this->geoObjectReceive->receiveGeoObjectFromYandexGeocoder($createTaskForm->location)
                     ));
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = $this->fileSave->saveNewFile($file);
