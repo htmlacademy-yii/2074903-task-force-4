@@ -1,6 +1,6 @@
 <?php
 
-namespace omarinina\application\services\file;
+namespace omarinina\application\services\file\interfaces;
 
 use yii\web\UploadedFile;
 

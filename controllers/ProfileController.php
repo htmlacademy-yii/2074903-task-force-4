@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\file\FileParseInterface;
+use omarinina\application\services\file\interfaces\FileParseInterface;
 use omarinina\application\services\user\addData\ServiceUserCategoriesUpdate;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;

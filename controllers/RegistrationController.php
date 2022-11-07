@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\file\FileParseInterface;
+use omarinina\application\services\file\interfaces\FileParseInterface;
 use omarinina\application\services\user\create\ServiceUserCreate;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;

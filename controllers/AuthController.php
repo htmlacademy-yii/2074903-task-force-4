@@ -20,54 +20,61 @@ class AuthController extends Controller
 {
     /**
      * @return Response|string
-     * @throws HttpException
-     * @throws InvalidConfigException
-     * @throws ServerErrorHttpException
      */
     public function actionAuthorizeUserViaVk() : Response|string
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+        try {
+            if (!Yii::$app->user->isGuest) {
+                return $this->goHome();
+            }
 
-        /** @var Collection $collectionClientsOAuth */
-        $collectionClientsOAuth = Yii::$app->get('authClientCollection');
-        /** @var VKontakte $vkClientOAuth */
-        $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
+            /** @var Collection $collectionClientsOAuth */
+            $collectionClientsOAuth = Yii::$app->get('authClientCollection');
+            /** @var VKontakte $vkClientOAuth */
+            $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
 
-        $codeVk = Yii::$app->request->get('code');
-        $userData = ServiceUserAuthVk::applyAccessTokenForVk($codeVk, $vkClientOAuth)->getUserAttributes();
+            $codeVk = Yii::$app->request->get('code');
+            $userData = ServiceUserAuthVk::applyAccessTokenForVk($codeVk, $vkClientOAuth)->getUserAttributes();
 
-        if ($userData) {
-            $currentUser = Users::findOne(['vkId' => $userData['id']]);
-            if (!$currentUser) {
-                if (array_key_exists('email', $userData)) {
-                    $currentUser = Users::findOne(['email' => mb_strtolower($userData['email'])]);
-                    $currentUser?->addVkId($userData['id']);
-                }
+            if ($userData) {
+                $currentUser = Users::findOne(['vkId' => $userData['id']]);
                 if (!$currentUser) {
-                    return $this->redirect([
-                        'registration/index',
-                        'userData' => $userData
-                    ]);
+                    if (array_key_exists('email', $userData)) {
+                        $currentUser = Users::findOne(['email' => mb_strtolower($userData['email'])]);
+                        $currentUser?->addVkId($userData['id']);
+                    }
+                    if (!$currentUser) {
+                        return $this->redirect([
+                            'registration/index',
+                            'userData' => $userData
+                        ]);
+                    }
+                }
+                if ($currentUser) {
+                    Yii::$app->user->login($currentUser);
+                    return $this->redirect(['site/index']);
                 }
             }
-            if ($currentUser) {
-                Yii::$app->user->login($currentUser);
-                return $this->redirect(['site/index']);
-            }
+            throw new NotFoundHttpException();
+        } catch (HttpException|InvalidConfigException|ServerErrorHttpException $e) {
+            return $e->getMessage();
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
         }
-        throw new NotFoundHttpException();
     }
 
     /**
      * @param int $userId
-     * @return Response
+     * @return Response|string
      */
-    public function actionLogin(int $userId) : Response
+    public function actionLogin(int $userId) : Response|string
     {
-        $newUser = Users::findOne($userId);
-        Yii::$app->user->login($newUser);
-        return $this->redirect(['site/index']);
+        try {
+            $newUser = Users::findOne($userId);
+            Yii::$app->user->login($newUser);
+            return $this->redirect(['site/index']);
+        } catch (\Throwable $e) {
+            return 'Something wrong. Sorry, please, try again later';
+        }
     }
 }

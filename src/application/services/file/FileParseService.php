@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\file\parse;
+namespace omarinina\application\services\file;
 
-use omarinina\application\services\file\FileParseInterface;
+use omarinina\application\services\file\interfaces\FileParseInterface;
 use Yii;
 use yii\web\UploadedFile;
 use omarinina\infrastructure\constants\HelperConstants;

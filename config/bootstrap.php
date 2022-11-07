@@ -11,6 +11,6 @@ Yii::$container->set(
 );
 
 Yii::$container->set(
-    \omarinina\application\services\file\FileParseInterface::class,
-    \omarinina\application\services\file\parse\FileParseService::class
+    \omarinina\application\services\file\interfaces\FileParseInterface::class,
+    \omarinina\application\services\file\FileParseService::class
 );
