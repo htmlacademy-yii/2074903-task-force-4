@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace omarinina\application\services\file\save;
 
 use omarinina\domain\models\Files;
+use omarinina\infrastructure\constants\HelperConstants;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
 
@@ -19,8 +20,8 @@ class ServiceFileSave
     {
         $savedFile = new Files();
         $name = uniqid('upload') . '.' . $file->getExtension();
-        $file->saveAs('@webroot/uploads/' . $name);
-        $savedFile->fileSrc = '/uploads/' . $name;
+        $file->saveAs('@webroot' . HelperConstants::PART_PATH_FILE . $name);
+        $savedFile->fileSrc = HelperConstants::PART_PATH_FILE . $name;
 
         if (!$savedFile->save(false)) {
             throw new ServerErrorHttpException(
