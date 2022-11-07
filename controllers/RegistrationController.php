@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\file\parse\ServiceFileParse;
+use omarinina\application\services\file\FileParseInterface;
 use omarinina\application\services\user\create\ServiceUserCreate;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
@@ -16,6 +16,19 @@ use yii\web\ServerErrorHttpException;
 
 class RegistrationController extends Controller
 {
+    /** @var FileParseInterface */
+    private FileParseInterface $fileParse;
+
+    public function __construct(
+        $id,
+        $module,
+        FileParseInterface $fileParse,
+        $config = []
+    ) {
+        $this->fileParse = $fileParse;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +64,7 @@ class RegistrationController extends Controller
 
                 if ($registrationForm->validate()) {
                     $avatarVk = array_key_exists('photo', $userData) ?
-                        ServiceFileParse::parseAvatarVkFile($userData['photo']) :
+                        $this->fileParse->parseAvatarVkFile($userData['photo']) :
                         null;
                     $newUser = ServiceUserCreate::createNewUser(
                         $registrationForm,

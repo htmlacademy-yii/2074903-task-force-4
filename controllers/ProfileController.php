@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\file\parse\ServiceFileParse;
+use omarinina\application\services\file\FileParseInterface;
 use omarinina\application\services\user\addData\ServiceUserCategoriesUpdate;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;
@@ -20,6 +20,19 @@ use yii\web\UploadedFile;
 
 class ProfileController extends SecurityController
 {
+    /** @var FileParseInterface */
+    private FileParseInterface $fileParse;
+
+    public function __construct(
+        $id,
+        $module,
+        FileParseInterface $fileParse,
+        $config = []
+    ) {
+        $this->fileParse = $fileParse;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @param int $id
      * @return string
@@ -40,8 +53,7 @@ class ProfileController extends SecurityController
                 'currentUser' => $userProfile
             ]);
         } catch (NotFoundHttpException|
-            \Exception|
-            \yii\base\InvalidConfigException $e) {
+            \Exception $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
@@ -64,7 +76,7 @@ class ProfileController extends SecurityController
 
                 if ($editForm->validate()) {
                     $avatar = UploadedFile::getInstance($editForm, 'avatar');
-                    $avatarSrc = ServiceFileParse::parseAvatarFile($avatar);
+                    $avatarSrc = $this->fileParse->parseAvatarFile($avatar);
                     $user->updateProfile($editForm, $avatarSrc);
                     ServiceUserCategoriesUpdate::updateExecutorCategories($user, $editForm->categories);
                     return $this->redirect(['view', 'id' => $user->id]);
@@ -84,7 +96,7 @@ class ProfileController extends SecurityController
     }
 
     /**
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionSecurity() : Response|string
     {

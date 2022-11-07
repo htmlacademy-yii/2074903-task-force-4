@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace omarinina\application\services\file\parse;
 
+use omarinina\application\services\file\FileParseInterface;
 use Yii;
 use yii\web\UploadedFile;
 use omarinina\infrastructure\constants\HelperConstants;
 
-class ServiceFileParse
+class FileParseService implements FileParseInterface
 {
     /**
      * @param UploadedFile|null $avatar
      * @return string|null
      */
-    public static function parseAvatarFile(?UploadedFile $avatar = null) : ?string
+    public function parseAvatarFile(?UploadedFile $avatar = null) : ?string
     {
         if ($avatar) {
-            $name = uniqid('upload') . '.' . $avatar->getExtension();
+            $name = uniqid('upload') . 'parse' . $avatar->getExtension();
             $avatar->saveAs('@webroot' . HelperConstants::PART_PATH_AVATAR . $name);
 
             return HelperConstants::PART_PATH_AVATAR . $name;
@@ -25,7 +26,7 @@ class ServiceFileParse
         return null;
     }
 
-    public static function parseAvatarVkFile(?string $urlAvatarVk = null) : ?string
+    public function parseAvatarVkFile(?string $urlAvatarVk = null) : ?string
     {
         if ($urlAvatarVk) {
             $url = $urlAvatarVk;

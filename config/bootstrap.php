@@ -9,3 +9,8 @@ Yii::$container->set(
     \omarinina\application\services\respond\interfaces\RespondCreateInterface::class,
     \omarinina\application\services\respond\RespondCreateService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\file\FileParseInterface::class,
+    \omarinina\application\services\file\parse\FileParseService::class
+);
