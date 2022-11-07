@@ -8,7 +8,6 @@ use omarinina\application\services\respond\interfaces\RespondCreateInterface;
 use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
 use omarinina\application\services\respond\dto\NewRespondDto;
 use omarinina\application\services\review\interfaces\ReviewCreateInterface;
-use omarinina\application\services\task\addData\ServiceTaskDataAdd;
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\IdUserException;
@@ -57,10 +56,10 @@ class TaskActionsController extends SecurityController
             if ($respondId) {
                 $respond = Responds::findOne($respondId);
                 $userId = \Yii::$app->user->id;
+                $task = $respond->task;
 
                 if ($this->respondStatusAdd->addAcceptStatus($respond, $userId)->status) {
-                    $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
-                    $task->addInWorkStatus();
+                    $task->addExecutorId($respond->executorId)->addInWorkStatus();
                     $this->respondStatusAdd->addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond

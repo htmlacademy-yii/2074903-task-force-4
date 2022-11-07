@@ -19,6 +19,7 @@ use omarinina\domain\actions\AbstractAction;
 use omarinina\domain\exception\task\IdUserException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
+use yii\web\ServerErrorHttpException;
 
 /**
  * This is the model class for table "tasks".
@@ -331,12 +332,15 @@ class Tasks extends \yii\db\ActiveRecord
     }
 
     /**
-     * @param Responds $respond
-     * @return bool
+     * @param int $executorId
+     * @return null|Tasks
+     * @throws ServerErrorHttpException
      */
-    public function addExecutorId(Responds $respond) : bool
+    public function addExecutorId(int $executorId) : ?Tasks
     {
-        $this->executorId = $respond->executorId;
-        return $this->save(false);
+        $this->executorId = $executorId;
+        return $this->save(false) ?
+            $this :
+            throw new ServerErrorHttpException('something wrong, please try again later', 500);
     }
 }
