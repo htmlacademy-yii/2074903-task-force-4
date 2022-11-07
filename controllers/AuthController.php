@@ -72,6 +72,7 @@ class AuthController extends Controller
         } catch (HttpException|InvalidConfigException|ServerErrorHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -87,6 +88,7 @@ class AuthController extends Controller
             Yii::$app->user->login($newUser);
             return $this->redirect(['site/index']);
         } catch (\Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }

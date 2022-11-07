@@ -8,7 +8,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\interfaces\FileSaveInterface;
 use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
 use omarinina\application\services\location\interfaces\GeoObjectReceiveInterface;
-use omarinina\application\services\location\pointReceive\GeoObjectReceiveService;
 use omarinina\application\services\task\dto\NewTaskDto;
 use omarinina\application\services\task\interfaces\TaskCreateInterface;
 use omarinina\application\services\task\interfaces\TaskFilterInterface;
@@ -121,6 +120,7 @@ class TasksController extends SecurityController
         } catch (BadRequestHttpException|\Exception $e) {
             return $e->getMessage();
         } catch (Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -151,6 +151,7 @@ class TasksController extends SecurityController
         } catch (NotFoundHttpException|\yii\base\InvalidConfigException|\Exception $e) {
             return $e->getMessage();
         } catch (Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -200,6 +201,7 @@ class TasksController extends SecurityController
         } catch (GuzzleException $e) {
             return 'Your data has not been recorded with location, please, try again later';
         } catch (Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -225,6 +227,7 @@ class TasksController extends SecurityController
                 'tasks' => $allTasks,
             ]);
         } catch (Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }

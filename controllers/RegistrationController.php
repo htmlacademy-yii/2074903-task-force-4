@@ -93,6 +93,7 @@ class RegistrationController extends Controller
         } catch (ServerErrorHttpException|\yii\base\Exception $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
             return 'Something wrong. Sorry, please, try again later';
         }
     }
