@@ -9,7 +9,6 @@ use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
 use omarinina\application\services\respond\dto\NewRespondDto;
 use omarinina\application\services\review\create\ServiceReviewCreate;
 use omarinina\application\services\task\addData\ServiceTaskDataAdd;
-use omarinina\application\services\task\changeStatus\ServiceTaskStatusChange;
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\IdUserException;
@@ -56,7 +55,7 @@ class TaskActionsController extends SecurityController
 
                 if ($this->respondStatusAdd->addAcceptStatus($respond, $userId)->status) {
                     $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
-                    ServiceTaskStatusChange::changeStatusToInWork($task);
+                    $task->addInWorkStatus();
                     $this->respondStatusAdd->addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond
@@ -90,7 +89,7 @@ class TaskActionsController extends SecurityController
                 return $this->redirect(['tasks/view', 'id' => $task->id]);
             }
             throw new NotFoundHttpException('Respond is not found', 404);
-        } catch (ServerErrorHttpException|NotFoundHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
@@ -118,8 +117,7 @@ class TaskActionsController extends SecurityController
         } catch (NotFoundHttpException|
             AvailableActionsException|
             CurrentActionException|
-            IdUserException|
-            ServerErrorHttpException $e) {
+            IdUserException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
@@ -151,7 +149,7 @@ class TaskActionsController extends SecurityController
                 throw new NotFoundHttpException('Page not found', 404);
             }
             throw new NotFoundHttpException('Task is not found', 404);
-        } catch (NotFoundHttpException|ServerErrorHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
@@ -168,13 +166,12 @@ class TaskActionsController extends SecurityController
             if ($taskId) {
                 $task = Tasks::findOne($taskId);
                 $userId = Yii::$app->user->id;
-
-                ServiceTaskStatusChange::changeStatusToFailed($task, $userId);
+                $task->addFailedStatus($userId);
 
                 return $this->redirect(['tasks/view', 'id' => $taskId]);
             }
             throw new NotFoundHttpException('Task is not found', 404);
-        } catch (NotFoundHttpException|ServerErrorHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
             return 'Something wrong. Sorry, please, try again later';
@@ -193,7 +190,7 @@ class TaskActionsController extends SecurityController
                 $userId = Yii::$app->user->id;
                 $taskAcceptanceForm = new TaskAcceptanceForm();
 
-                if (ServiceTaskStatusChange::changeStatusToDone($task, $userId)) {
+                if ($task->addDoneStatus($userId)) {
                     if (Yii::$app->request->getIsPost()) {
                         $taskAcceptanceForm->load(Yii::$app->request->post());
                         if ($taskAcceptanceForm->validate()) {
