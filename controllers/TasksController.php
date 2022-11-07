@@ -177,8 +177,8 @@ class TasksController extends SecurityController
     {
         $currentUser = Yii::$app->user->identity;
         $allTasks = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
-            ServiceTaskFilter::filterClientTasks($currentUser->id, $status) :
-            ServiceTaskFilter::filterExecutorTasks($currentUser->id, $status);
+            ServiceTaskFilter::filterClientTasksByStatus($currentUser->id, $status) :
+            ServiceTaskFilter::filterExecutorTasksByStatus($currentUser->id, $status);
         $title = $currentUser->role === UserRoleConstants::ID_CLIENT_ROLE ?
             ViewConstants::CLIENT_TASK_FILTER_TITLES[$status] :
             ViewConstants::EXECUTOR_TASK_FILTER_TITLES[$status];

@@ -17,13 +17,12 @@ class ServiceTaskFilter
      * @return Tasks[]
      * @throws \Throwable
      */
-    public static function filterClientTasks(int $clientId, ?int $status = null) : array
+    public static function filterClientTasksByStatus(int $clientId, ?int $status = null) : array
     {
-        $allClientTasks = Tasks::find()->where(['clientId' => $clientId]);
-        if (!$status) {
-            return $allClientTasks->andWhere(['status' => TaskStatusConstants::ID_NEW_STATUS])->all();
-        }
-        return $allClientTasks->andWhere(['status' => $status])->all();
+        return Tasks::find()
+            ->where(['clientId' => $clientId])
+            ->andWhere(['status' => $status ?? TaskStatusConstants::ID_NEW_STATUS])
+            ->all();
     }
 
     /**
@@ -32,17 +31,17 @@ class ServiceTaskFilter
      * @return Tasks[]
      * @throws \Throwable
      */
-    public static function filterExecutorTasks(int $executorId, ?int $status = null) : array
+    public static function filterExecutorTasksByStatus(int $executorId, ?int $status = null) : array
     {
         $allExecutorTasks = Tasks::find()->where(['executorId' => $executorId]);
-        if (!$status) {
-            return $allExecutorTasks->andWhere(['status' => TaskStatusConstants::ID_IN_WORK_STATUS])->all();
-        } elseif ($status === TaskStatusConstants::ID_OVERDUE_STATUS) {
-            return $allExecutorTasks
+        if ($status === TaskStatusConstants::ID_OVERDUE_STATUS) {
+            $allExecutorTasks = $allExecutorTasks
                 ->andWhere(['status' => TaskStatusConstants::ID_IN_WORK_STATUS])
-                ->andWhere('tasks.expiryDate < NOW()')
-                ->all();
+                ->andWhere('tasks.expiryDate < NOW()');
+        } else {
+            $allExecutorTasks = $allExecutorTasks
+                ->andWhere(['status' => $status ?? TaskStatusConstants::ID_IN_WORK_STATUS]);
         }
-        return $allExecutorTasks->andWhere(['status' => $status])->all();
+        return $allExecutorTasks->all();
     }
 }
