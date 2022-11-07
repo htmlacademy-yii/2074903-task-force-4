@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\file\save;
+namespace omarinina\application\services\file;
 
+use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
 use omarinina\domain\models\task\TaskFiles;
 use yii\web\ServerErrorHttpException;
 
-class ServiceFileTaskRelations
+class FileTaskRelationsService implements FileTaskRelationsInterface
 {
     /**
      * @param int $taskId
@@ -15,7 +16,7 @@ class ServiceFileTaskRelations
      * @return TaskFiles|null
      * @throws ServerErrorHttpException
      */
-    public static function saveRelationsFileTask(int $taskId, int $fileId) : ?TaskFiles
+    public function saveRelationsFileTask(int $taskId, int $fileId) : ?TaskFiles
     {
         $taskFile = new TaskFiles();
         $taskFile->fileId = $fileId;

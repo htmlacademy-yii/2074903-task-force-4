@@ -19,3 +19,8 @@ Yii::$container->set(
     \omarinina\application\services\file\interfaces\FileSaveInterface::class,
     \omarinina\application\services\file\FileSaveService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\file\interfaces\FileTaskRelationsInterface::class,
+    \omarinina\application\services\file\FileTaskRelationsService::class
+);

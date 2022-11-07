@@ -6,7 +6,7 @@ namespace app\controllers;
 
 use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\file\interfaces\FileSaveInterface;
-use omarinina\application\services\file\save\ServiceFileTaskRelations;
+use omarinina\application\services\file\interfaces\FileTaskRelationsInterface;
 use omarinina\application\services\location\pointReceive\ServiceGeoObjectReceive;
 use omarinina\application\services\task\create\ServiceTaskCreate;
 use omarinina\application\services\task\filter\ServiceTaskFilter;
@@ -33,13 +33,18 @@ class TasksController extends SecurityController
     /** @var FileSaveInterface */
     private FileSaveInterface $fileSave;
 
+    /** @var FileTaskRelationsInterface  */
+    private FileTaskRelationsInterface $fileTaskRelations;
+
     public function __construct(
         $id,
         $module,
         FileSaveInterface $fileSave,
+        FileTaskRelationsInterface $fileTaskRelations,
         $config = []
     ) {
         $this->fileSave = $fileSave;
+        $this->fileTaskRelations = $fileTaskRelations;
         parent::__construct($id, $module, $config);
     }
 
@@ -164,7 +169,7 @@ class TasksController extends SecurityController
                     );
                     foreach (UploadedFile::getInstances($createTaskForm, 'files') as $file) {
                         $savedFile = $this->fileSave->saveNewFile($file);
-                        ServiceFileTaskRelations::saveRelationsFileTask($createdTask->id, $savedFile->id);
+                        $this->fileTaskRelations->saveRelationsFileTask($createdTask->id, $savedFile->id);
                     }
                     return $this->redirect(['view', 'id' => $createdTask->id]);
                 }
