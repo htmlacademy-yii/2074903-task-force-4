@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\user\addData;
+namespace omarinina\application\services\user;
 
-use omarinina\domain\models\Categories;
+use omarinina\application\services\user\interfaces\UserCategoriesUpdateInterface;
 use omarinina\domain\models\user\ExecutorCategories;
 use omarinina\domain\models\user\Users;
 use Yii;
 
-class ServiceUserCategoriesUpdate
+class UserCategoriesUpdateService implements UserCategoriesUpdateInterface
 {
     /**
      * @param Users $user
@@ -17,7 +17,7 @@ class ServiceUserCategoriesUpdate
      * @return void
      * @throws \Throwable
      */
-    public static function updateExecutorCategories(Users $user, ?array $categories = null) : void
+    public function updateExecutorCategories(Users $user, ?array $categories = null) : void
     {
         if ($categories) {
             $currentExecutorCategories = array_map(

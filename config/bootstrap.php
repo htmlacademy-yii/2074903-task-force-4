@@ -39,3 +39,8 @@ Yii::$container->set(
     \omarinina\application\services\task\interfaces\TaskFilterInterface::class,
     \omarinina\application\services\task\TaskFilterService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\user\interfaces\UserCategoriesUpdateInterface::class,
+    \omarinina\application\services\user\UserCategoriesUpdateService::class
+);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use omarinina\application\services\file\interfaces\FileParseInterface;
-use omarinina\application\services\user\addData\ServiceUserCategoriesUpdate;
+use omarinina\application\services\user\interfaces\UserCategoriesUpdateInterface;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\user\Users;
@@ -23,13 +23,18 @@ class ProfileController extends SecurityController
     /** @var FileParseInterface */
     private FileParseInterface $fileParse;
 
+    /** @var UserCategoriesUpdateInterface */
+    private UserCategoriesUpdateInterface $userCategoriesUpdate;
+
     public function __construct(
         $id,
         $module,
         FileParseInterface $fileParse,
+        UserCategoriesUpdateInterface $userCategoriesUpdate,
         $config = []
     ) {
         $this->fileParse = $fileParse;
+        $this->userCategoriesUpdate = $userCategoriesUpdate;
         parent::__construct($id, $module, $config);
     }
 
@@ -78,7 +83,7 @@ class ProfileController extends SecurityController
                     $avatar = UploadedFile::getInstance($editForm, 'avatar');
                     $avatarSrc = $this->fileParse->parseAvatarFile($avatar);
                     $user->updateProfile($editForm, $avatarSrc);
-                    ServiceUserCategoriesUpdate::updateExecutorCategories($user, $editForm->categories);
+                    $this->userCategoriesUpdate->updateExecutorCategories($user, $editForm->categories);
                     return $this->redirect(['view', 'id' => $user->id]);
                 }
             }
