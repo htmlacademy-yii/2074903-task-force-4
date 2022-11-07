@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\user\auth\ServiceUserAuthVk;
+use omarinina\application\services\user\interfaces\UserAuthVkInterface;
 use omarinina\domain\models\user\Users;
 use yii\authclient\clients\VKontakte;
 use yii\authclient\Collection;
@@ -18,6 +18,19 @@ use yii\web\ServerErrorHttpException;
 
 class AuthController extends Controller
 {
+    /** @var UserAuthVkInterface */
+    private UserAuthVkInterface $userAuthVk;
+
+    public function __construct(
+        $id,
+        $module,
+        UserAuthVkInterface $userAuthVk,
+        $config = []
+    ) {
+        $this->userAuthVk = $userAuthVk;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * @return Response|string
      */
@@ -34,7 +47,7 @@ class AuthController extends Controller
             $vkClientOAuth = $collectionClientsOAuth->getClient('vkontakte');
 
             $codeVk = Yii::$app->request->get('code');
-            $userData = ServiceUserAuthVk::applyAccessTokenForVk($codeVk, $vkClientOAuth)->getUserAttributes();
+            $userData = $this->userAuthVk->applyAccessTokenForVk($codeVk, $vkClientOAuth)->getUserAttributes();
 
             if ($userData) {
                 $currentUser = Users::findOne(['vkId' => $userData['id']]);

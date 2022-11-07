@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\user\auth;
+namespace omarinina\application\services\user;
 
+use omarinina\application\services\user\interfaces\UserAuthVkInterface;
 use yii\authclient\clients\VKontakte;
-use yii\authclient\Collection;
-use Yii;
-use yii\base\InvalidConfigException;
 use yii\web\HttpException;
 
-class ServiceUserAuthVk
+class UserAuthVkVkService implements UserAuthVkInterface
 {
     /**
      * @param string $code
@@ -18,7 +16,7 @@ class ServiceUserAuthVk
      * @return VKontakte
      * @throws HttpException
      */
-    public static function applyAccessTokenForVk(string $code, VKontakte $vkClient) : VKontakte
+    public function applyAccessTokenForVk(string $code, VKontakte $vkClient) : VKontakte
     {
         $token = $vkClient->fetchAccessToken($code);
         $requestOAuth = $vkClient->createRequest();
