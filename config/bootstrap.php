@@ -24,3 +24,8 @@ Yii::$container->set(
     \omarinina\application\services\file\interfaces\FileTaskRelationsInterface::class,
     \omarinina\application\services\file\FileTaskRelationsService::class
 );
+
+Yii::$container->set(
+    \omarinina\application\services\review\interfaces\ReviewCreateInterface::class,
+    \omarinina\application\services\review\ReviewCreateService::class
+);

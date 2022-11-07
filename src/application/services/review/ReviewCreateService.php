@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace omarinina\application\services\review\create;
+namespace omarinina\application\services\review;
 
+use omarinina\application\services\review\interfaces\ReviewCreateInterface;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\constants\ReviewConstants;
@@ -12,7 +13,7 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\web\ServerErrorHttpException;
 
-class ServiceReviewCreate
+class ReviewCreateService implements ReviewCreateInterface
 {
     /**
      * @param Tasks $task
@@ -20,7 +21,7 @@ class ServiceReviewCreate
      * @return Reviews|null
      * @throws ServerErrorHttpException
      */
-    public static function createNewReview(Tasks $task, array $attributes) : ?Reviews
+    public function createNewReview(Tasks $task, array $attributes) : ?Reviews
     {
         $newReview = new Reviews();
         $newReview->attributes = $attributes;

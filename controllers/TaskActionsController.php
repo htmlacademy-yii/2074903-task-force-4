@@ -7,7 +7,7 @@ namespace app\controllers;
 use omarinina\application\services\respond\interfaces\RespondCreateInterface;
 use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
 use omarinina\application\services\respond\dto\NewRespondDto;
-use omarinina\application\services\review\create\ServiceReviewCreate;
+use omarinina\application\services\review\interfaces\ReviewCreateInterface;
 use omarinina\application\services\task\addData\ServiceTaskDataAdd;
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;
@@ -29,15 +29,20 @@ class TaskActionsController extends SecurityController
     /** @var RespondCreateInterface */
     private RespondCreateInterface $respondCreate;
 
+    /** @var ReviewCreateInterface  */
+    private ReviewCreateInterface $reviewCreate;
+
     public function __construct(
         $id,
         $module,
         RespondStatusAddInterface $respondStatusAdd,
         RespondCreateInterface $respondCreate,
+        ReviewCreateInterface $reviewCreate,
         $config = []
     ) {
         $this->respondStatusAdd = $respondStatusAdd;
         $this->respondCreate = $respondCreate;
+        $this->reviewCreate = $reviewCreate;
         parent::__construct($id, $module, $config);
     }
 
@@ -196,7 +201,7 @@ class TaskActionsController extends SecurityController
                         if ($taskAcceptanceForm->validate()) {
                             $attributes = Yii::$app->request->post('TaskAcceptanceForm');
 
-                            ServiceReviewCreate::createNewReview($task, $attributes);
+                            $this->reviewCreate->createNewReview($task, $attributes);
 
                             return $this->redirect(['tasks/view', 'id' => $taskId]);
                         }
