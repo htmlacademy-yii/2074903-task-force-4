@@ -6,7 +6,6 @@ namespace app\controllers;
 
 use omarinina\application\services\file\parse\ServiceFileParse;
 use omarinina\application\services\user\addData\ServiceUserCategoriesUpdate;
-use omarinina\application\services\user\addData\ServiceUserDataAdd;
 use omarinina\application\services\user\show\ServiceUserShow;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\user\Users;
@@ -66,7 +65,7 @@ class ProfileController extends SecurityController
                 if ($editForm->validate()) {
                     $avatar = UploadedFile::getInstance($editForm, 'avatar');
                     $avatarSrc = ServiceFileParse::parseAvatarFile($avatar);
-                    ServiceUserDataAdd::updateUserProfile($user, $editForm, $avatarSrc);
+                    $user->updateProfile($editForm, $avatarSrc);
                     ServiceUserCategoriesUpdate::updateExecutorCategories($user, $editForm->categories);
                     return $this->redirect(['view', 'id' => $user->id]);
                 }
@@ -101,10 +100,8 @@ class ProfileController extends SecurityController
                 $securityForm->load(Yii::$app->request->post());
 
                 if ($securityForm->validate()) {
-                    ServiceUserDataAdd::updateUserPassword(
-                        $securityForm,
-                        $user
-                    );
+                    $user->updatePassword($securityForm->newPassword);
+
                     return $this->redirect(['view', 'id' => $user->id]);
                 }
             }

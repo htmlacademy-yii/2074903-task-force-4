@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
-use omarinina\application\services\user\addData\ServiceUserDataAdd;
 use omarinina\application\services\user\auth\ServiceUserAuthVk;
 use omarinina\domain\models\user\Users;
 use yii\authclient\clients\VKontakte;
@@ -44,9 +43,7 @@ class AuthController extends Controller
             if (!$currentUser) {
                 if (array_key_exists('email', $userData)) {
                     $currentUser = Users::findOne(['email' => mb_strtolower($userData['email'])]);
-                    if ($currentUser) {
-                        ServiceUserDataAdd::addUserVkId($currentUser, $userData);
-                    }
+                    $currentUser?->addVkId($userData['id']);
                 }
                 if (!$currentUser) {
                     return $this->redirect([
