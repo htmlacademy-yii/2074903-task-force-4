@@ -144,7 +144,7 @@ class TaskActionsController extends SecurityController
                     if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
-                        $this->respondCreate->saveNewRespond(new NewRespondDto($user->id, $task->id, $attributes));
+                        $this->respondCreate->createNewRespond(new NewRespondDto($user->id, $task->id, $attributes));
 
                         return $this->redirect(['tasks/view', 'id' => $taskId]);
                     }

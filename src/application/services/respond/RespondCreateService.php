@@ -13,10 +13,10 @@ class RespondCreateService implements RespondCreateInterface
 {
     /**
      * @param NewRespondDto $dto
-     * @return void
+     * @return Responds|null
      * @throws ServerErrorHttpException
      */
-    public function saveNewRespond(NewRespondDto $dto): void
+    public function createNewRespond(NewRespondDto $dto): ?Responds
     {
         $newRespond = new Responds();
         if ($dto->formAttributes) {
@@ -30,5 +30,6 @@ class RespondCreateService implements RespondCreateInterface
                 500
             );
         }
+        return $newRespond;
     }
 }

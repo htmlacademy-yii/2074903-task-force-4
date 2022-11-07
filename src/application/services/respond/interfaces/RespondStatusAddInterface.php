@@ -8,9 +8,24 @@ use omarinina\domain\models\task\Responds;
 
 interface RespondStatusAddInterface
 {
-    public function addAcceptStatus(Responds $respond, int $userId);
+    /**
+     * @param Responds $respond
+     * @param int $userId
+     * @return Responds|null
+     */
+    public function addAcceptStatus(Responds $respond, int $userId) : ?Responds;
 
-    public function addRefuseStatus(Responds $respond, int $userId);
+    /**
+     * @param Responds $respond
+     * @param int $userId
+     * @return void
+     */
+    public function addRefuseStatus(Responds $respond, int $userId) : void;
 
-    public function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null);
+    /**
+     * @param Responds[] $responds
+     * @param Responds|null $acceptedRespond
+     * @return void
+     */
+    public function addRestRespondsRefuseStatus(array $responds, ?Responds $acceptedRespond = null) : void;
 }
