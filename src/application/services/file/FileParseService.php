@@ -18,7 +18,7 @@ class FileParseService implements FileParseInterface
     public function parseAvatarFile(?UploadedFile $avatar = null) : ?string
     {
         if ($avatar) {
-            $name = uniqid('upload') . 'parse' . $avatar->getExtension();
+            $name = uniqid('upload') . '.' . $avatar->getExtension();
             $avatar->saveAs('@webroot' . HelperConstants::PART_PATH_AVATAR . $name);
 
             return HelperConstants::PART_PATH_AVATAR . $name;
