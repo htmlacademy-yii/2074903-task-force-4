@@ -427,18 +427,4 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         }
         return $this->save(false);
     }
-
-    /**
-     * @return void
-     * @throws \Throwable
-     */
-    public function deleteAllExecutorCategories() : void
-    {
-        $existedExecutorCategories = ExecutorCategories::find()->where(['executorId' => $this->id])->all();
-        Yii::$app->db->transaction(function () use ($existedExecutorCategories) {
-            foreach ($existedExecutorCategories as $existedCategory) {
-                $existedCategory->delete();
-            }
-        });
-    }
 }
