@@ -412,7 +412,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         $this->hidden = $form->hidden;
         if ($avatarSrc) {
             if ($this->avatarSrc) {
-                unlink(Yii::$app->basePath . '/web/' . $this->avatarSrc);
+                $currentAvatarSrc = Yii::$app->basePath . '/web/' . $this->avatarSrc;
+                if (file_exists($currentAvatarSrc)) {
+                    unlink($currentAvatarSrc);
+                }
             }
             $this->avatarSrc = $avatarSrc;
         }

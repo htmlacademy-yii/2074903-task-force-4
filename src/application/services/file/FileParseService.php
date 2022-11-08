@@ -19,6 +19,12 @@ class FileParseService implements FileParseInterface
     {
         if ($avatar) {
             $name = uniqid('upload') . '.' . $avatar->getExtension();
+            $uploadPath = Yii::getAlias('@webroot') . HelperConstants::PART_PATH_AVATAR;
+
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
             $avatar->saveAs('@webroot' . HelperConstants::PART_PATH_AVATAR . $name);
 
             return HelperConstants::PART_PATH_AVATAR . $name;
@@ -31,8 +37,15 @@ class FileParseService implements FileParseInterface
         if ($urlAvatarVk) {
             $url = $urlAvatarVk;
             $fileName = HelperConstants::PART_PATH_AVATAR . uniqid('upload') . '.' . 'jpg';
-            $path = Yii::getAlias('@webroot') . $fileName;
-            file_put_contents($path, file_get_contents($url));
+
+            $uploadPath = Yii::getAlias('@webroot') . HelperConstants::PART_PATH_AVATAR;
+
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            $fullPath = Yii::getAlias('@webroot') . $fileName;
+            file_put_contents($fullPath, file_get_contents($url));
             return $fileName;
         }
         return null;

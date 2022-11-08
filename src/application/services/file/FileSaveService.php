@@ -9,6 +9,7 @@ use omarinina\domain\models\Files;
 use omarinina\infrastructure\constants\HelperConstants;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
+use Yii;
 
 class FileSaveService implements FileSaveInterface
 {
@@ -21,6 +22,13 @@ class FileSaveService implements FileSaveInterface
     {
         $savedFile = new Files();
         $name = uniqid('upload') . '.' . $file->getExtension();
+
+        $uploadPath = Yii::getAlias('@webroot') . HelperConstants::PART_PATH_FILE;
+
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
         $file->saveAs('@webroot' . HelperConstants::PART_PATH_FILE . $name);
         $savedFile->fileSrc = HelperConstants::PART_PATH_FILE . $name;
 
