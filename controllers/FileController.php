@@ -32,7 +32,7 @@ class FileController extends SecurityController
         } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
-            error_log('Error: '.$e->getMessage() . PHP_EOL, 3, Yii::getAlias('@webroot') . '/runtime/errors.log');
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
