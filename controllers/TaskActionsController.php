@@ -1,11 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace app\controllers;
 
-use omarinina\application\services\respond\add_status\ServiceRespondStatusAdd;
-use omarinina\application\services\respond\create\ServiceRespondCreate;
-use omarinina\application\services\review\create\ServiceReviewCreate;
-use omarinina\application\services\task\add_data\ServiceTaskDataAdd;
-use omarinina\application\services\task\change_status\ServiceTaskStatusChange;
+use omarinina\application\services\respond\interfaces\RespondCreateInterface;
+use omarinina\application\services\respond\interfaces\RespondStatusAddInterface;
+use omarinina\application\services\respond\dto\NewRespondDto;
+use omarinina\application\services\review\interfaces\ReviewCreateInterface;
 use omarinina\domain\exception\task\AvailableActionsException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\IdUserException;
@@ -20,6 +22,30 @@ use yii\web\ServerErrorHttpException;
 
 class TaskActionsController extends SecurityController
 {
+    /** @var RespondStatusAddInterface */
+    private RespondStatusAddInterface $respondStatusAdd;
+
+    /** @var RespondCreateInterface */
+    private RespondCreateInterface $respondCreate;
+
+    /** @var ReviewCreateInterface  */
+    private ReviewCreateInterface $reviewCreate;
+
+    public function __construct(
+        $id,
+        $module,
+        RespondStatusAddInterface $respondStatusAdd,
+        RespondCreateInterface $respondCreate,
+        ReviewCreateInterface $reviewCreate,
+        $config = []
+    ) {
+        $this->respondStatusAdd = $respondStatusAdd;
+        $this->respondCreate = $respondCreate;
+        $this->reviewCreate = $reviewCreate;
+        parent::__construct($id, $module, $config);
+    }
+
+
     /**
      * @param int $respondId
      * @return Response|string
@@ -30,12 +56,11 @@ class TaskActionsController extends SecurityController
             if ($respondId) {
                 $respond = Responds::findOne($respondId);
                 $userId = \Yii::$app->user->id;
+                $task = $respond->task;
 
-                $task = ServiceTaskDataAdd::addExecutorIdToTask($respond, $userId);
-
-                if (ServiceRespondStatusAdd::addAcceptStatus($respond, $userId)->status) {
-                    ServiceTaskStatusChange::changeStatusToInWork($task);
-                    ServiceRespondStatusAdd::addRestRespondsRefuseStatus(
+                if ($this->respondStatusAdd->addAcceptStatus($respond, $userId)->status) {
+                    $task->addExecutorId($respond->executorId)->addInWorkStatus();
+                    $this->respondStatusAdd->addRestRespondsRefuseStatus(
                         $task->responds,
                         $respond
                     );
@@ -47,6 +72,7 @@ class TaskActionsController extends SecurityController
         } catch (ServerErrorHttpException|NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -63,14 +89,15 @@ class TaskActionsController extends SecurityController
                 $task = $respond->task;
                 $userId = \Yii::$app->user->id;
 
-                ServiceRespondStatusAdd::addRefuseStatus($respond, $userId);
+                $this->respondStatusAdd->addRefuseStatus($respond, $userId);
 
                 return $this->redirect(['tasks/view', 'id' => $task->id]);
             }
             throw new NotFoundHttpException('Respond is not found', 404);
-        } catch (ServerErrorHttpException|NotFoundHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -86,8 +113,8 @@ class TaskActionsController extends SecurityController
                 $task = Tasks::findOne($taskId);
                 $userId = Yii::$app->user->id;
 
-                if (ServiceTaskStatusChange::changeStatusToCancelled($task, $userId)) {
-                    ServiceRespondStatusAdd::addRestRespondsRefuseStatus($task->responds);
+                if ($task->addCancelledStatus($userId)) {
+                    $this->respondStatusAdd->addRestRespondsRefuseStatus($task->responds);
                 }
 
                 return $this->redirect(['tasks/view', 'id' => $task->id]);
@@ -96,10 +123,10 @@ class TaskActionsController extends SecurityController
         } catch (NotFoundHttpException|
             AvailableActionsException|
             CurrentActionException|
-            IdUserException|
-            ServerErrorHttpException $e) {
+            IdUserException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -121,7 +148,7 @@ class TaskActionsController extends SecurityController
                     if ($taskResponseForm->validate() && $taskResponseForm->isAvailableAddRespond($user, $task)) {
                         $attributes = Yii::$app->request->post('TaskResponseForm');
 
-                        ServiceRespondCreate::saveNewRespond($user, $task, $attributes);
+                        $this->respondCreate->createNewRespond(new NewRespondDto($user->id, $task->id, $attributes));
 
                         return $this->redirect(['tasks/view', 'id' => $taskId]);
                     }
@@ -129,9 +156,10 @@ class TaskActionsController extends SecurityController
                 throw new NotFoundHttpException('Page not found', 404);
             }
             throw new NotFoundHttpException('Task is not found', 404);
-        } catch (NotFoundHttpException|ServerErrorHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -146,15 +174,15 @@ class TaskActionsController extends SecurityController
             if ($taskId) {
                 $task = Tasks::findOne($taskId);
                 $userId = Yii::$app->user->id;
-
-                ServiceTaskStatusChange::changeStatusToFailed($task, $userId);
+                $task->addFailedStatus($userId);
 
                 return $this->redirect(['tasks/view', 'id' => $taskId]);
             }
             throw new NotFoundHttpException('Task is not found', 404);
-        } catch (NotFoundHttpException|ServerErrorHttpException $e) {
+        } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }
@@ -171,13 +199,13 @@ class TaskActionsController extends SecurityController
                 $userId = Yii::$app->user->id;
                 $taskAcceptanceForm = new TaskAcceptanceForm();
 
-                if (ServiceTaskStatusChange::changeStatusToDone($task, $userId)) {
+                if ($task->addDoneStatus($userId)) {
                     if (Yii::$app->request->getIsPost()) {
                         $taskAcceptanceForm->load(Yii::$app->request->post());
                         if ($taskAcceptanceForm->validate()) {
                             $attributes = Yii::$app->request->post('TaskAcceptanceForm');
 
-                            ServiceReviewCreate::saveNewReview($task, $attributes);
+                            $this->reviewCreate->createNewReview($task, $attributes);
 
                             return $this->redirect(['tasks/view', 'id' => $taskId]);
                         }
@@ -193,6 +221,7 @@ class TaskActionsController extends SecurityController
             ServerErrorHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }

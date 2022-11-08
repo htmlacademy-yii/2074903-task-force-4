@@ -1,5 +1,8 @@
 <?php
-/* @var $this View */
+
+declare(strict_types=1);
+
+/** @var $this View */
 /** @var omarinina\domain\models\task\Tasks $currentTask */
 /** @var omarinina\domain\models\task\Responds[] $responds */
 /** @var omarinina\infrastructure\models\form\TaskResponseForm $model */
@@ -18,10 +21,10 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
 <div class="main-content container">
     <div class="left-column">
         <div class="head-wrapper">
-            <h3 class="head-main"><?= $currentTask->name; ?></h3>
+            <h3 class="head-main"><?= Html::encode($currentTask->name); ?></h3>
             <p class="price price--big"><?= $currentTask->budget . ' ₽'; ?></p>
         </div>
-        <p class="task-description"><?= $currentTask->description; ?></p>
+        <p class="task-description"><?= Html::encode($currentTask->description); ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
             <?= $currentTask->getAvailableActions(\Yii::$app->user->id)->getViewAvailableButton() ?>
         <?php endif; ?>
@@ -81,18 +84,18 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             <div class="feedback-wrapper">
                 <a href="<?= Url::to(['profile/view', 'id' => $respond->executor->id]) ?>"
                    class="link link--block link--big">
-                    <?= $respond->executor->name ?></a>
+                    <?= Html::encode($respond->executor->name) ?></a>
                 <div class="response-wrapper">
                     <div class="stars-rating small">
                         <?= str_repeat(
                             '<span class="fill-star">&nbsp;</span>',
-                            round(
+                            (int)round(
                                 Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
                         <?= str_repeat(
                             '<span>&nbsp;</span>',
-                            Users::MAX_RATING - round(
+                            Users::MAX_RATING - (int)round(
                                 Users::findOne($respond->executor->id)->getExecutorRating()
                             )
                         ) ?>
@@ -104,7 +107,7 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                         ) ?></p>
                 </div>
                 <p class="response-message">
-                    <?= $respond->comment ?>
+                    <?= Html::encode($respond->comment) ?>
                 </p>
 
             </div>
@@ -113,7 +116,9 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                 <p class="info-text">
                     <span class="current-time"><?= $respond->countTimeAgoPost($respond->createAt) ?>
                     </span> назад</p>
+                <?php if ($respond->price) : ?>
                 <p class="price price--small"><?= $respond->price ?> ₽</p>
+                <?php endif; ?>
             </div>
                 <?php if (!$respond->status && \Yii::$app->user->id === $currentTask->clientId) : ?>
             <div class="button-popup">
@@ -145,19 +150,30 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                 <dd><?= $currentTask->taskStatus->name ?></dd>
             </dl>
         </div>
+        <?php if ($currentTask->files) : ?>
         <div class="right-card white file-card">
             <h4 class="head-card">Файлы задания</h4>
             <ul class="enumeration-list">
+                <?php foreach ($currentTask->files as $file) : ?>
                 <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">my_picture.jpg</a>
-                    <p class="file-size">356 Кб</p>
+                    <a href="<?= Url::to(['file/download', 'fileId' => $file->id]) ?>"
+                       class="link link--block link--clip">
+                        <?= str_replace(
+                            '/uploads/',
+                            '',
+                            $file->fileSrc
+                        ) ?>
+                    </a>
+                    <p class="file-size">
+                        <?php echo Yii::$app->formatter->asShortSize(
+                            filesize(Yii::getAlias('@webroot').$file->fileSrc)
+                        ) ?>
+                    </p>
                 </li>
-                <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">information.docx</a>
-                    <p class="file-size">12 Кб</p>
-                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -221,9 +237,16 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
                     ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
             </p>
             <p>
-                <?= $form->field($model, 'score', ['options' => ['class'=> 'completion-head control-label']])
-                    ->textInput(['placeholder' => 'Оцените работу от 1 до 5']); ?>
+                <?= $form->field($model, 'score', ['options' => [
+                    'class'=> 'completion-head control-label',
+                    'style' => 'display: none']])
+                    ->textInput(['id' => 'acceptance-form-rate',
+                    ]); ?>
             </p>
+            <p class="completion-head control-label">Оценка работы</p>
+            <div class="stars-rating big active-stars">
+                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+            </div>
 
             <?php
             echo Html::submitInput('Завершить', ['class' => 'button button--pop-up button--blue']);
@@ -261,7 +284,8 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
             ?>
             <?= $form->field($model, 'comment', ['options' => ['class' => 'form-group']])
                 ->textarea(['placeholder' => 'Напишите то, что важно']); ?>
-            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group', 'placeholder' => '1000']]) ?>
+            <?= $form->field($model, 'price', ['options' => ['class'=> 'form-group']])
+                ->textInput(['placeholder' => '1000']) ?>
             <?php
             echo Html::submitInput(
                 'Завершить',

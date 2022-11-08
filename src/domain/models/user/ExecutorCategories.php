@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\domain\models\user;
 
 use omarinina\domain\models\Categories;
@@ -68,5 +70,15 @@ class ExecutorCategories extends \yii\db\ActiveRecord
     public function getExecutor()
     {
         return $this->hasOne(Users::class, ['id' => 'executorId']);
+    }
+
+    /**
+     * @return void
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function deleteExecutorCategory(): void
+    {
+        $this->delete();
     }
 }

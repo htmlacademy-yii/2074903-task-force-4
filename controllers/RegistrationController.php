@@ -1,13 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
 namespace app\controllers;
 
-use omarinina\application\services\user\create\ServiceUserCreate;
-use omarinina\infrastructure\models\form\RegistrationCityRoleForm;
+use omarinina\application\services\file\interfaces\FileParseInterface;
+use omarinina\application\services\user\dto\NewUserDto;
+use omarinina\application\services\user\interfaces\UserCreateInterface;
 use omarinina\infrastructure\models\form\RegistrationForm;
 use omarinina\domain\models\Cities;
-use omarinina\infrastructure\models\form\RegistrationRoleForm;
 use Yii;
-use yii\base\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\AccessControl;
@@ -15,6 +17,24 @@ use yii\web\ServerErrorHttpException;
 
 class RegistrationController extends Controller
 {
+    /** @var FileParseInterface */
+    private FileParseInterface $fileParse;
+
+    /** @var UserCreateInterface */
+    private UserCreateInterface $userCreate;
+
+    public function __construct(
+        $id,
+        $module,
+        FileParseInterface $fileParse,
+        UserCreateInterface $userCreate,
+        $config = []
+    ) {
+        $this->fileParse = $fileParse;
+        $this->userCreate = $userCreate;
+        parent::__construct($id, $module, $config);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -49,11 +69,15 @@ class RegistrationController extends Controller
                 $registrationForm->load(Yii::$app->request->post());
 
                 if ($registrationForm->validate()) {
-                    $newUser = ServiceUserCreate::createNewUser(
+                    $avatarVk = !$userData ? null : (array_key_exists('photo', $userData) ?
+                        $this->fileParse->parseAvatarVkFile($userData['photo']) :
+                        null);
+                    $newUser = $this->userCreate->createNewUser(new NewUserDto(
                         $registrationForm,
                         Yii::$app->request->post('RegistrationForm'),
-                        $userData
-                    );
+                        $userData,
+                        $avatarVk
+                    ));
                     if ($userData) {
                         return $this->redirect(['auth/login', 'userId' => $newUser->id]);
                     }
@@ -69,6 +93,7 @@ class RegistrationController extends Controller
         } catch (ServerErrorHttpException|\yii\base\Exception $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\domain\models\user;
 
 use omarinina\domain\models\Cities;
@@ -7,10 +9,15 @@ use omarinina\domain\models\task\Responds;
 use omarinina\domain\models\task\Reviews;
 use omarinina\domain\models\task\Tasks;
 use omarinina\domain\models\Categories;
+use omarinina\domain\valueObjects\Phone;
+use omarinina\infrastructure\constants\ReviewConstants;
+use omarinina\infrastructure\constants\TaskConstants;
 use omarinina\infrastructure\constants\TaskStatusConstants;
 use omarinina\infrastructure\constants\UserRoleConstants;
+use omarinina\infrastructure\models\form\EditProfileForm;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\caching\TagDependency;
 use yii\web\IdentityInterface;
 
 /**
@@ -29,6 +36,7 @@ use yii\web\IdentityInterface;
  * @property string|null $phone
  * @property string|null $telegram
  * @property string|null $bio
+ * @property bool|null $hidden
  *
  * @property Cities $userCity
  * @property Categories[] $executorCategories
@@ -72,8 +80,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['bio', 'avatarSrc'], 'string'],
             [['email'], 'string', 'max' => 128],
             [['name', 'password'], 'string', 'max' => 255],
-            [['phone', 'telegram'], 'string', 'max' => 30],
+            [['phone'], 'string', 'max' => 30],
+            [['telegram'], 'string', 'max' => 64],
             [['email', 'vkId'], 'unique'],
+            [['hidden'], 'boolean'],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['city' => 'id']],
             [['role'], 'exist', 'skipOnError' => true, 'targetClass' => Roles::class, 'targetAttribute' => ['role' => 'id']],
         ];
@@ -150,7 +160,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorReviews()
     {
-        return $this->hasMany(Reviews::class, ['executorId' => 'id'])->cache();
+        return $this->hasMany(Reviews::class, ['executorId' => 'id'])
+            ->cache(true, new TagDependency(['tags' => ReviewConstants::CACHE_TAG]));
     }
 
     /**
@@ -180,7 +191,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getExecutorTasks()
     {
-        return $this->hasMany(Tasks::class, ['executorId' => 'id'])->cache();
+        return $this->hasMany(Tasks::class, ['executorId' => 'id'])
+            ->cache(true, new TagDependency(['tags' => TaskConstants::CACHE_EXECUTOR_TAG]));
     }
 
     public static function findIdentity($id)
@@ -361,13 +373,58 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         return array_search($currentExecutorRating, $allRating) + 1;
     }
 
-    public function addVkId(int $vkId)
+    /**
+     * @param int $vkId
+     * @return bool
+     */
+    public function addVkId(int $vkId): bool
     {
         $this->vkId = $vkId;
+        return $this->save(false);
+    }
 
-        if (!$this->save(false)) {
-            return false;
+    /**
+     * @param string $newPassword
+     * @return bool
+     * @throws \yii\base\Exception
+     */
+    public function updatePassword(string $newPassword) : bool
+    {
+        $this->password = Yii::$app->getSecurity()->generatePasswordHash($newPassword);
+        return $this->save(false);
+    }
+
+    /**
+     * @param EditProfileForm $form
+     * @param string|null $avatarSrc
+     * @return bool
+     * @throws InvalidConfigException
+     */
+    public function updateProfile(EditProfileForm $form, ?string $avatarSrc = null) : bool
+    {
+        $this->name = $form->name;
+        $this->email = $form->email;
+        if ($form->phone) {
+            $this->phone = (new Phone($form->phone))->getPhone();
         }
-        return true;
+        $this->telegram = $form->telegram;
+        $this->bio = $form->bio;
+        $this->hidden = $form->hidden;
+        if ($avatarSrc) {
+            if ($this->avatarSrc) {
+                $currentAvatarSrc = Yii::$app->basePath . '/web/' . $this->avatarSrc;
+                if (file_exists($currentAvatarSrc)) {
+                    unlink($currentAvatarSrc);
+                }
+            }
+            $this->avatarSrc = $avatarSrc;
+        }
+        if ($form->birthDate !== null) {
+            $this->birthDate = Yii::$app->formatter->asDate(
+                $form->birthDate,
+                'yyyy-MM-dd'
+            );
+        }
+        return $this->save(false);
     }
 }

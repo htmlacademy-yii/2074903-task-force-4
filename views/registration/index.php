@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use omarinina\domain\models\Cities;
@@ -53,7 +55,9 @@ if ($userData && array_key_exists('city', $userData)) {
                         'class' => ' form-group',
                         ]])
                         ->textInput(['placeholder' => 'something@google.com',
-                            'value' => $userData && array_key_exists('email', $userData) ? $userData['email'] : null
+                            'value' => $userData && array_key_exists('email', $userData) ?
+                                $userData['email'] :
+                                null
                         ]); ?>
                     <?= $form->field($model, 'city', ['options' => ['class' => 'form-group']])
                         ->dropDownList(
@@ -67,16 +71,37 @@ if ($userData && array_key_exists('city', $userData)) {
                             ]
                         ); ?>
                 </div>
+            <?php if (!$userData) : ?>
                 <?= $form->field($model, 'password', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'пароль']); ?>
                 <?= $form->field($model, 'repeatedPassword', ['options' => ['class' => 'half-wrapper form-group']])
                     ->passwordInput(['placeholder' => 'повторите пароль']); ?>
+            <?php else : ?>
+                <?php $password = Yii::$app->security->generateRandomString(8); ?>
                 <?= $form->field(
                     $model,
-                    'executor',
-                    ['options' => ['class' => 'form-group']]
-                )->checkbox(['class' => 'control-label checkbox-label']) ?>
-
+                    'password',
+                    ['options' => ['class' => 'half-wrapper form-group', 'style' => 'display:none']]
+                )
+                    ->passwordInput([
+                        'placeholder' => 'пароль',
+                        'value' => $password
+                    ]); ?>
+                <?= $form->field(
+                    $model,
+                    'repeatedPassword',
+                    ['options' => ['class' => 'half-wrapper form-group', 'style' => 'display:none']]
+                )
+                    ->passwordInput([
+                        'placeholder' => 'повторите пароль',
+                        'value' => $password
+                    ]); ?>
+            <?php endif; ?>
+            <?= $form->field(
+                $model,
+                'executor',
+                ['options' => ['class' => 'form-group']]
+            )->checkbox(['class' => 'control-label checkbox-label']) ?>
                 <input type="submit" class="button button--blue" value="Создать аккаунт">
             <?php ActiveForm::end(); ?>
         </div>

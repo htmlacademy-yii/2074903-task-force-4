@@ -1,61 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
+use yii\data\Pagination;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
+use app\widgets\TaskWidget;
+use yii\widgets\LinkPager;
+use omarinina\infrastructure\constants\ViewConstants;
 
 /** @var yii\web\View $this */
 /** @var omarinina\domain\models\task\Tasks[] $newTasks */
 /** @var omarinina\domain\models\Categories[] $categories */
 /** @var omarinina\infrastructure\models\form\TaskFilterForm $model */
+/** @var Pagination $pagination */
 
 ?>
 
 <div class="main-content container">
     <div class="left-column">
         <h3 class="head-main head-task">Новые задания</h3>
+        <?php if (!$newTasks) : ?>
+        <p>Свободных заданий пока нет.</p>
+        <?php endif; ?>
         <?php foreach ($newTasks as $newTask) : ?>
-        <div class="task-card">
-            <div class="header-task">
-                <a  href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="link link--block link--big">
-                    <?= $newTask->name; ?></a>
-                <p class="price price--task"><?= $newTask->budget; ?> ₽</p>
-            </div>
-            <p class="info-text"><span class="current-time">
-                    <?= $newTask->countTimeAgoPost($newTask->createAt) ?>
-                </span> назад</p>
-            <p class="task-text"><?= $newTask->description; ?></p>
-            <div class="footer-task">
-                <?php if (isset($newTask->location)) : ?>
-                <p class="info-text town-text"><?= $newTask->location; ?></p>
-                <?php endif; ?>
-                <p class="info-text category-text"><?= $newTask->category->name ?></p>
-                <a href="<?= Url::to(['tasks/view', 'id' => $newTask->id]) ?>" class="button button--black">
-                    Смотреть Задание</a>
-            </div>
-        </div>
+            <?= TaskWidget::widget(['task' => $newTask]) ?>
         <?php endforeach; ?>
 
         <div class="pagination-wrapper">
-            <ul class="pagination-list">
-                <li class="pagination-item mark">
-                    <a href="#" class="link link--page"></a>
-                </li>
-                <li class="pagination-item">
-                    <a href="#" class="link link--page">1</a>
-                </li>
-                <li class="pagination-item pagination-item--active">
-                    <a href="#" class="link link--page">2</a>
-                </li>
-                <li class="pagination-item">
-                    <a href="#" class="link link--page">3</a>
-                </li>
-                <li class="pagination-item mark">
-                    <a href="#" class="link link--page"></a>
-                </li>
-            </ul>
+                <?= LinkPager::widget([
+                    'pagination' => $pagination,
+                    'options' => ['class' => 'pagination-list'],
+                    'activePageCssClass' => 'pagination-item pagination-item--active',
+                    'linkContainerOptions' => ['class' => 'pagination-item'],
+                    'maxButtonCount' => ViewConstants::BUTTON_COUNT_PAGINATION,
+                    'linkOptions' => ['class' => 'link link--page'],
+                    'prevPageCssClass' => 'mark',
+                    'nextPageCssClass' => 'mark',
+                    'prevPageLabel' => '',
+                    'nextPageLabel' => '',
+                    'hideOnSinglePage' => true,
+                ]) ?>
         </div>
     </div>
+
     <div class="right-column">
         <div class="right-card black">
             <div class="search-form">

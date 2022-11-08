@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\infrastructure\models\form;
 
 use omarinina\infrastructure\constants\TaskStatusConstants;
@@ -13,8 +15,8 @@ class TaskResponseForm extends Model
     /** @var null|string */
     public ?string $comment = null;
 
-    /** @var int */
-    public int $price = 0;
+    /** @var null|int|string */
+    public int|string|null $price = null;
 
     public function attributeLabels()
     {
@@ -27,8 +29,7 @@ class TaskResponseForm extends Model
     public function rules()
     {
         return [
-            [['price'], 'required'],
-            [['comment'], 'default', 'value' => null],
+            [['comment', 'price'], 'default', 'value' => null],
             [['price'], 'integer', 'min' => 1],
         ];
     }

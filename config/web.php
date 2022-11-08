@@ -1,6 +1,7 @@
 <?php
 
 use omarinina\infrastructure\constants\KeysConstants;
+use GuzzleHttp\Client;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -8,7 +9,10 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'omarinina\infrastructure\modules\Bootstrap'
+    ],
     'homeUrl' => ['tasks/index'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -34,11 +38,16 @@ $config = [
             'clients' => [
                 'vkontakte' => [
                     'class' => 'yii\authclient\clients\VKontakte',
-                    'clientId' => '51458800',
+                    'clientId' => KeysConstants::VK_CLIENT_ID,
                     'clientSecret' => KeysConstants::VK_CLIENT_KEY,
                 ],
             ],
         ],
+        'yandexGeoClient' => function () {
+            return new Client([
+                'base_uri' => 'https://geocode-maps.yandex.ru/1.x',
+            ]);
+        },
         'user' => [
             'identityClass' => 'omarinina\domain\models\user\Users',
             'enableAutoLogin' => true,
@@ -77,20 +86,20 @@ if (YII_ENV_DEV) {
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        'panels' => [
-            'db' => [
-                'class' => 'yii\debug\panels\DbPanel',
-                'defaultOrder' => [
-                    'seq' => SORT_ASC
-                ],
-                'defaultFilter' => [
-                    'type' => 'SELECT'
-                ]
-            ],
-            'profiling' => \yii\debug\panels\ProfilingPanel::class,
-        ],
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        'allowedIPs' => ['*'],
+//        'panels' => [
+//            'db' => [
+//                'class' => 'yii\debug\panels\DbPanel',
+//                'defaultOrder' => [
+//                    'seq' => SORT_ASC
+//                ],
+//                'defaultFilter' => [
+//                    'type' => 'SELECT'
+//                ]
+//            ],
+//            'profiling' => \yii\debug\panels\ProfilingPanel::class,
+//        ],
+//        // uncomment the following to add your IP if you are not connecting from localhost.
+//        'allowedIPs' => ['*'],
     ];
 
     $config['bootstrap'][] = 'gii';

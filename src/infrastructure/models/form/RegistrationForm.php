@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace omarinina\infrastructure\models\form;
 
 use omarinina\domain\models\user\Users;
@@ -23,7 +26,7 @@ class RegistrationForm extends Model
     /** @var string */
     public string $repeatedPassword = '';
 
-    /** @var boolean */
+    /** @var bool */
     public bool $executor = false;
 
     public function rules(): array

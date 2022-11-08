@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** @var yii\web\View $this */
 /** @var string $content */
 
@@ -69,7 +71,6 @@ use app\widgets\LoginWidget;
         </div>
     </header>
     <main>
-<!--        //there will be $content here-->
         <div class="landing-container">
             <div class="landing-top">
                 <h1>Работа для всех.<br>
@@ -77,8 +78,10 @@ use app\widgets\LoginWidget;
                 <p>Сломался кран на кухне? Надо отправить документы? Нет времени самому гулять с собакой?
                     У нас вы быстро найдёте исполнителя для любой жизненной ситуации?<br>
                     Быстро, безопасно и с гарантией. Просто, как раз, два, три. </p>
-                <button class="button">Создать аккаунт</button>
+                <a href="<?= Url::to(['registration/index']) ?>" class="button">Создать аккаунт</a>
+                <p>  </p>
             </div>
+
             <div class="landing-center">
                 <div class="landing-instruction">
                     <div class="landing-instruction-step">

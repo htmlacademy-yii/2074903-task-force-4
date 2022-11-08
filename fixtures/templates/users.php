@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @var $faker \Faker\Generator
  */
@@ -8,7 +10,7 @@ return [
     'name' => $faker->userName(),
     'password' => $faker->password(),
     'role' => $faker->randomElement([1, 2]),
-    'city' => $faker->numberBetween(1,1087),
+    'city' => $faker->numberBetween(1, 1087),
     'avatarSrc' => $faker->randomElement(
         [
             '/img/avatars/1.png',
@@ -18,7 +20,7 @@ return [
             '/img/avatars/5.png',
         ]
     ),
-    'birthDate' => $faker->date('Y-m-d','-18 years'),
+    'birthDate' => $faker->date('Y-m-d', '-18 years'),
     'phone' => $faker->phoneNumber(),
     'telegram' => $faker->lexify('@???????'),
     'bio' => $faker->text()

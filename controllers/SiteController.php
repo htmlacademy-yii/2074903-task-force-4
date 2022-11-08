@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace app\controllers;
 
 use Yii;
@@ -100,6 +102,7 @@ class SiteController extends Controller
         } catch (NotFoundHttpException $e) {
             return $e->getMessage();
         } catch (\Throwable $e) {
+            Yii::$app->errorHandler->logException($e);
             return 'Something wrong. Sorry, please, try again later';
         }
     }

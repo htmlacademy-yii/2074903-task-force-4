@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace omarinina\domain\models\task;
 
 use omarinina\domain\models\Cities;
@@ -17,6 +19,7 @@ use omarinina\domain\actions\AbstractAction;
 use omarinina\domain\exception\task\IdUserException;
 use omarinina\domain\exception\task\CurrentActionException;
 use omarinina\domain\exception\task\AvailableActionsException;
+use yii\web\ServerErrorHttpException;
 
 /**
  * This is the model class for table "tasks".
@@ -284,10 +287,7 @@ class Tasks extends \yii\db\ActiveRecord
             CancelAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -303,10 +303,7 @@ class Tasks extends \yii\db\ActiveRecord
             DenyAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -322,10 +319,7 @@ class Tasks extends \yii\db\ActiveRecord
             AcceptAction::getInternalName(),
             $userId
         );
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
@@ -334,22 +328,19 @@ class Tasks extends \yii\db\ActiveRecord
     public function addInWorkStatus() : bool
     {
         $this->status = TaskStatusConstants::ID_IN_WORK_STATUS;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        return $this->save(false);
     }
 
     /**
-     * @param Responds $respond
-     * @return bool
+     * @param int $executorId
+     * @return null|Tasks
+     * @throws ServerErrorHttpException
      */
-    public function addExecutorId(Responds $respond) : bool
+    public function addExecutorId(int $executorId) : ?Tasks
     {
-        $this->executorId = $respond->executorId;
-        if (!$this->save(false)) {
-            return false;
-        }
-        return true;
+        $this->executorId = $executorId;
+        return $this->save(false) ?
+            $this :
+            throw new ServerErrorHttpException('something wrong, please try again later', 500);
     }
 }
