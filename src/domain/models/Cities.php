@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace omarinina\domain\models;
 
 use omarinina\domain\models\user\Users;
-use Yii;
 
 /**
  * This is the model class for table "cities".

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace omarinina\domain\actions;
 
-use yii\helpers\Url;
-use Yii;
-use app\widgets\AcceptanceWidget;
-
 class AcceptAction extends AbstractAction
 {
     /**

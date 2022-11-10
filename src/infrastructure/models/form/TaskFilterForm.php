@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace omarinina\infrastructure\models\form;
 
-use omarinina\domain\models\task\Tasks;
 use yii\base\Model;
 use omarinina\domain\models\Categories;
 use yii\db\ActiveQuery;

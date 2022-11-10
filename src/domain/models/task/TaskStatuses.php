@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace omarinina\domain\models\task;
 
-use Yii;
-
 /**
  * This is the model class for table "taskStatuses".
  *

@@ -6,7 +6,6 @@ namespace omarinina\domain\models;
 
 use omarinina\domain\models\task\TaskFiles;
 use omarinina\domain\models\task\Tasks;
-use Yii;
 
 /**
  * This is the model class for table "files".

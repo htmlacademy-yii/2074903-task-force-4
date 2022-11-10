@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace omarinina\domain\models\user;
 
 use omarinina\domain\models\Categories;
-use Yii;
 
 /**
  * This is the model class for table "executorCategories".

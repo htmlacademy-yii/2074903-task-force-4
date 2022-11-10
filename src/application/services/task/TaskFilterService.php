@@ -7,8 +7,6 @@ namespace omarinina\application\services\task;
 use omarinina\application\services\task\interfaces\TaskFilterInterface;
 use omarinina\domain\models\task\Tasks;
 use omarinina\infrastructure\constants\TaskStatusConstants;
-use Yii;
-use yii\db\Query;
 
 class TaskFilterService implements TaskFilterInterface
 {

@@ -8,7 +8,6 @@ use omarinina\application\services\user\interfaces\UserShowInterface;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
 use yii\web\NotFoundHttpException;
-use Yii;
 
 class UserShowService implements UserShowInterface
 {

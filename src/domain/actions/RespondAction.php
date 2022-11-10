@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace omarinina\domain\actions;
 
-use omarinina\application\services\user\show\UserShowService;
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\UserRoleConstants;
-use Yii;
-use app\widgets\ResponseWidget;
-use yii\web\NotFoundHttpException;
 
 class RespondAction extends AbstractAction
 {
@@ -42,7 +38,6 @@ class RespondAction extends AbstractAction
     /**
      * @param int $idUser
      * @return bool
-     * @throws NotFoundHttpException
      */
     public function isAvailableForUser(int $idUser): bool
     {
