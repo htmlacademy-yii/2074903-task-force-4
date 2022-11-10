@@ -12,7 +12,7 @@ class m221011_152648_add_default_null_expiryDate extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn('tasks', 'expiryDate', 'timestamp default null');
+        $this->alterColumn('tasks', 'expiryDate', $this->timestamp()->null());
     }
 
     /**
@@ -20,5 +20,6 @@ class m221011_152648_add_default_null_expiryDate extends Migration
      */
     public function safeDown()
     {
+
     }
 }

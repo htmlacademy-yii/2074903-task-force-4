@@ -30,6 +30,6 @@ class m220929_151142_add_data_to_taskStatuses extends Migration
      */
     public function safeDown()
     {
-        $this->delete('taskStatuses');
+
     }
 }

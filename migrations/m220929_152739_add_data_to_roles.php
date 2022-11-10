@@ -27,7 +27,7 @@ class m220929_152739_add_data_to_roles extends Migration
      */
     public function safeDown()
     {
-        $this->delete('roles');
+
     }
 
 }
