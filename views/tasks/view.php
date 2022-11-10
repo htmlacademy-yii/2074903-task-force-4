@@ -22,7 +22,9 @@ $this->registerJsFile(Yii::$app->request->baseUrl.'/js/main.js');
     <div class="left-column">
         <div class="head-wrapper">
             <h3 class="head-main"><?= Html::encode($currentTask->name); ?></h3>
+            <?php if ($currentTask->budget) : ?>
             <p class="price price--big"><?= $currentTask->budget . ' ₽'; ?></p>
+            <?php endif; ?>
         </div>
         <p class="task-description"><?= Html::encode($currentTask->description); ?></p>
         <?php if ($currentTask->getAvailableActions(\Yii::$app->user->id)) : ?>
