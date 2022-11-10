@@ -194,26 +194,26 @@ class TaskActionsController extends SecurityController
     public function actionAcceptTask(int $taskId) : Response|string
     {
         try {
-            if ($taskId) {
-                $task = Tasks::findOne($taskId);
-                $userId = Yii::$app->user->id;
-                $taskAcceptanceForm = new TaskAcceptanceForm();
+            if (!$taskId) {
+                throw new NotFoundHttpException('Task is not found', 404);
+            }
+            $task = Tasks::findOne($taskId);
+            $userId = Yii::$app->user->id;
+            $taskAcceptanceForm = new TaskAcceptanceForm();
 
-                if ($task->addDoneStatus($userId)) {
-                    if (Yii::$app->request->getIsPost()) {
-                        $taskAcceptanceForm->load(Yii::$app->request->post());
-                        if ($taskAcceptanceForm->validate()) {
-                            $attributes = Yii::$app->request->post('TaskAcceptanceForm');
-
-                            $this->reviewCreate->createNewReview($task, $attributes);
-
-                            return $this->redirect(['tasks/view', 'id' => $taskId]);
-                        }
-                    }
-                }
+            if (!$task->addDoneStatus($userId)) {
                 throw new NotFoundHttpException('Page not found', 404);
             }
-            throw new NotFoundHttpException('Task is not found', 404);
+            if (Yii::$app->request->getIsPost()) {
+                $taskAcceptanceForm->load(Yii::$app->request->post());
+                if ($taskAcceptanceForm->validate()) {
+                    $attributes = Yii::$app->request->post('TaskAcceptanceForm');
+
+                    $this->reviewCreate->createNewReview($task, $attributes);
+
+                    return $this->redirect(['tasks/view', 'id' => $taskId]);
+                }
+            }
         } catch (NotFoundHttpException|
             AvailableActionsException|
             CurrentActionException|

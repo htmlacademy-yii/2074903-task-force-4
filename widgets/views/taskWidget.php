@@ -16,7 +16,9 @@ TaskWidgetAsset::register($this);
     <div class="header-task">
         <a  href="<?= Url::to(['tasks/view', 'id' => $task->id]) ?>" class="link link--block link--big">
             <?= Html::encode($task->name); ?></a>
+        <?php if ($task->budget) : ?>
         <p class="price price--task"><?= $task->budget; ?> ₽</p>
+        <?php endif; ?>
     </div>
     <p class="info-text"><span class="current-time">
                     <?= $task->countTimeAgoPost($task->createAt) ?>

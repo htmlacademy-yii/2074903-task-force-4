@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace omarinina\domain\models\task;
 
 use omarinina\domain\models\user\Users;
-use Yii;
 use omarinina\domain\traits\TimeCounter;
 
 /**

@@ -6,7 +6,6 @@ namespace omarinina\domain\models\task;
 
 use omarinina\domain\models\user\Users;
 use omarinina\infrastructure\constants\RespondStatusConstants;
-use Yii;
 use omarinina\domain\traits\TimeCounter;
 
 /**

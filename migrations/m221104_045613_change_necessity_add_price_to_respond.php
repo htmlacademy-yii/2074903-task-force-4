@@ -12,7 +12,7 @@ class m221104_045613_change_necessity_add_price_to_respond extends Migration
      */
     public function safeUp()
     {
-        $this->alterColumn('responds', 'price', $this->integer());
+        $this->alterColumn('responds', 'price', $this->integer()->null());
     }
 
     /**
@@ -20,6 +20,6 @@ class m221104_045613_change_necessity_add_price_to_respond extends Migration
      */
     public function safeDown()
     {
-        $this->alterColumn('responds', 'price', $this->integer()->notNull());
+
     }
 }

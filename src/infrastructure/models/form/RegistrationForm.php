@@ -6,7 +6,6 @@ namespace omarinina\infrastructure\models\form;
 
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Cities;
-use Yii;
 use yii\base\Model;
 
 class RegistrationForm extends Model

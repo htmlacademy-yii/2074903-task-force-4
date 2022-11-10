@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace omarinina\domain\models\task;
 
-use omarinina\domain\models\Cities;
 use omarinina\domain\models\user\Users;
 use omarinina\domain\models\Categories;
 use omarinina\domain\models\Files;
 use omarinina\infrastructure\constants\TaskStatusConstants;
-use Yii;
 use omarinina\domain\traits\TimeCounter;
 use omarinina\domain\actions\AcceptAction;
 use omarinina\domain\actions\CancelAction;

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace omarinina\infrastructure\models\form;
 
-use GuzzleHttp\Exception\GuzzleException;
 use omarinina\application\services\location\interfaces\GeoObjectReceiveInterface;
-use omarinina\application\services\location\pointReceive\GeoObjectReceiveService;
 use omarinina\domain\models\Categories;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
@@ -27,8 +25,8 @@ class CreateTaskForm extends Model
     /** @var null|string */
     public ?string $location = null;
 
-    /** @var string */
-    public string $budget = '';
+    /** @var null|string */
+    public ?string $budget = null;
 
     /** @var string|null */
     public ?string $expiryDate = null;
@@ -52,12 +50,13 @@ class CreateTaskForm extends Model
     public function rules()
     {
         return [
-            [['name', 'budget', 'categoryId', 'description'], 'required'],
+            [['name', 'categoryId', 'description'], 'required'],
             [['name'], 'string', 'min' => 10, 'max' => 255],
             [['description'], 'string', 'min' => 30, 'max' => 2000],
             [['categoryId'], 'exist', 'targetClass' => Categories::class, 'targetAttribute' => ['categoryId' => 'id']],
             [['expiryDate'], 'default', 'value' => null],
             [['expiryDate'], 'validateExpiryDate'],
+            [['budget'], 'default', 'value' => null],
             [['budget'], 'integer', 'min' => 1],
             [['files'], 'file', 'maxFiles' => 10, 'maxSize' => 5 * 1024 * 1024, 'skipOnEmpty' => true],
             [['location'], 'default', 'value' => null],

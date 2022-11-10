@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace omarinina\domain\actions;
 
-use omarinina\domain\models\task\Tasks;
-use yii\helpers\Url;
-use Yii;
-use app\widgets\CancellationWidget;
-
 class CancelAction extends AbstractAction
 {
     /**
